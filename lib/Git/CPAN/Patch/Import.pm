@@ -172,8 +172,8 @@ sub main {
         $out->print( join ' ', ( $last_version ? "import" : "initial import of" ), "$name $version from CPAN\n" );
         $out->print( <<"END" );
 
-git-cpan-module: $name
-git-cpan-version: $version
+git-cpan-module:   $name
+git-cpan-version:  $version
 git-cpan-authorid: @{[ $author_obj->cpanid ]}
 
 END
