@@ -48,6 +48,7 @@ for my $dist (@dists) {
     });
     system "git", "remote", "add", "origin", "git\@github-gitpan:gitpan/$dist.git";
     system "git", "push", "origin", "master";
+    system "rm .git/hooks/*.sample";
 }
 
 

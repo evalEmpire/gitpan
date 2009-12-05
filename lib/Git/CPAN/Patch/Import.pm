@@ -170,7 +170,13 @@ sub main {
 
         # commit message
         $out->print( join ' ', ( $last_version ? "import" : "initial import of" ), "$name $version from CPAN\n" );
-        $out->print( join "\n", '', "git-cpan-module: $name", "git-cpan-version: $version", '' );
+        $out->print( <<"END" );
+
+git-cpan-module: $name
+git-cpan-version: $version
+git-cpan-authorid: @{[ $author_obj->cpanid ]}
+
+END
 
 
         # we need to send an EOF to git in order for it to actually finalize the commit
