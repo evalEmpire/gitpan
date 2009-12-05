@@ -1,0 +1,77 @@
+#!/usr/bin/perl
+
+# Do a complete git-ificaiton of BackPAN.  Or give it just a few modules.
+
+use strict;
+use warnings;
+use v5.10;
+
+use File::chdir;
+use Getopt::Long;
+use Parse::BACKPAN::Packages;
+
+my %opts;
+GetOptions(
+    \%opts,
+    "backpan:s",
+    "login=s",
+    "token=s",
+);
+
+my @dists;
+if( @ARGV ) {
+    @dists = @ARGV;
+}
+else {
+    my $backpan = Parse::BACKPAN::Packages->new();
+
+    # Filter out some garbage the backpan indexer picks up
+    @dists = grep !/^[\d._\-]+(\.U)?$/, @{$backpan->distributions};
+}
+
+my %backpan_init_opts;
+$backpan_init_opts{"--backpan"} = $opts{backpan} if $opts{backpan};
+
+for my $dist (@dists) {
+    system "git", "backpan-init" => $dist, %backpan_init_opts, "--mkdir";
+
+    local $CWD = $dist;
+
+    system "git", "gc";
+    github_action("create_repo", {
+        login           => $opts{login},
+        token           => $opts{token},
+        name            => $dist,
+        description     => "Release history of $dist",
+        homepage        => "http://search.cpan.org/dist/$dist/",
+        public          => 1,
+    });
+    system "git", "remote", "add", "origin", "git\@github-gitpan:gitpan/$dist.git";
+    system "git", "push", "origin", "master";
+}
+
+
+use LWP::UserAgent;
+use HTTP::Request::Common qw(POST);
+
+sub github_action {
+    state $ua = LWP::UserAgent->new;
+
+    state $actions = {
+        create_repo => 'repos/create',
+        delete_repo => 'repos/delete',
+    };
+
+    my $action = shift;
+    my $opts   = shift;
+
+    my $url = "http://github.com/api/v2/json/";
+    $url .= $actions->{$action};
+
+    my $req = POST $url, [
+        %$opts
+    ];
+    my $response = $ua->request($req)->as_string;
+
+    print "Github said: $response\n";
+}
