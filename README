@@ -1,2 +1,7 @@
 A placeholder for the gitPAN project so it can have an issue tracker,
 wiki and all that.
+
+The code for gitpan currently lives in:
+http://github.com/schwern/git-cpan-patch (a fork of Yanick's work)
+http://github.com/schwern/parse-backpan-packages (a fork of Leon's work)
+
