@@ -10,69 +10,126 @@ use File::chdir;
 use Getopt::Long;
 use Parse::BACKPAN::Packages;
 
+my %Dists_To_Skip = map { $_ => 1 } qw(
+    perl
+);
+
 my %opts;
 GetOptions(
     \%opts,
     "backpan:s",
     "login=s",
     "token=s",
+    "author=s",
+    "github!",
+    "random=i",
 );
 
 my @dists;
 if( @ARGV ) {
     @dists = @ARGV;
 }
-else {
+elsif( $opts{random} ) {
+    my $num = $opts{random};
     my $backpan = Parse::BACKPAN::Packages->new();
 
-    # Filter out some garbage the backpan indexer picks up
-    @dists = grep !/^[\d._\-]+(\.U)?$/, @{$backpan->distributions};
+    my $all_dists = $backpan->distributions;
+    @dists = map { $all_dists->[rand @$all_dists] } 1..$num;
 }
+elsif( $opts{author} ) {
+    my $backpan = Parse::BACKPAN::Packages->new();
+    @dists = $backpan->distributions_by($opts{author});
+}
+else {
+    my $backpan = Parse::BACKPAN::Packages->new();
+    @dists = @{$backpan->distributions};
+}
+
+# Filter out some garbage the backpan indexer picks up
+@dists = grep !/^[\d._\-]+(\.U)?$/, @dists;
 
 my %backpan_init_opts;
 $backpan_init_opts{"--backpan"} = $opts{backpan} if $opts{backpan};
 
 for my $dist (@dists) {
+    next if $Dists_To_Skip{$dist};
+
+    # MARCEL has -0.01.tar.gz
+    # Should probably be filtered out by Parse::BACKPAN or
+    # made into a dist called empty string.
+    next if $dist =~ /^-[\d.]+$/;
+
+    if( $opts{github} ) {
+        if( does_repo_exist("gitpan", $dist) ) {
+            print "Repo already exists on github, skipping\n";
+            next;
+        }
+    }
+
     system "git", "backpan-init" => $dist, %backpan_init_opts, "--mkdir";
 
     local $CWD = $dist;
 
-    system "git", "gc";
-    github_action("create_repo", {
-        login           => $opts{login},
-        token           => $opts{token},
-        name            => $dist,
-        description     => "Release history of $dist",
-        homepage        => "http://search.cpan.org/dist/$dist/",
-        public          => 1,
-    });
-    system "git", "remote", "add", "origin", "git\@github-gitpan:gitpan/$dist.git";
-    system "git", "push", "origin", "master";
     system "rm .git/hooks/*.sample";
+    system "git", "gc";
+
+    if( $opts{github} ) {
+        github_action("create_repo", {
+            login           => $opts{login},
+            token           => $opts{token},
+            name            => $dist,
+            description     => "Release history of $dist",
+            homepage        => "http://search.cpan.org/dist/$dist/",
+            public          => 1,
+        });
+        system "git", "remote", "add", "origin", "git\@github-gitpan:gitpan/$dist.git";
+        system "git", "push", "origin", "master";
+        system "git", "push", "origin", "--tags";
+    }
 }
 
 
 use LWP::UserAgent;
 use HTTP::Request::Common qw(POST);
+use JSON::XS;
 
 sub github_action {
     state $ua = LWP::UserAgent->new;
 
     state $actions = {
-        create_repo => 'repos/create',
-        delete_repo => 'repos/delete',
+        create_repo => sub { 'repos/create' },
+        delete_repo => sub { 'repos/delete' },
+        repo_info   => sub {
+            my $opts = shift;
+            sprintf 'repos/show/%s/%s',
+              delete $opts->{user},
+              delete $opts->{name}
+        },
     };
 
     my $action = shift;
     my $opts   = shift;
 
     my $url = "http://github.com/api/v2/json/";
-    $url .= $actions->{$action};
+    $url .= $actions->{$action}->($opts);
 
     my $req = POST $url, [
         %$opts
     ];
-    my $response = $ua->request($req)->as_string;
-
+    my $response = $ua->request($req)->content;
     print "Github said: $response\n";
+
+    return decode_json($response);
+}
+
+sub does_repo_exist {
+    my $user = shift;
+    my $repo = shift;
+
+    my $response = github_action("repo_info", {
+        user    => $user,
+        name    => $repo
+    });
+
+    return exists $response->{error} ? 0 : 1;
 }
