@@ -8,6 +8,7 @@ use autodie;
 use Archive::Extract;
 $Archive::Extract::PREFER_BIN = 1;
 
+use File::chmod;
 use File::Find;
 use File::Basename;
 use LWP::Simple qw(getstore);
@@ -44,9 +45,9 @@ sub cpanplus {
 sub _fix_permissions {
     my $dir = shift;
 
-    `chmod u+rx $dir`;
+    chmod "u+rx", $dir;
     find(sub {
-        -d $_ ? `chmod u+rx $_` : `chmod u+r $_`;
+        -d $_ ? chmod "u+rx", $_ : chmod "u+r", $_;
     }, $dir);
 }
 
@@ -146,7 +147,7 @@ sub import_one_backpan_release {
 
     # commit message
     my $name    = $release->dist;
-    my $version = $release->version;
+    my $version = $release->version || '';
     $out->print( join ' ', ( $last_version ? "import" : "initial import of" ), "$name $version from CPAN\n" );
     $out->print( <<"END" );
 
@@ -171,10 +172,12 @@ END
     my $dist = $release->dist;
     $repo->command_noisy('update-ref', '-m' => "import $dist", 'refs/remotes/cpan/master', $commit );
 
-    if( $repo->command( "tag", "-l" => $version ) ) {
-        say "Tag $version already exists, overwriting";
+    if( $version ) {
+        if( $repo->command( "tag", "-l" => $version ) ) {
+            say "Tag $version already exists, overwriting";
+        }
+        $repo->command_noisy( "tag", "-f" => $version, $commit );
     }
-    $repo->command_noisy( "tag", "-f" => $version, $commit );
 
     say "created tag '$version' ($commit)";
 }
