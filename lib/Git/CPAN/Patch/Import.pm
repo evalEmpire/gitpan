@@ -153,6 +153,7 @@ sub import_one_backpan_release {
 git-cpan-module:   $name
 git-cpan-version:  $version
 git-cpan-authorid: @{[ $author->cpanid ]}
+git-cpan-file:     @{[ $release->prefix ]}
 
 END
 
