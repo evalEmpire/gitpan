@@ -108,6 +108,10 @@ sub import_one_backpan_release {
       or die "Couldn't extract $archive_file to $tmp_dir because ".$ae->error;
 
     my $dir = $ae->extract_path;
+    if( !$dir ) {
+        say "The archive is empty, skipping";
+        return;
+    }
     _fix_permissions($dir);
 
     # create a tree object for the CPAN module
