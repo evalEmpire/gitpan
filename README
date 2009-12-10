@@ -6,3 +6,116 @@ together other people's work:  Leon's Parse::BACKPAN::Packages and Yanick's
 git-cpan-patch.  The patched versions of these necessary to make gitpan
 work are linked in as git submodules.
 
+FAQ
+***
+
+What is gitPAN?
+---------------
+
+gitPAN is a project to import the entire history of CPAN (known as
+BackPAN) into a set of git repositories, one per distribution.
+
+
+What is CPAN?
+-------------
+
+CPAN is the Comprehensive Perl Archive Network at cpan.org.  It is an
+archive of tens of thousands of Perl modules written by thousands of
+authors.  A good interface to it is http://search.cpan.org
+
+
+What is BackPAN?
+----------------
+
+In order to limit CPAN's size, authors are requested to delete old
+releases.  BackPAN maintains all CPAN releases, even deleted ones, and
+is a complete history of CPAN.  There are only a few BackPAN mirrors
+such as http://backpan.perl.org
+
+
+Why is gitPAN?
+--------------
+
+CPAN (and thus BackPAN) is a pile of tarballs organized by author.  It
+is difficult to get the complete history of a distribution, espeically
+one that has changed authors or is released by multiple authors (for
+example, Moose).  Because releases are regularly deleted from CPAN
+even sites like search.cpan.org provide an incomplete history.  Having
+the complete history of each distrubtion in its own repository makes
+the full distribution history easy to access.
+
+gitPAN also hopes to make patching CPAN modules easier.  Ideally you
+simply clone the gitPAN repository and work.  New releases can be
+pulled and merged from gitPAN.
+
+gitPAN hopes to showcase using a repository as an archive format,
+rather than a pile of tarballs.  A repository is far more useful than
+a pile of tarballs, and contrary to many people's expectations, the
+repository is turning out smaller.
+
+Finally, gitPAN is being created in the hope that "if you build it
+they will come".  Getting data out of CPAN in an automated fashion has
+traditionally been difficult.
+
+
+Where is gitPAN?
+----------------
+
+The repositories are on github.com at http://github.com/gitpan
+(watch out, it may overload your browser).
+
+Code, discussion, and issues can be had at http://github.com/schwern/gitpan.
+
+
+How do I access a distribution on gitPAN?
+-----------------------------------------
+
+Simplest way is to go to http://github.com/gitpan/<distribution>.
+For example, Acme-Pony can be found at http://github.com/gitpan/Acme-Pony.
+Instructions for futher access can be found there.
+
+The clone URL for a given distribution is git://github.com/gitpan/<distribution>.git.
+You can clone without a github account.
+
+
+How big is BackPAN?
+-------------------
+
+BackPAN (just the modules, we're not doing perl releases) contains
+about 120k archive files (mostly gzipped tarballs) representing about
+21,000 distributions from 5000 authors taking up 14 gigs of space.
+
+
+How big is gitPAN?
+------------------
+
+gitPAN will consist of 21,000 repositories representing each CPAN
+distributions.  Experiments importing random distributions give an
+estimated total space requirement of 6-7 gigs.
+
+
+Will you be adding X to gitPAN?
+-------------------------------
+
+The primary focus is to get accurate repositories for each CPAN
+distribution and to make this data available for others to use.  When
+you think "will gitPAN do X" instead think "how can I use gitPAN to
+build X?"
+
+
+How can I merge gitPAN's history with my module?
+------------------------------------------------
+
+If you are the owner of a CPAN module and have an existing, but
+incomplete, repository you can fill in the history using gitPAN.  The
+technique is outlined in this article.
+http://use.perl.org/~schwern/journal/39974
+
+
+How can I help?
+---------------
+
+See http://github.com/schwern/github/issues for a list of open problems.
+
+You can also contribute by looking through imported CPAN distributions
+and checking for mistakes.
