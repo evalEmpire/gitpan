@@ -8,6 +8,7 @@ use autodie;
 use Archive::Extract;
 $Archive::Extract::PREFER_BIN = 1;
 
+use File::Find;
 use File::Basename;
 use LWP::Simple qw(getstore);
 use File::Spec::Functions;
@@ -37,6 +38,16 @@ sub backpan_index {
 sub cpanplus {
     state $cpanplus = CPANPLUS::Backend->new;
     return $cpanplus;
+}
+
+# Make sure we can read tarballs and change directories
+sub _fix_permissions {
+    my $dir = shift;
+
+    `chmod u+rx $dir`;
+    find(sub {
+        -d $_ ? `chmod u+rx $_` : `chmod u+r $_`;
+    }, $dir);
 }
 
 sub init_repo {
@@ -96,6 +107,7 @@ sub import_one_backpan_release {
       or die "Couldn't extract $archive_file to $tmp_dir because ".$ae->error;
 
     my $dir = $ae->extract_path;
+    _fix_permissions($dir);
 
     # create a tree object for the CPAN module
     # this imports the source code without touching the user's working directory or
