@@ -91,7 +91,7 @@ sub import_one_backpan_release {
         $last_version = $repo->command_oneline("cpan-last-version");
     }
 
-    my $tmp_dir = tempdir( CLEANUP => 1 );
+    my $tmp_dir = File::Temp->newdir();
 
     my $release_url = $backpan_url . "/" . $release->prefix;
     my $archive_file = catfile($tmp_dir, $release->filename);
@@ -104,8 +104,11 @@ sub import_one_backpan_release {
 
     say "extracting distribution";
     my $ae = Archive::Extract->new( archive => $archive_file );
-    $ae->extract( to => $tmp_dir )
-      or die "Couldn't extract $archive_file to $tmp_dir because ".$ae->error;
+    unless( $ae->extract( to => $tmp_dir ) ) {
+        say "Couldn't extract $archive_file to $tmp_dir because ".$ae->error;
+        say "Skipping";
+        return;
+    }
 
     my $dir = $ae->extract_path;
     if( !$dir ) {
