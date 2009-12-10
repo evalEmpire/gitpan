@@ -5,17 +5,188 @@ use warnings;
 
 use autodie;
 
+use Archive::Extract;
+use LWP::Simple qw(getstore);
 use File::Spec::Functions;
 use File::Temp qw(tempdir);
+use File::Path;
 use File::chdir;
 use Cwd qw/ getcwd /;
 use version;
 use Git;
+use CLASS;
 
 use CPANPLUS;
 use Parse::BACKPAN::Packages;
 
+our $BackPAN_URL = "http://backpan.perl.org/";
+
 sub say (@) { print @_, "\n" }
+
+sub backpan_index {
+    state $backpan = do {
+        say "Loading BackPAN index (this may take a while)";
+        Parse::BACKPAN::Packages->new;
+    };
+    return $backpan;
+}
+
+sub cpanplus {
+    state $cpanplus = CPANPLUS::Backend->new;
+    return $cpanplus;
+}
+
+sub init_repo {
+    my $module = shift;
+    my $opts   = shift;
+
+    if ( defined $opts->{mkdir} ) {
+        ( my $dirname = $opts->{mkdir} || $module ) =~ s/::/-/g;
+        say "creating directory $dirname";
+        mkpath $dirname;
+        chdir $dirname;
+    }
+
+    if ( -d '.git' ) {
+        unless ( $opts->{force} ) {
+            die "Aborting: git repository already present.\n",
+                "use '-force' if it's really what you want to do\n";
+        }
+    }
+    else {
+        Git::command_noisy('init');
+    }
+}
+
+
+sub import_one_backpan_release {
+    my $release     = shift;
+    my $backpan_url = shift;
+
+    my $repo = Git->repository;
+
+    my( $last_commit, $last_version );
+
+    # figure out if there is already an imported module
+    if ( $last_commit = eval { $repo->command_oneline("rev-parse", "-q", "--verify", "cpan/master") } ) {
+        $last_version = $repo->command_oneline("cpan-last-version");
+    }
+
+    my $tmp_dir = tempdir( CLEANUP => 1 );
+
+    my $release_url = $backpan_url . "/" . $release->prefix;
+    my $archive_file = catfile($tmp_dir, $release->filename);
+
+    say "downloading $release_url";
+
+    getstore($release_url, $archive_file)
+      or die "Couldn't retrieve $release_url";
+
+    say "extracting distribution";
+    my $ae = Archive::Extract->new( archive => $archive_file );
+    $ae->extract( to => $tmp_dir )
+      or die "Couldn't extract $archive_file to $tmp_dir because ".$ae->error;
+
+    my $dir = $ae->extract_path;
+
+    # create a tree object for the CPAN module
+    # this imports the source code without touching the user's working directory or
+    # index
+
+    my $tree = do {
+        # don't overwrite the user's index
+        local $ENV{GIT_INDEX_FILE} = catfile($tmp_dir, "temp_git_index");
+        local $ENV{GIT_DIR} = catfile( getcwd(), '.git' );
+        local $ENV{GIT_WORK_TREE} = $dir;
+
+        local $CWD = $dir;
+
+        my $write_tree_repo = Git->repository;
+
+        $write_tree_repo->command_noisy( qw(add -v --force .) );
+        $write_tree_repo->command_oneline( "write-tree" );
+    };
+
+    # reate a commit for the imported tree object and write it into
+    # refs/remotes/cpan/master
+    local %ENV = %ENV;
+    $ENV{GIT_AUTHOR_DATE}  ||= $release->date;
+
+    my $author = $CLASS->cpanplus->author_tree($release->cpanid);
+    $ENV{GIT_AUTHOR_NAME}  ||= $author->author;
+    $ENV{GIT_AUTHOR_EMAIL} ||= $author->email;
+
+    my @parents = grep { $_ } $last_commit;
+
+    # FIXME $repo->command_bidi_pipe is broken
+    my ( $pid, $in, $out, $ctx ) = Git::command_bidi_pipe(
+        "commit-tree", $tree,
+        map { ( -p => $_ ) } @parents,
+    );
+
+    # commit message
+    my $name    = $release->dist;
+    my $version = $release->version;
+    $out->print( join ' ', ( $last_version ? "import" : "initial import of" ), "$name $version from CPAN\n" );
+    $out->print( <<"END" );
+
+git-cpan-module:   $name
+git-cpan-version:  $version
+git-cpan-authorid: @{[ $author->cpanid ]}
+
+END
+
+    # we need to send an EOF to git in order for it to actually finalize the commit
+    # this kludge makes command_close_bidi_pipe not barf
+    close $out;
+    open $out, '<', \my $buf;
+
+    chomp(my $commit = <$in>);
+
+    Git::command_close_bidi_pipe($pid, $in, $out, $ctx);
+
+
+    # finally, update the fake remote branch and create a tag for convenience
+    my $dist = $release->dist;
+    $repo->command_noisy('update-ref', '-m' => "import $dist", 'refs/remotes/cpan/master', $commit );
+
+    $repo->command_noisy( tag => $version, $commit );
+
+    say "created tag '$version' ($commit)";
+}
+
+
+sub import_from_backpan {
+    my $distribution = shift;
+    my $opts         = shift;
+
+    $distribution =~ s/::/-/g;
+
+    $opts->{backpan} ||= $BackPAN_URL;
+
+    init_repo($distribution, $opts);
+
+    my $backpan = $CLASS->backpan_index;
+    my @releases = $backpan->releases($distribution)
+      or die "Error: no distributions found. ",
+             "Are you sure you spelled the module name correctly?\n";
+
+    for my $release (@releases) {
+        # skip .ppm files
+        next if $release->filename =~ m{\.ppm\b};
+
+        say "importing " . $release->distvname;
+        import_one_backpan_release(
+            $release,
+            $opts->{backpan},
+        );
+    }
+
+    my $repo = Git->repository;
+    $repo->command_noisy('checkout', '-t', '-b', 'master', 'cpan/master');
+}
+
+
 
 sub main {
     my $module = shift;
