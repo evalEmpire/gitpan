@@ -117,8 +117,8 @@ sub github_action {
         repo_info   => sub {
             my $opts = shift;
             sprintf 'repos/show/%s/%s',
-              delete $opts->{user},
-              delete $opts->{name}
+              $opts->{user},
+              $opts->{name}
         },
     };
 
@@ -134,7 +134,16 @@ sub github_action {
     my $response = $ua->request($req)->content;
     print "Github said: $response\n";
 
-    return decode_json($response);
+    $response = decode_json($response);
+
+    if( $response->{error}              and
+        $response->{error}[0]{error} =~ /too many requests/ )
+    {
+        sleep 1;
+        return github_action($action, $opts);
+    }
+
+    return $response;
 }
 
 sub does_repo_exist {
