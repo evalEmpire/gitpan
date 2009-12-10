@@ -173,13 +173,14 @@ END
     $repo->command_noisy('update-ref', '-m' => "import $dist", 'refs/remotes/cpan/master', $commit );
 
     if( $version ) {
-        if( $repo->command( "tag", "-l" => $version ) ) {
-            say "Tag $version already exists, overwriting";
+        my $tag = $version;
+        $tag =~ s{^\.}{0.};  # git does not like a leading . as a tag name
+        if( $repo->command( "tag", "-l" => $tag ) ) {
+            say "Tag $tag already exists, overwriting";
         }
-        $repo->command_noisy( "tag", "-f" => $version, $commit );
+        $repo->command_noisy( "tag", "-f" => $tag, $commit );
+        say "created tag '$tag' ($commit)";
     }
-
-    say "created tag '$version' ($commit)";
 }
 
 
