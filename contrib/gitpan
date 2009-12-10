@@ -23,27 +23,33 @@ GetOptions(
     "author=s",
     "github!",
     "random=i",
+    "pattern=s",
 );
 
 my @dists;
 if( @ARGV ) {
     @dists = @ARGV;
 }
-elsif( $opts{random} ) {
-    my $num = $opts{random};
-    my $backpan = Git::CPAN::Patch::Import->backpan_index;
-
-    my $all_dists = $backpan->distributions;
-    @dists = map { $all_dists->[rand @$all_dists] } 1..$num;
-}
-elsif( $opts{author} ) {
-    my $backpan = Git::CPAN::Patch::Import->backpan_index;
-    @dists = $backpan->distributions_by($opts{author});
-}
 else {
     my $backpan = Git::CPAN::Patch::Import->backpan_index;
-    @dists = @{$backpan->distributions};
+
+    if( $opts{random} ) {
+        my $num = $opts{random};
+
+        my $all_dists = $backpan->distributions;
+        @dists = map { $all_dists->[rand @$all_dists] } 1..$num;
+    }
+    elsif( $opts{author} ) {
+        @dists = $backpan->distributions_by($opts{author});
+    }
+    elsif( $opts{pattern} ) {
+        @dists = grep /$opts{pattern}/, @{$backpan->distributions};
+    }
+    else {
+        @dists = @{$backpan->distributions};
+    }
 }
+
 
 # Filter out some garbage the backpan indexer picks up
 @dists = grep !/^[\d._\-]+(\.U)?$/, @dists;
@@ -66,10 +72,12 @@ for my $dist (@dists) {
         }
     }
 
-    Git::CPAN::Patch::Import::import_from_backpan(
+    my $repo_dir = Git::CPAN::Patch::Import::import_from_backpan(
         $dist,
         { %backpan_init_opts, "mkdir" => "" }
     );
+
+    local $CWD = $repo_dir;
 
     system "rm .git/hooks/*.sample";
     system "git", "gc";

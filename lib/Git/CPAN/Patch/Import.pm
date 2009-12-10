@@ -6,6 +6,9 @@ use warnings;
 use autodie;
 
 use Archive::Extract;
+$Archive::Extract::PREFER_BIN = 1;
+
+use File::Basename;
 use LWP::Simple qw(getstore);
 use File::Spec::Functions;
 use File::Temp qw(tempdir);
@@ -40,12 +43,14 @@ sub init_repo {
     my $module = shift;
     my $opts   = shift;
 
+    my $dirname = ".";
     if ( defined $opts->{mkdir} ) {
-        ( my $dirname = $opts->{mkdir} || $module ) =~ s/::/-/g;
+        ( $dirname = $opts->{mkdir} || $module ) =~ s/::/-/g;
         say "creating directory $dirname";
         mkpath $dirname;
-        chdir $dirname;
     }
+
+    local $CWD = $dirname;
 
     if ( -d '.git' ) {
         unless ( $opts->{force} ) {
@@ -56,6 +61,8 @@ sub init_repo {
     else {
         Git::command_noisy('init');
     }
+
+    return $dirname;
 }
 
 
@@ -79,6 +86,7 @@ sub import_one_backpan_release {
 
     say "downloading $release_url";
 
+    mkpath dirname $archive_file;
     getstore($release_url, $archive_file)
       or die "Couldn't retrieve $release_url";
 
@@ -164,7 +172,9 @@ sub import_from_backpan {
 
     $opts->{backpan} ||= $BackPAN_URL;
 
-    init_repo($distribution, $opts);
+    my $repo_dir = init_repo($distribution, $opts);
+
+    local $CWD = $repo_dir;
 
     my $backpan = $CLASS->backpan_index;
     my @releases = $backpan->releases($distribution)
@@ -184,6 +194,8 @@ sub import_from_backpan {
 
     my $repo = Git->repository;
     $repo->command_noisy('checkout', '-t', '-b', 'master', 'cpan/master');
+
+    return $repo_dir;
 }
 
 
