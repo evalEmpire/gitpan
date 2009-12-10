@@ -10,6 +10,9 @@ use Git::CPAN::Patch::Import;
 use File::chdir;
 use Getopt::Long;
 
+# Github currently limits repo names to 50 characters
+use constant MAX_LENGTH_GITHUB_REPO_NAME => 50;
+
 my %Dists_To_Skip = map { $_ => 1 } qw(
     perl
 );
@@ -24,6 +27,7 @@ GetOptions(
     "github!",
     "random=i",
     "pattern=s",
+    "sort!",
 );
 
 my @dists;
@@ -51,8 +55,9 @@ else {
 }
 
 
-# Filter out some garbage the backpan indexer picks up
-@dists = grep !/^[\d._\-]+(\.U)?$/, @dists;
+@dists = filter_dists(@dists);
+
+@dists = sort { lc $a cmp lc $b } @dists if $opts{sort};
 
 my %backpan_init_opts;
 $backpan_init_opts{"backpan"} = $opts{backpan} if $opts{backpan};
@@ -67,7 +72,7 @@ for my $dist (@dists) {
 
     if( $opts{github} ) {
         if( does_repo_exist("gitpan", $dist) ) {
-            print "Repo already exists on github, skipping\n";
+            print "$dist already exists on github, skipping\n";
             next;
         }
     }
@@ -108,7 +113,7 @@ use LWP::UserAgent;
 use HTTP::Request::Common qw(POST);
 use JSON::XS;
 
-sub github_action {
+sub _do_github_action {
     state $ua = LWP::UserAgent->new;
 
     state $actions = {
@@ -134,26 +139,55 @@ sub github_action {
     my $response = $ua->request($req)->content;
     print "Github said: $response\n";
 
-    $response = decode_json($response);
+    return decode_json($response);
+}
 
-    if( $response->{error}              and
-        $response->{error}[0]{error} =~ /too many requests/ )
-    {
-        sleep 1;
-        return github_action($action, $opts);
+
+sub github_action {
+    my $response;
+    for my $backoff (1..6) {
+        $response = _do_github_action(@_);
+
+        if( is_too_many_requests($response) ) {
+            sleep 2**$backoff;
+        }
+        else {
+            last;
+        }
     }
 
     return $response;
 }
 
+
+sub is_too_many_requests {
+    my $response = shift;
+    return $response->{error} && ($response->{error}[0]{error} =~ /too many requests/);
+}
+
+
 sub does_repo_exist {
     my $user = shift;
     my $repo = shift;
+
+    # This is far faster than asking github about every one
+    return 1 if -e "$repo/.git/refs/remotes/origin/";
 
     my $response = github_action("repo_info", {
         user    => $user,
         name    => $repo
     });
+    return 0 if $response->{error};
+    return 1;
+}
 
-    return exists $response->{error} ? 0 : 1;
+
+sub filter_dists {
+           # filter out garbage the BackPAN index picks up
+    return grep !/^[\d._\-]+(\.U)?$/,
+           # filter out dists too long to go into github, rather
+           # than put them in with the wrong name.  I have a ticket
+           # in with github to increase the max
+           grep { length $_ <= MAX_LENGTH_GITHUB_REPO_NAME }
+                @_;
 }
