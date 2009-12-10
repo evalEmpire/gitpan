@@ -158,7 +158,10 @@ END
     my $dist = $release->dist;
     $repo->command_noisy('update-ref', '-m' => "import $dist", 'refs/remotes/cpan/master', $commit );
 
-    $repo->command_noisy( tag => $version, $commit );
+    if( $repo->command( "tag", "-l" => $version ) ) {
+        say "Tag $version already exists, overwriting";
+    }
+    $repo->command_noisy( "tag", "-f" => $version, $commit );
 
     say "created tag '$version' ($commit)";
 }
