@@ -28,6 +28,8 @@ GetOptions(
     "random=i",
     "pattern=s",
     "sort!",
+    "repodir=s",
+    "tempdir=s",
 );
 
 my @dists;
@@ -61,7 +63,9 @@ else {
 
 my %backpan_init_opts;
 $backpan_init_opts{"backpan"} = $opts{backpan} if $opts{backpan};
+$backpan_init_opts{"tempdir"} = $opts{tempdir} if $opts{tempdir};
 
+local $CWD = $opts{repodir} if defined $opts{repodir};
 for my $dist (@dists) {
     next if $Dists_To_Skip{$dist};
 
