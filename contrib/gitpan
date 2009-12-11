@@ -107,6 +107,7 @@ for my $dist (@dists) {
         for(1..3) {
             system "git", "push", "origin", "master";
             last if $? == 0;
+            sleep 2;
         }
         system "git", "push", "origin", "--tags";
     }
