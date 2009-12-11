@@ -195,3 +195,104 @@ sub filter_dists {
            grep { length $_ <= MAX_LENGTH_GITHUB_REPO_NAME }
                 @_;
 }
+
+
+__END__
+
+=head1 NAME
+
+gitpan - Import all of BackPAN to github
+
+=head1 SYNOPSIS
+
+    gitpan [options] [dist] [dist] ...
+
+=head1 DESCRIPTION
+
+gitpan is a script to import large chunks (or all of) BackPAN into git
+and github.  It allows you to select BackPAN distributions to import
+and control importing to github.
+
+=head1 OPTIONS
+
+=head2 Distribution Selection
+
+By default, gitpan will import every distribution on BackPAN.  You can
+override this by passing it a list of distributions on the command
+line or the following.
+
+=head3 --author
+
+Import all the options of a particular author.  Give it their CPAN id.
+For example
+
+    gitpan --author=MSCHWERN
+
+=head3 --random
+
+Pick N random distributions.
+
+    gitpan --random=100
+
+=head3 --pattern
+
+Pick all distributions matching the given pattern.
+
+    # Import all the D's.
+    gitpan --pattern='^[Dd]'
+
+=head3 --sort
+
+Sort the distributions before processing
+
+
+=head2 Github
+
+=head3 --github
+
+If this option is passed, it will create a repository on github and
+push the repo.
+
+=head3 --login
+
+Your github login name, only necessary if --github is set.
+
+=head3 --token
+
+Your github API token, only necessary if --github is set.
+
+=head2 BackPAN
+
+=head3 --backpan
+
+URL to BackPAN.
+
+Defaults to http://backpan.perl.org/
+
+=head2 Building
+
+=head3 tempdir
+
+The temporary directory gitpan uses.
+
+Defaults to whatever L<File::Temp> does.
+
+=head3 repodir
+
+Where gitpan will look for and place local copies of the repositories.
+
+=head1 EXAMPLE
+
+Here is how gitpan does its importing.
+
+    gitpan --github --login=gitpan --token=wouldntyoulikeotknow         \
+           --backpan=file:///var/local/backpan                          \
+           --tempdir=$PWD/gitpan-build/temp --repodir=$PWD/gitpan-build/repos \
+           --pattern='^[Ff]' --sort
+
+That says to use file:///var/local/backpan as the BackPAN mirror (a
+local repo), build in gitpan-build/ (a case-sensitive disk image),
+create repositories on gitpan's account on github, and import all the
+distributions starting with "F" or "f" in order.
+
+=cut
