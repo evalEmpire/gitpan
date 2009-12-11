@@ -80,7 +80,8 @@ sub init_repo {
 
 sub import_one_backpan_release {
     my $release     = shift;
-    my $backpan_url = shift;
+    my $opts        = shift;
+    my $backpan_url = $opts->{backpan} || $BackPAN_URL;
 
     my $repo = Git->repository;
 
@@ -91,7 +92,9 @@ sub import_one_backpan_release {
         $last_version = $repo->command_oneline("cpan-last-version");
     }
 
-    my $tmp_dir = File::Temp->newdir();
+    my $tmp_dir = File::Temp->newdir(
+        $opts->{tempdir} ? (DIR     => $opts->{tempdir}) : ()
+    );
 
     my $release_url = $backpan_url . "/" . $release->prefix;
     my $archive_file = catfile($tmp_dir, $release->filename);
@@ -197,8 +200,6 @@ sub import_from_backpan {
 
     $distribution =~ s/::/-/g;
 
-    $opts->{backpan} ||= $BackPAN_URL;
-
     my $repo_dir = init_repo($distribution, $opts);
 
     local $CWD = $repo_dir;
@@ -215,7 +216,7 @@ sub import_from_backpan {
         say "importing " . $release->distvname;
         import_one_backpan_release(
             $release,
-            $opts->{backpan},
+            $opts,
         );
     }
 
