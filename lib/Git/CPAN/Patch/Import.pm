@@ -187,6 +187,7 @@ END
     if( $version ) {
         my $tag = $version;
         $tag =~ s{^\.}{0.};  # git does not like a leading . as a tag name
+        $tag =~ s{\.$}{};    # nor a trailing one
         if( $repo->command( "tag", "-l" => $tag ) ) {
             say "Tag $tag already exists, overwriting";
         }
