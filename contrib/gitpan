@@ -86,6 +86,11 @@ for my $dist (@dists) {
         { %backpan_init_opts, "mkdir" => "" }
     );
 
+    unless( $repo_dir) {
+        say "No repository created for $dist.  Skipping";
+        next;
+    }
+
     local $CWD = $repo_dir;
 
     system "rm .git/hooks/*.sample";
