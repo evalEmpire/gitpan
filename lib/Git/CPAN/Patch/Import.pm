@@ -106,6 +106,10 @@ sub import_one_backpan_release {
     mkpath dirname $archive_file;
     getstore($release_url, $archive_file)
       or die "Couldn't retrieve $release_url";
+    if( !-e $archive_file ) {
+        say "$archive_file is missing.  Skipping.";
+        return;
+    }
 
     say "extracting distribution";
     my $ae = Archive::Extract->new( archive => $archive_file );
