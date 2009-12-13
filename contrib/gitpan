@@ -10,8 +10,8 @@ use Git::CPAN::Patch::Import;
 use File::chdir;
 use Getopt::Long;
 
-# Github currently limits repo names to 50 characters
-use constant MAX_LENGTH_GITHUB_REPO_NAME => 50;
+# Github currently limits repo names to 100 characters
+use constant MAX_LENGTH_GITHUB_REPO_NAME => 100;
 
 my %Dists_To_Skip = map { $_ => 1 } qw(
     perl
