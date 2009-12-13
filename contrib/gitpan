@@ -15,6 +15,8 @@ use constant MAX_LENGTH_GITHUB_REPO_NAME => 100;
 
 my %Dists_To_Skip = map { $_ => 1 } qw(
     perl
+    parrot
+    parrot-cfg
 );
 
 my %opts;
