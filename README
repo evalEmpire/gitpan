@@ -84,14 +84,28 @@ How big is BackPAN?
 BackPAN (just the modules, we're not doing perl releases) contains
 about 120k archive files (mostly gzipped tarballs) representing about
 21,000 distributions from 5000 authors taking up 14 gigs of space.
+Tarballs consume about 12 gigs, not sure where the other 2 is going
+(readme files, meta files, random non-distro junk, block size
+rounding?).
 
 
 How big is gitPAN?
 ------------------
 
-gitPAN will consist of 21,000 repositories representing each CPAN
-distributions.  Experiments importing random distributions give an
-estimated total space requirement of 6-7 gigs.
+gitPAN consists of over 21,000 repositories representing each CPAN
+distribution.  Disk usage (garbage collected repositories with no
+checkout) is 4.3 gigs.  It imported 120,000 files weighing in at 9.7
+gigs giving a compression ratio of over 2x.
+
+gitPAN consumes about 150 gigs on github, presumably due to indexing.
+
+
+Did gitPAN skip anything?
+-------------------------
+
+Yes.  It skipped perl, parrot and parrot-cfg.  They're not really CPAN
+modules and they have far more complete repositories.  It may
+skip more in the future, these are the ones I noticed.
 
 
 Will you be adding X to gitPAN?
@@ -102,6 +116,9 @@ distribution and to make this data available for others to use.  When
 you think "will gitPAN do X" instead think "how can I use gitPAN to
 build X?"
 
+That said, suggestions on how to improve the data available from
+gitpan heartily accepted.
+
 
 How can I merge gitPAN's history with my module?
 ------------------------------------------------
@@ -110,6 +127,15 @@ If you are the owner of a CPAN module and have an existing, but
 incomplete, repository you can fill in the history using gitPAN.  The
 technique is outlined in this article.
 http://use.perl.org/~schwern/journal/39974
+
+
+Where can I get a list of all the repositories?
+-----------------------------------------------
+
+You can get it from github's API <http://develop.github.com> with the
+URL <http://github.com/api/v2/json/repos/show/gitpan>.  At the time of
+this writing the call is timing out.  Your alternative is to get a
+list of distributions from Parse::BACKPAN::Packages.
 
 
 How can I help?
@@ -133,6 +159,13 @@ a repository resource to your release meta-data.  See
 http://module-build.sourceforge.net/META-spec-v1.4.html#resources
 
 
+I noticed a problem with a repository
+-------------------------------------
+
+Please report it at <http://github.com/schwern/gitpan/issues> or to
+schwern+github@gmail.com.
+
+
 Who do we have to thank for gitPAN?
 -----------------------------------
 
@@ -151,3 +184,12 @@ Yanick Champoux for git-cpan-patch which does most of the work.
 ftp.funet.fi for an rsync-able BackPAN mirror.
 Michael Schwern glued it all together.
 
+
+How can I contact gitPAN?
+-------------------------
+
+Email:   schwern+gitpan@gmail.com
+Web:     http://github.com/gitpan/
+Dev:     http://github.com/schwern/gitpan
+Issues:  http://github.com/schwern/gitpan/issues
+Twitter: #gitpan
