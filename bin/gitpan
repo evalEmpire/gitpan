@@ -1,0 +1,164 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use v5.10;
+
+use autodie;
+use Net::GitHub::V2::Repositories;
+use Getopt::Long::Descriptive;
+
+my @Options = (
+    [ "login=s"         => "github.com username"  ],
+    [ "token=s"         => "github.com API token" ],
+    [ "clone!"          => "don't clone after forking" ],
+);
+
+my %Commands = (
+    fork        => \&command_fork,
+    clone       => \&command_clone,
+);
+
+my($Opts, $Usage) = describe_options(
+    "usage: %c <command> %o",
+    @Options
+);
+$Opts->{clone} = 1 unless exists $Opts->{clone};
+
+read_config_file($Opts);
+
+main($Opts, @ARGV);
+
+sub main {
+    my($options, @args) = @_;
+    my $command = shift @args;
+
+    my $func = get_command($command);
+    return $func->($options, @args);
+}
+
+sub get_command {
+    my $command = shift;
+
+    my $func = $Commands{$command};
+    die <<ERROR unless $func;
+Unknown command $command.
+Valid commands are @{[ join ", ", keys %Commands ]}.
+ERROR
+
+    return $func;
+}
+
+sub command_fork {
+    my($opts, $repo) = @_;
+
+    die "You must supply your github login and token to fork.\n"
+      unless $opts->{login} and $opts->{token};
+
+    my $github = Net::GitHub::V2::Repositories->new(
+        login   => $opts->{login},
+        token   => $opts->{token},
+        owner   => "gitpan",
+        repo    => $repo,
+    );
+
+    my $result = $github->fork;
+    die <<ERROR if $result->{error};
+Forking gitpan/$repo failed.  Github had this to say:
+$result->{error}
+ERROR
+
+    say <<OUT;
+Successful fork of gitpan/$repo to $opts->{login}/$repo.
+New repository at $result->{url}
+OUT
+
+    command_clone($opts, $repo) if $opts->{clone};
+}
+
+sub command_clone {
+    my($opts, $repo) = @_;
+
+    system "git", "clone", "git://github.com/gitpan/$repo.git";
+}
+
+
+sub read_config_file {
+    my $opts = shift;
+
+    my $file = "$ENV{HOME}/.gitpan";
+    return unless -r $file;
+
+    open my($fh), $file;
+    while(my $line = <$fh>) {
+        next if $line =~ /^#/;
+
+        chomp $line;
+        my($key, $value) = split /\s*:\s*/, $line, 2;
+
+        $opts->{$key} = $value unless exists $opts->{$key};
+    }
+}
+
+
+=head1 NAME
+
+gitpan - Utility to access gitpan repositories
+
+=head1 SYNOPSIS
+
+    gitpan clone <distribution>
+    gitpan fork <distribution>
+
+=head1 DESCRIPTION
+
+gitpan is a utility to automate some common things you'll want to do
+with gitpan repositories (see L<http://github.com/gitpan>).
+
+=head1 COMMANDS
+
+=head2 clone
+
+  gitpan clone <distribution>
+
+Does a git clone of the distribution.  Little more than a thin wrapper around:
+
+    git clone git://github.com/gitpan/distribution
+
+For example:
+
+    gitpan clone DateTime
+
+
+=head2 fork
+
+  gitpan --login=<login> --token=<token> fork <distribution>
+
+Makes a fork of a gitpan distribution and then clones it.
+
+Both C<--login> and C<--token> necessary to create the fork on github.
+
+If C<--noclone> is given
+
+=head1 OPTIONS
+
+Default options can be given in a .gitpan file in your home directory.
+
+For example:
+
+    login: you
+    token: deadbeef
+
+=head2 login
+
+Your github login name.
+
+=head2 token
+
+Your github API authorization token.  Its in L<https://github.com/account>.
+
+=head2 noclone
+
+Don't clone after forking.
+
+=cut
