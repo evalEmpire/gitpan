@@ -73,7 +73,9 @@ Successful fork of gitpan/$repo to $opts->{login}/$repo.
 New repository at $result->{url}
 OUT
 
-    command_clone($opts, $repo) if $opts->{clone};
+    return unless $opts->{clone};
+
+    system "git", "clone", "git\@github.com:$opts->{login}/$repo";
 }
 
 sub command_clone {
