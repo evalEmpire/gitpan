@@ -85,7 +85,7 @@ for my $dist (@dists) {
 
     my $repo_dir = Git::CPAN::Patch::Import::import_from_backpan(
         $dist,
-        { %backpan_init_opts, "mkdir" => "" }
+        { %backpan_init_opts, "mkdir" => "", init_repo => 1 }
     );
 
     unless( $repo_dir) {
