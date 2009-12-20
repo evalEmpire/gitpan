@@ -3,6 +3,8 @@ package Git::CPAN::Patch::Import;
 use strict;
 use warnings;
 
+use 5.010;
+
 use autodie;
 
 use Archive::Extract;
