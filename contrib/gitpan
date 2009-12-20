@@ -10,11 +10,13 @@ use Git::CPAN::Patch::Import;
 use File::chdir;
 use Getopt::Long;
 
-# Github currently limits repo names to 50 characters
-use constant MAX_LENGTH_GITHUB_REPO_NAME => 50;
+# Github currently limits repo names to 100 characters
+use constant MAX_LENGTH_GITHUB_REPO_NAME => 100;
 
 my %Dists_To_Skip = map { $_ => 1 } qw(
     perl
+    parrot
+    parrot-cfg
 );
 
 my %opts;
@@ -86,6 +88,11 @@ for my $dist (@dists) {
         { %backpan_init_opts, "mkdir" => "" }
     );
 
+    unless( $repo_dir) {
+        say "No repository created for $dist.  Skipping";
+        next;
+    }
+
     local $CWD = $repo_dir;
 
     system "rm .git/hooks/*.sample";
@@ -104,12 +111,17 @@ for my $dist (@dists) {
         system "git", "remote", "add", "origin", "git\@github-gitpan:gitpan/$repo.git";
         # sometimes github doesn't have the repo ready immediately after create_repo
         # returns, so if push fails try it again.
-        for(1..3) {
+        do_with_back_off(6, sub {
             system "git", "push", "origin", "master";
-            last if $? == 0;
-        }
+            return $? == 0;
+        });
         system "git", "push", "origin", "--tags";
     }
+
+    # Delete everything but the .git/ directory to save space
+    # We name the directory specifically to avoid accidentally
+    # deleting everything should we be in the wrong cwd
+    system "rm -rf $repo_dir/*";
 }
 
 
@@ -140,25 +152,30 @@ sub _do_github_action {
     my $req = POST $url, [
         %$opts
     ];
-    my $response = $ua->request($req)->content;
-    print "Github said: $response\n";
 
-    return decode_json($response);
+    # Sometimes github gets confused but sorts it out quickly
+    my $response = do_with_back_off(4, sub {
+        my $response = $ua->request($req);
+        return if $response->code == 500;
+        return $response;
+    });
+
+    my $content = $response->content;
+    print "Github said: $content\n";
+
+    return decode_json($content);
 }
 
 
 sub github_action {
-    my $response;
-    for my $backoff (1..6) {
-        $response = _do_github_action(@_);
+    my @args = @_;
 
-        if( is_too_many_requests($response) ) {
-            sleep 2**$backoff;
-        }
-        else {
-            last;
-        }
-    }
+    my $response = do_with_back_off(6, sub {
+        my $response = _do_github_action(@args);
+
+        return if is_too_many_requests($response);
+        return $response;
+    });
 
     return $response;
 }
@@ -194,6 +211,22 @@ sub filter_dists {
            # in with github to increase the max
            grep { length $_ <= MAX_LENGTH_GITHUB_REPO_NAME }
                 @_;
+}
+
+
+sub do_with_back_off {
+    my($number, $code) = @_;
+
+    my $ret;
+    for my $backoff (1..$number) {
+        $ret = $code->();
+        last if $ret;
+
+        sleep 2**$backoff;
+    }
+
+    die "Command failed after $number back off and retries" unless $ret;
+    return $ret;
 }
 
 

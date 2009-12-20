@@ -62,19 +62,21 @@ sub init_repo {
         mkpath $dirname;
     }
 
-    local $CWD = $dirname;
+    {
+        local $CWD = $dirname;
 
-    if ( -d '.git' ) {
-        unless ( $opts->{force} ) {
-            die "Aborting: git repository already present.\n",
-                "use '-force' if it's really what you want to do\n";
+        if ( -d '.git' ) {
+            unless ( $opts->{force} ) {
+                die "Aborting: git repository already present.\n",
+                    "use '-force' if it's really what you want to do\n";
+            }
+        }
+        else {
+            Git::command_noisy('init');
         }
     }
-    else {
-        Git::command_noisy('init');
-    }
 
-    return $dirname;
+    return File::Spec->rel2abs($dirname);
 }
 
 
@@ -104,6 +106,10 @@ sub import_one_backpan_release {
     mkpath dirname $archive_file;
     getstore($release_url, $archive_file)
       or die "Couldn't retrieve $release_url";
+    if( !-e $archive_file ) {
+        say "$archive_file is missing.  Skipping.";
+        return;
+    }
 
     say "extracting distribution";
     my $ae = Archive::Extract->new( archive => $archive_file );
@@ -185,6 +191,7 @@ END
     if( $version ) {
         my $tag = $version;
         $tag =~ s{^\.}{0.};  # git does not like a leading . as a tag name
+        $tag =~ s{\.$}{};    # nor a trailing one
         if( $repo->command( "tag", "-l" => $tag ) ) {
             say "Tag $tag already exists, overwriting";
         }
@@ -195,17 +202,17 @@ END
 
 
 sub import_from_backpan {
-    my $distribution = shift;
-    my $opts         = shift;
+    my $dist = shift;
+    my $opts = shift;
 
-    $distribution =~ s/::/-/g;
+    $dist =~ s/::/-/g;
 
-    my $repo_dir = init_repo($distribution, $opts);
+    my $repo_dir = init_repo($dist, $opts);
 
     local $CWD = $repo_dir;
 
     my $backpan = $CLASS->backpan_index;
-    my @releases = $backpan->releases($distribution)
+    my @releases = $backpan->releases($dist)
       or die "Error: no distributions found. ",
              "Are you sure you spelled the module name correctly?\n";
 
@@ -221,7 +228,18 @@ sub import_from_backpan {
     }
 
     my $repo = Git->repository;
-    $repo->command_noisy('checkout', '-t', '-b', 'master', 'cpan/master');
+    if( grep { $_ =~ m{^\s* cpan/master \s*$}x } $repo->command('branch', '-r') ) {
+        $repo->command_noisy('checkout', '-t', '-b', 'master', 'cpan/master');
+    }
+    else {
+        say "Empty repository for $dist.  Deleting.";
+
+        # We can't delete it if we're inside it.
+        $CWD = "..";
+        rmtree $repo_dir;
+
+        return;
+    }
 
     return $repo_dir;
 }
