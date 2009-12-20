@@ -24,6 +24,8 @@ use CLASS;
 use CPANPLUS;
 use Parse::BACKPAN::Packages;
 
+our $VERSION = '0.3.0';
+
 our $BackPAN_URL = "http://backpan.perl.org/";
 
 sub say (@) { print @_, "\n" }
@@ -441,6 +443,9 @@ Git::CPAN::Patch::Import - The meat of git-cpan-import
 This is the guts of Git::CPAN::Patch::Import moved here to make it callable
 as a function so git-backpan-init goes faster.
 
+=head1 VERSION
+
+This document describes Git::CPAN::Patch::Import version 0.3.0
+
 =cut
 
-1;
