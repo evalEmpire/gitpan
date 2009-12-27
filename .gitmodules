@@ -1,6 +1,6 @@
-[submodule "Parse-BACKPAN-Packages"]
-	path = Parse-BACKPAN-Packages
-	url = git://github.com/schwern/parse-backpan-packages.git
 [submodule "git-cpan-patch"]
 	path = git-cpan-patch
 	url = git://github.com/schwern/git-cpan-patch.git
+[submodule "BackPAN-Index"]
+	path = BackPAN-Index
+	url = git://github.com/acme/parse-backpan-packages.git
