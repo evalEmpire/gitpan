@@ -24,14 +24,14 @@ use Git;
 use CLASS;
 
 use CPANPLUS;
-use Parse::BACKPAN::Packages;
+use BackPAN::Index;
 
 our $BackPAN_URL = "http://backpan.perl.org/";
 
 sub backpan_index {
     state $backpan = do {
         say "Loading BackPAN index (this may take a while)";
-        Parse::BACKPAN::Packages->new;
+        BackPAN::Index->new;
     };
     return $backpan;
 }
@@ -211,11 +211,11 @@ sub import_from_backpan {
     local $CWD = $repo_dir;
 
     my $backpan = $CLASS->backpan_index;
-    my @releases = $backpan->distributions($dist)
+    my $dist = $backpan->distribution($dist)
       or die "Error: no distributions found. ",
              "Are you sure you spelled the module name correctly?\n";
 
-    for my $release (@releases) {
+    for my $release ($dist->releases) {
         # skip .ppm files
         next if $release->filename =~ m{\.ppm\b};
 
@@ -365,10 +365,9 @@ sub main {
 
                 if ( $opts->{backpan} ) {
                     # we need the backpan index for dates
-                    say "opening backpan index";
-                    my $backpan = $opts->{backpan_obj} || Parse::BACKPAN::Packages->new;
+                    my $backpan = $self->backpan_index;
 
-                    %dists = map { $_->filename => $_ } $backpan->distributions($module_obj->package_name);
+                    %dists = map { $_->filename => $_ } $backpan->releases($module_obj->package_name);
                 }
 
                 if ( my $bp_dist = $dists{$dist} ) {
