@@ -19,7 +19,10 @@ my %Dists_To_Skip = map { $_ => 1 } qw(
     parrot-cfg
 );
 
-my %opts;
+# Defaults
+my %opts = (
+    update      => 1,
+);
 GetOptions(
     \%opts,
     "backpan:s",
@@ -32,6 +35,7 @@ GetOptions(
     "sort!",
     "repodir=s",
     "tempdir=s",
+    "update",
 );
 
 my @dists;
@@ -66,6 +70,7 @@ else {
 my %backpan_init_opts;
 $backpan_init_opts{"backpan"} = $opts{backpan} if $opts{backpan};
 $backpan_init_opts{"tempdir"} = $opts{tempdir} if $opts{tempdir};
+$backpan_init_opts{"update"}  = $opts{update};
 
 local $CWD = $opts{repodir} if defined $opts{repodir};
 for my $dist (@dists) {
@@ -294,6 +299,7 @@ Your github login name, only necessary if --github is set.
 
 Your github API token, only necessary if --github is set.
 
+
 =head2 BackPAN
 
 =head3 --backpan
@@ -302,17 +308,25 @@ URL to BackPAN.
 
 Defaults to http://backpan.perl.org/
 
+
 =head2 Building
 
-=head3 tempdir
+=head3 --tempdir
 
 The temporary directory gitpan uses.
 
 Defaults to whatever L<File::Temp> does.
 
-=head3 repodir
+=head3 --repodir
 
 Where gitpan will look for and place local copies of the repositories.
+
+=head3 --update
+
+Whether or not to update existing repositories.
+
+Defaults to true.
+
 
 =head1 EXAMPLE
 

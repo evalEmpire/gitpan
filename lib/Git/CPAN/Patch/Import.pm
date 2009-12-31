@@ -58,15 +58,21 @@ sub init_repo {
     my $dirname = ".";
     if ( defined $opts->{mkdir} ) {
         ( $dirname = $opts->{mkdir} || $module ) =~ s/::/-/g;
-        say "creating directory $dirname";
-        mkpath $dirname;
+
+        if( -d $dirname ) {
+            die "$dirname already exists\n" unless $opts->{update};
+        }
+        else {
+            say "creating directory $dirname";
+            mkpath $dirname;
+        }
     }
 
     {
         local $CWD = $dirname;
 
         if ( -d '.git' ) {
-            unless ( $opts->{force} ) {
+            if ( !$opts->{force} and !$opts->{update} ) {
                 die "Aborting: git repository already present.\n",
                     "use '-force' if it's really what you want to do\n";
             }
@@ -77,6 +83,36 @@ sub init_repo {
     }
 
     return File::Spec->rel2abs($dirname);
+}
+
+
+sub releases_in_git {
+    my $repo = Git->repository;
+    return unless contains_git_revisions();
+    my @releases = map  { m{\bgit-cpan-version:\s*(\S+)}x; $1 }
+                   grep /^\s*git-cpan-version:/,
+                     $repo->command(log => '--pretty=format:%b');
+    return @releases;
+}
+
+
+sub rev_exists {
+    my $rev = shift;
+    my $repo = Git->repository;
+
+    return eval {
+        git_cmd_try {
+            $repo->command(["rev-parse", $rev], {STDERR=>1});
+        } "fail"
+    };
+}
+
+
+sub contains_git_revisions {
+    my $repo = Git->repository;
+
+    return unless -d ".git";
+    return rev_exists("HEAD");
 }
 
 
@@ -126,10 +162,6 @@ sub import_one_backpan_release {
     }
     _fix_permissions($dir);
 
-    # create a tree object for the CPAN module
-    # this imports the source code without touching the user's working directory or
-    # index
-
     my $tree = do {
         # don't overwrite the user's index
         local $ENV{GIT_INDEX_FILE} = catfile($tmp_dir, "temp_git_index");
@@ -144,7 +176,7 @@ sub import_one_backpan_release {
         $write_tree_repo->command_oneline( "write-tree" );
     };
 
-    # reate a commit for the imported tree object and write it into
+    # Create a commit for the imported tree object and write it into
     # refs/remotes/cpan/master
     local %ENV = %ENV;
     $ENV{GIT_AUTHOR_DATE}  ||= $release->date;
@@ -202,24 +234,28 @@ END
 
 
 sub import_from_backpan {
-    my ( $dist, $opts ) = @_;
+    my ( $distname, $opts ) = @_;
 
-    $dist =~ s/::/-/g;
+    $distname =~ s/::/-/g;
 
-    my $repo_dir = $opts->{init_repo} ? init_repo($dist, $opts) : $CWD;
+    my $repo_dir = $opts->{init_repo} ? init_repo($distname, $opts) : $CWD;
 
     local $CWD = $repo_dir;
 
     my $backpan = $CLASS->backpan_index;
-    my $dist = $backpan->distribution($dist)
+    my $dist = $backpan->dist($distname)
       or die "Error: no distributions found. ",
              "Are you sure you spelled the module name correctly?\n";
 
+    my %existing_releases;
+    %existing_releases = map { $_ => 1 } releases_in_git() if $opts->{update};
     for my $release ($dist->releases) {
+        next if $existing_releases{$release->version};
+
         # skip .ppm files
         next if $release->filename =~ m{\.ppm\b};
 
-        say "importing " . $release->distvname;
+        say "importing $release";
         import_one_backpan_release(
             $release,
             $opts,
@@ -227,10 +263,7 @@ sub import_from_backpan {
     }
 
     my $repo = Git->repository;
-    if( grep { $_ =~ m{^\s* cpan/master \s*$}x } $repo->command('branch', '-r') ) {
-        $repo->command_noisy('checkout', '-t', '-b', 'master', 'cpan/master');
-    }
-    else {
+    if( !releases_in_git() ) {
         say "Empty repository for $dist.  Deleting.";
 
         # We can't delete it if we're inside it.
@@ -238,6 +271,14 @@ sub import_from_backpan {
         rmtree $repo_dir;
 
         return;
+    }
+
+    if( !rev_exists("master") ) {
+        $repo->command_noisy('checkout', '-t', '-b', 'master', 'cpan/master');
+    }
+    else {
+        $repo->command_noisy('checkout', 'master', '.');
+        $repo->command_noisy('merge', 'cpan/master');
     }
 
     return $repo_dir;
@@ -365,7 +406,7 @@ sub main {
 
                 if ( $opts->{backpan} ) {
                     # we need the backpan index for dates
-                    my $backpan = $self->backpan_index;
+                    my $backpan = $CLASS->backpan_index;
 
                     %dists = map { $_->filename => $_ } $backpan->releases($module_obj->package_name);
                 }
