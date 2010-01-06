@@ -13,7 +13,6 @@ $Archive::Extract::PREFER_BIN = 1;
 use File::chmod;
 use File::Find;
 use File::Basename;
-use LWP::Simple qw(getstore);
 use File::Spec::Functions;
 use File::Temp qw(tempdir);
 use File::Path;
@@ -117,9 +116,9 @@ sub contains_git_revisions {
 
 
 sub import_one_backpan_release {
-    my $release     = shift;
-    my $opts        = shift;
-    my $backpan_url = $opts->{backpan} || $BackPAN_URL;
+    my $release      = shift;
+    my $opts         = shift;
+    my $backpan_urls = $opts->{backpan} || $BackPAN_URL;
 
     my $repo = Git->repository;
 
@@ -134,14 +133,25 @@ sub import_one_backpan_release {
         $opts->{tempdir} ? (DIR     => $opts->{tempdir}) : ()
     );
 
-    my $release_url = $backpan_url . "/" . $release->prefix;
     my $archive_file = catfile($tmp_dir, $release->filename);
-
-    say "downloading $release_url";
-
     mkpath dirname $archive_file;
-    getstore($release_url, $archive_file)
-      or die "Couldn't retrieve $release_url";
+
+    my $response;
+    for my $backpan_url (@$backpan_urls) {
+        my $release_url = $backpan_url . "/" . $release->prefix;
+
+        say "Downloading $release_url";
+        $response = get_from_url($release_url, $archive_file);
+        last if $response->is_success;
+
+        say "  failed @{[ $response->status_line ]}";
+    }
+
+    if( !$response->is_success ) {
+        say "Fetch failed.  Skipping.";
+        return;
+    }
+
     if( !-e $archive_file ) {
         say "$archive_file is missing.  Skipping.";
         return;
@@ -230,6 +240,19 @@ END
         $repo->command_noisy( "tag", "-f" => $tag, $commit );
         say "created tag '$tag' ($commit)";
     }
+}
+
+
+sub get_from_url {
+    my($url, $file) = @_;
+
+    require LWP::UserAgent;
+    my $ua = LWP::UserAgent->new;
+
+    my $req = HTTP::Request->new( GET => $url );
+    my $res = $ua->request($req, $file);
+
+    return $res;
 }
 
 

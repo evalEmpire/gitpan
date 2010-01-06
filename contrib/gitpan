@@ -68,7 +68,7 @@ else {
 @dists = sort { lc $a cmp lc $b } @dists if $opts{sort};
 
 my %backpan_init_opts;
-$backpan_init_opts{"backpan"} = $opts{backpan} if $opts{backpan};
+$backpan_init_opts{"backpan"} = [split /,/, $opts{backpan}] if $opts{backpan};
 $backpan_init_opts{"tempdir"} = $opts{tempdir} if $opts{tempdir};
 $backpan_init_opts{"update"}  = $opts{update};
 
@@ -316,10 +316,15 @@ Your github API token, only necessary if --github is set.
 
 =head3 --backpan
 
-URL to BackPAN.
+A comma seperated list of URLs to BackPAN.  Handy to have a URL to a
+local mirror for fast retrieval and one to a remote mirror for
+completeness.
+
+For example
+
+    --backpan=file:///var/local/backpan,http://backpan.perl.org
 
 Defaults to http://backpan.perl.org/
-
 
 =head2 Building
 
