@@ -69,7 +69,7 @@ else {
     @dists = $dists->all;
 
     if( $opts{pattern} ) {
-        @dists = grep /$opts{pattern}/, $dists->get_column("name");
+        @dists = grep /$opts{pattern}/, @dists;
     }
 }
 
@@ -82,6 +82,8 @@ my %backpan_init_opts;
 $backpan_init_opts{"backpan"} = [split /,/, $opts{backpan}] if $opts{backpan};
 $backpan_init_opts{"tempdir"} = $opts{tempdir} if $opts{tempdir};
 $backpan_init_opts{"update"}  = $opts{update};
+
+say "Looking at @{[ scalar @dists ]} dists";
 
 local $CWD = $opts{repodir} if defined $opts{repodir};
 for my $dist (@dists) {
