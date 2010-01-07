@@ -45,19 +45,26 @@ if( @ARGV ) {
 else {
     my $backpan = Git::CPAN::Patch::Import->backpan_index;
 
+    my $dists = $backpan->dists;
+
     if( $opts{random} ) {
         my $num = $opts{random};
 
-        @dists = $backpan->dists->search( undef, { order_by => \'random()' } );
+        $dists->search( undef, { order_by => \'random()', rows => $num } );
     }
-    elsif( $opts{author} ) {
-        @dists = $backpan->dists_by($opts{author});
+    elsif( $opts{sort} ) {
+        $dists->search( undef, { order_by => 'name' } );
     }
-    elsif( $opts{pattern} ) {
-        @dists = grep /$opts{pattern}/, $backpan->dists->get_column("name");
+
+    if( $opts{author} ) {
+        $dists->search({ "releases.cpanid" => $opts{author} },
+                       { join => "releases", distinct => 1 });
     }
-    else {
-        @dists = $backpan->dists;
+
+    @dists = $dists->all;
+
+    if( $opts{pattern} ) {
+        @dists = grep /$opts{pattern}/, $dists->get_column("name");
     }
 }
 
