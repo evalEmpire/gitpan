@@ -48,17 +48,16 @@ else {
     if( $opts{random} ) {
         my $num = $opts{random};
 
-        my $all_dists = $backpan->distributions;
-        @dists = map { $all_dists->[rand @$all_dists] } 1..$num;
+        @dists = $backpan->dists->search( undef, { order_by => \'random()' } );
     }
     elsif( $opts{author} ) {
-        @dists = $backpan->distributions_by($opts{author});
+        @dists = $backpan->dists_by($opts{author});
     }
     elsif( $opts{pattern} ) {
-        @dists = grep /$opts{pattern}/, @{$backpan->distributions};
+        @dists = grep /$opts{pattern}/, $backpan->dists->get_column("name");
     }
     else {
-        @dists = @{$backpan->distributions};
+        @dists = $backpan->dists;
     }
 }
 
