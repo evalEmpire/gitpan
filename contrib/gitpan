@@ -36,6 +36,7 @@ GetOptions(
     "repodir=s",
     "tempdir=s",
     "update",
+    "since=s"
 );
 
 my @dists;
@@ -47,18 +48,22 @@ else {
 
     my $dists = $backpan->dists;
 
+    if( $opts{since} ) {
+        $dists = $dists->search( latest_date => \">= $opts{since}" );
+    }
+
     if( $opts{random} ) {
         my $num = $opts{random};
 
-        $dists->search( undef, { order_by => \'random()', rows => $num } );
+        $dists = $dists->search( undef, { order_by => \'random()', rows => $num } );
     }
     elsif( $opts{sort} ) {
-        $dists->search( undef, { order_by => 'name' } );
+        $dists = $dists->search( undef, { order_by => 'name' } );
     }
 
     if( $opts{author} ) {
-        $dists->search({ "releases.cpanid" => $opts{author} },
-                       { join => "releases", distinct => 1 });
+        $dists = $dists->search({ "releases.cpanid" => $opts{author} },
+                                { join => "releases", distinct => 1 });
     }
 
     @dists = $dists->all;
@@ -300,6 +305,14 @@ Pick all distributions matching the given pattern.
 =head3 --sort
 
 Sort the distributions before processing
+
+=head3 --since
+
+Pick only distributions which have changed since the given time.
+
+Time is given in Unix epoch time.
+
+    gitpan --since=1200000000
 
 
 =head2 Github
