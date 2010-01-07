@@ -63,7 +63,9 @@ sub init_repo {
         }
         else {
             say "creating directory $dirname";
-            mkpath $dirname;
+
+            # mkpath() does not play nice with overloaded objects
+            mkpath "$dirname";
         }
     }
 
@@ -226,9 +228,9 @@ END
     Git::command_close_bidi_pipe($pid, $in, $out, $ctx);
 
 
-    # finally, update the fake remote branch and create a tag for convenience
+    # finally, update the fake branch and create a tag for convenience
     my $dist = $release->dist;
-    $repo->command_noisy('update-ref', '-m' => "import $dist", 'refs/remotes/cpan/master', $commit );
+    $repo->command_noisy('update-ref', '-m' => "import $dist", 'refs/heads/cpan/master', $commit );
 
     if( $version ) {
         my $tag = $version;
@@ -270,9 +272,12 @@ sub import_from_backpan {
       or die "Error: no distributions found. ",
              "Are you sure you spelled the module name correctly?\n";
 
+    fixup_repository();
+
     my %existing_releases;
     %existing_releases = map { $_ => 1 } releases_in_git() if $opts->{update};
-    for my $release ($dist->releases) {
+    my $release_added = 0;
+    for my $release ($dist->releases->search( undef, { order_by => "date" } )) {
         next if $existing_releases{$release->version};
 
         # skip .ppm files
@@ -283,19 +288,26 @@ sub import_from_backpan {
             $release,
             $opts,
         );
+        $release_added++;
+    }
+
+    if( !$release_added ) {
+        if( !keys %existing_releases ) {
+            say "Empty repository for $dist.  Deleting.";
+
+            # We can't delete it if we're inside it.
+            $CWD = "..";
+            rmtree $repo_dir;
+
+            return;
+        }
+        else {
+            say "No updates for $dist.";
+            return;
+        }
     }
 
     my $repo = Git->repository;
-    if( !releases_in_git() ) {
-        say "Empty repository for $dist.  Deleting.";
-
-        # We can't delete it if we're inside it.
-        $CWD = "..";
-        rmtree $repo_dir;
-
-        return;
-    }
-
     if( !rev_exists("master") ) {
         $repo->command_noisy('checkout', '-t', '-b', 'master', 'cpan/master');
     }
@@ -307,6 +319,18 @@ sub import_from_backpan {
     return $repo_dir;
 }
 
+
+sub fixup_repository {
+    my $repo = Git->repository;
+
+    return unless -d ".git";
+
+    # We do our work in cpan/master, it might not exist if this
+    # repo was cloned from gitpan.
+    if( !rev_exists("cpan/master") and rev_exists("master") ) {
+        $repo->command_noisy('branch', '-t', 'cpan/master', 'master');
+    }
+}
 
 
 sub main {
@@ -402,7 +426,7 @@ sub main {
 
 
     # reate a commit for the imported tree object and write it into
-    # refs/remotes/cpan/master
+    # refs/heads/cpan/master
 
     {
         local %ENV = %ENV;

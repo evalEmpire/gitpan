@@ -115,6 +115,7 @@ for my $dist (@dists) {
     system "git", "gc";
 
     if( $opts{github} ) {
+        my $repo = "$dist";
         if( !$opts{update} or !does_repo_exist_on_github($opts{login}, $dist) ) {
             my $response = github_action("create_repo", {
                 login           => $opts{login},
@@ -125,10 +126,12 @@ for my $dist (@dists) {
                 public          => 1,
             });
 
-            my $repo = $response->{repository}{name};
-
-            system "git", "remote", "add", "origin", "git\@github-gitpan:gitpan/$repo.git";
+            $repo = $response->{repository}{name};
         }
+
+        # Sometimes we re-clone from gitpan and so the origin is wrong
+        system "git", "remote", "rm", "origin";
+        system "git", "remote", "add", "origin", "git\@github-gitpan:gitpan/$repo.git";
 
         # sometimes github doesn't have the repo ready immediately after create_repo
         # returns, so if push fails try it again.
