@@ -315,7 +315,7 @@ sub import_from_backpan {
         $repo->command_noisy('checkout', '-t', '-b', 'master', 'cpan/master');
     }
     else {
-        $repo->command_noisy('checkout', 'master', '.');
+        $repo->command_noisy('checkout', 'master');
         $repo->command_noisy('merge', 'cpan/master');
     }
 
