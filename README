@@ -132,8 +132,10 @@ http://use.perl.org/~schwern/journal/39974
 How do I update my module on gitpan?
 ------------------------------------
 
-gitpan will automatically pull new releases from CPAN.  It is not yet
-updating.
+gitpan will automatically pull new releases from CPAN.
+
+Updates are currently happening sporatically pending finding hosting
+for the importer.
 
 
 Where can I get a list of all the repositories?
