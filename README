@@ -150,7 +150,7 @@ list of distributions from Parse::BACKPAN::Packages.
 How can I help?
 ---------------
 
-See http://github.com/schwern/github/issues for a list of open problems.
+See http://github.com/schwern/gitpan/issues for a list of open problems.
 
 You can also contribute by looking through imported CPAN distributions
 and checking for mistakes.
