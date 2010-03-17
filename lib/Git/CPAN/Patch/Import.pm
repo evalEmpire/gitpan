@@ -120,7 +120,10 @@ sub contains_git_revisions {
 sub import_one_backpan_release {
     my $release      = shift;
     my $opts         = shift;
-    my $backpan_urls = $opts->{backpan} || $BackPAN_URL;
+    my $backpan_urls = ( ref $opts->{backpan}
+                       ? $opts->{backpan}
+                       : [ $opts->{backpan} || $BackPAN_URL ]
+                       );
 
     my $repo = Git->repository;
 
