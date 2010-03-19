@@ -23,6 +23,7 @@ my %Dists_To_Skip = map { $_ => 1 } qw(
 my %opts = (
     update      => 1,
 );
+
 GetOptions(
     \%opts,
     "backpan:s",
@@ -147,9 +148,10 @@ for my $dist (@dists) {
     # Delete everything but the .git/ directory to save space
     # We name the directory specifically to avoid accidentally
     # deleting everything should we be in the wrong cwd
+
+    die "Weird!  $repo_dir doesn't look ok" unless repo_dir_looks_ok($repo_dir);
     system "rm -rf $repo_dir/*";
 }
-
 
 use LWP::UserAgent;
 use HTTP::Request::Common qw(POST);
@@ -246,6 +248,15 @@ sub filter_dists {
                 @_;
 }
 
+sub repo_dir_looks_ok {
+    my ( $repo_dir ) = @_;
+
+    return 0 unless defined $repo_dir                          # it's defined
+                 && $repo_dir =~ /[^/]+/                       # and more than just /
+                 && -d File::Spec->catfile($repo_dir, '.git')  # and has a git repo 
+    ;
+    return 1;
+}
 
 sub do_with_back_off {
     my($number, $code) = @_;
