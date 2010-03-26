@@ -172,7 +172,7 @@ for my $dist (@dists) {
     # We name the directory specifically to avoid accidentally
     # deleting everything should we be in the wrong cwd
 
-    _log_and_die("Weird! $repo_dir doesn't look ok") unless repo_dir_looks_ok($repo_dir);
+    _log_and_die($log_h, "Weird! $repo_dir doesn't look ok") unless repo_dir_looks_ok($repo_dir);
     system "rm -rf $repo_dir/*";
     print $log_h "done!\n";
 }
