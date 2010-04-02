@@ -128,7 +128,7 @@ for my $dist (@dists) {
 
         unless( $repo_dir) {
             say $log_h "No repository created for $dist.  Skipping";
-            next;
+            return;  # subtle.  TODO: move this block to a sub. 
         }
 
         local $CWD = $repo_dir;
