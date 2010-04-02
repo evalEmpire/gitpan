@@ -119,7 +119,7 @@ for my $dist (@dists) {
     open my $dist_logf, '>', $dist_log or warn "Bah, failed to open $dist_log for writing: $!";
 
     my $repo_dir = 'oh_geez';
-    my $dist_output = capture { $repo_dir = \&git_pull_dist( $dist ); };
+    my $dist_output = capture { $repo_dir = git_pull_dist( $dist ); };
 
     print $dist_logf $dist_output;
     close $dist_logf or print $log_h "failed to close $dist_log: $!";
