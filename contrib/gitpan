@@ -119,51 +119,7 @@ for my $dist (@dists) {
     open my $dist_logf, '>', $dist_log or warn "Bah, failed to open $dist_log for writing: $!";
 
     my $repo_dir = 'oh_geez';
-    my $dist_output = capture {
-
-        $repo_dir = Git::CPAN::Patch::Import::import_from_backpan(
-            $dist,
-            { %backpan_init_opts, "mkdir" => "", init_repo => 1 }
-        );
-
-        unless( $repo_dir) {
-            say $log_h "No repository created for $dist.  Skipping";
-            return;  # subtle.  TODO: move this block to a sub. 
-        }
-
-        local $CWD = $repo_dir;
-
-        system "rm .git/hooks/*.sample";
-        system "git", "gc";
-
-        if( $opts{github} ) {
-            my $repo = "$dist";
-            if( !$opts{update} or !does_repo_exist_on_github($opts{login}, $dist) ) {
-                my $response = github_action("create_repo", {
-                    login           => $opts{login},
-                    token           => $opts{token},
-                    name            => $dist,
-                    description     => "Release history of $dist",
-                    homepage        => "http://search.cpan.org/dist/$dist/",
-                    public          => 1,
-                });
-
-                $repo = $response->{repository}{name};
-            }
-
-            # Sometimes we re-clone from gitpan and so the origin is wrong
-            system "git", "remote", "rm", "origin";
-            system "git", "remote", "add", "origin", "git\@github-gitpan:gitpan/$repo.git";
-
-            # sometimes github doesn't have the repo ready immediately after create_repo
-            # returns, so if push fails try it again.
-            do_with_back_off(6, sub {
-                system "git", "push", "origin", "master";
-                return $? == 0;
-            });
-            system "git", "push", "origin", "--tags";
-        }
-    };
+    my $dist_output = capture { $repo_dir = \&git_pull_dist( $dist ); };
 
     print $dist_logf $dist_output;
     close $dist_logf or print $log_h "failed to close $dist_log: $!";
@@ -177,6 +133,54 @@ for my $dist (@dists) {
     print $log_h "done!\n";
 }
 
+sub git_pull_dist {
+    my ( $dist ) = @_;
+
+    my $repo_dir = Git::CPAN::Patch::Import::import_from_backpan(
+        $dist,
+        { %backpan_init_opts, "mkdir" => "", init_repo => 1 }
+    );
+
+    unless( $repo_dir) {
+        say $log_h "No repository created for $dist.  Skipping";
+        return;  
+    }
+
+    local $CWD = $repo_dir;
+
+    system "rm .git/hooks/*.sample";
+    system "git", "gc";
+
+    if( $opts{github} ) {
+        my $repo = "$dist";
+        if( !$opts{update} or !does_repo_exist_on_github($opts{login}, $dist) ) {
+            my $response = github_action("create_repo", {
+                login           => $opts{login},
+                token           => $opts{token},
+                name            => $dist,
+                description     => "Release history of $dist",
+                homepage        => "http://search.cpan.org/dist/$dist/",
+                public          => 1,
+            });
+
+            $repo = $response->{repository}{name};
+        }
+
+        # Sometimes we re-clone from gitpan and so the origin is wrong
+        system "git", "remote", "rm", "origin";
+        system "git", "remote", "add", "origin", "git\@github-gitpan:gitpan/$repo.git";
+
+        # sometimes github doesn't have the repo ready immediately after create_repo
+        # returns, so if push fails try it again.
+        do_with_back_off(6, sub {
+            system "git", "push", "origin", "master";
+            return $? == 0;
+        });
+        system "git", "push", "origin", "--tags";
+    }
+
+    return;
+}
 
 sub _log_and_die {
     my ( $fh, $msg ) = @_;
