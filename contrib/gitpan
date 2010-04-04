@@ -179,7 +179,7 @@ sub git_pull_dist {
         system "git", "push", "origin", "--tags";
     }
 
-    return;
+    return $repo_dir;
 }
 
 sub _log_and_die {
