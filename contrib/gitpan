@@ -6,6 +6,8 @@ use strict;
 use warnings;
 use v5.10;
 
+$|++;
+
 use Git::CPAN::Patch::Import;
 use File::chdir;
 use Getopt::Long;
@@ -39,14 +41,16 @@ GetOptions(
     "tempdir=s",
     "update",
     "since=s",
-    "log=s",
 );
 
 my ( $year, $mon, $day ) = (localtime(time))[5,4,3];
 $year += 1900; $mon++;
 my $log_date = sprintf('%d-%d-%d', $year, $mon, $day);
-$opts{log} ||= sprintf('%s-%s-%d.log', 'gitpan', $log_date, $$);
+my $stdout_log = sprintf('%s-%s-%d.stdout.log', 'gitpan', $log_date, $$);
+my $stderr_log = sprintf('%s-%s-%d.stderr.log', 'gitpan', $log_date, $$);
 
+open STDOUT, '>', $stdout_log or die "failed to open $stdout_log for writing: $!";
+open STDERR, '>', $stderr_log or die "failed to open $stderr_log for writing: $!";
 
 my @dists;
 if( @ARGV ) {
@@ -91,10 +95,7 @@ $backpan_init_opts{"backpan"} = [split /,/, $opts{backpan}] if $opts{backpan};
 $backpan_init_opts{"tempdir"} = $opts{tempdir} if $opts{tempdir};
 $backpan_init_opts{"update"}  = $opts{update};
 
-# open our log file before we move
-open my $log_h, '>', $opts{log} or die "failed to open $opts{log} for writing: $!";
-
-print $log_h "Looking at @{[ scalar @dists ]} dists\n";
+say "Looking at @{[ scalar @dists ]} dists";
 
 local $CWD = $opts{repodir} if defined $opts{repodir};
 for my $dist (@dists) {
@@ -107,33 +108,38 @@ for my $dist (@dists) {
 
     if( $opts{github} ) {
         if( !$opts{update} and does_repo_exist("gitpan", $dist) ) {
-            print $log_h "$dist already exists on github, skipping\n";
+            say "$dist already exists on github, skipping";
             next;
         }
     }
 
-    print $log_h "Pulling in $dist...";
+    say "Pulling in $dist...";
 
     # time to try capturing all our output
-    my $dist_log = sprintf('%s-%s-%d.log', $dist, $log_date, $$);
-    open my $dist_logf, '>', $dist_log or warn "Bah, failed to open $dist_log for writing: $!";
+    my $dist_log = $dist.'.log';
+    open my $dist_logf, '>>', $dist_log or warn "Bah, failed to open $dist_log for writing: $!";
 
-    my $repo_dir = 'oh_geez';
-    my $dist_output = capture { $repo_dir = git_pull_dist( $dist ); };
+    my $repo_dir;
+    my $dist_output;
+    eval { $dist_output = capture { $repo_dir = push_dist( $dist ); }; };
+    say "push_dist failed: $@" if $@;
+    say $dist_logf $dist_output;
+    close $dist_logf or warn "failed to close $dist_log: $!";
 
-    print $dist_logf $dist_output;
-    close $dist_logf or print $log_h "failed to close $dist_log: $!";
+    say $dist_output;
+
+    next unless $repo_dir;
+
+    die("Weird! $repo_dir doesn't look ok") unless repo_dir_looks_ok($repo_dir);
 
     # Delete everything but the .git/ directory to save space
     # We name the directory specifically to avoid accidentally
     # deleting everything should we be in the wrong cwd
-
-    _log_and_die("Weird! $repo_dir doesn't look ok") unless repo_dir_looks_ok($repo_dir);
-    system "rm -rf $repo_dir/*";
-    print $log_h "done!\n";
+    #system "rm -rf $repo_dir/*";
+    say "done!";
 }
 
-sub git_pull_dist {
+sub push_dist {
     my ( $dist ) = @_;
 
     my $repo_dir = Git::CPAN::Patch::Import::import_from_backpan(
@@ -141,8 +147,8 @@ sub git_pull_dist {
         { %backpan_init_opts, "mkdir" => "", init_repo => 1 }
     );
 
-    unless( $repo_dir) {
-        say $log_h "No repository created for $dist.  Skipping";
+    unless( $repo_dir ) {
+        say "No repository created for $dist.  Skipping";
         return;  
     }
 
@@ -182,12 +188,6 @@ sub git_pull_dist {
     return $repo_dir;
 }
 
-sub _log_and_die {
-    my ( $fh, $msg ) = @_;
-
-    print $fh $msg;
-    die $msg;
-}
 
 use LWP::UserAgent;
 use HTTP::Request::Common qw(POST);
@@ -225,7 +225,7 @@ sub _do_github_action {
     });
 
     my $content = $response->content;
-    print "Github said: $content\n";
+    say "Github said: $content\n";
 
     return decode_json($content);
 }
