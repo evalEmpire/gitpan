@@ -6,9 +6,12 @@ use strict;
 use warnings;
 use v5.10;
 
+$|++;
+
 use Git::CPAN::Patch::Import;
 use File::chdir;
 use Getopt::Long;
+use Capture::Tiny qw/capture/;
 
 # Github currently limits repo names to 100 characters
 use constant MAX_LENGTH_GITHUB_REPO_NAME => 100;
@@ -23,6 +26,7 @@ my %Dists_To_Skip = map { $_ => 1 } qw(
 my %opts = (
     update      => 1,
 );
+
 GetOptions(
     \%opts,
     "backpan:s",
@@ -36,8 +40,17 @@ GetOptions(
     "repodir=s",
     "tempdir=s",
     "update",
-    "since=s"
+    "since=s",
 );
+
+my ( $year, $mon, $day ) = (localtime(time))[5,4,3];
+$year += 1900; $mon++;
+my $log_date = sprintf('%d-%d-%d', $year, $mon, $day);
+my $stdout_log = sprintf('%s-%s-%d.stdout.log', 'gitpan', $log_date, $$);
+my $stderr_log = sprintf('%s-%s-%d.stderr.log', 'gitpan', $log_date, $$);
+
+open STDOUT, '>', $stdout_log or die "failed to open $stdout_log for writing: $!";
+open STDERR, '>', $stderr_log or die "failed to open $stderr_log for writing: $!";
 
 my @dists;
 if( @ARGV ) {
@@ -73,7 +86,6 @@ else {
     }
 }
 
-
 @dists = filter_dists(@dists);
 
 @dists = sort { lc $a cmp lc $b } @dists if $opts{sort};
@@ -96,19 +108,48 @@ for my $dist (@dists) {
 
     if( $opts{github} ) {
         if( !$opts{update} and does_repo_exist("gitpan", $dist) ) {
-            print "$dist already exists on github, skipping\n";
+            say "$dist already exists on github, skipping";
             next;
         }
     }
+
+    say "Pulling in $dist...";
+
+    # time to try capturing all our output
+    my $dist_log = $dist.'.log';
+    open my $dist_logf, '>>', $dist_log or warn "Bah, failed to open $dist_log for writing: $!";
+
+    my $repo_dir;
+    my $dist_output;
+    eval { $dist_output = capture { $repo_dir = push_dist( $dist ); }; };
+    say "push_dist failed: $@" if $@;
+    say $dist_logf $dist_output;
+    close $dist_logf or warn "failed to close $dist_log: $!";
+
+    say $dist_output;
+
+    next unless $repo_dir;
+
+    die("Weird! $repo_dir doesn't look ok") unless repo_dir_looks_ok($repo_dir);
+
+    # Delete everything but the .git/ directory to save space
+    # We name the directory specifically to avoid accidentally
+    # deleting everything should we be in the wrong cwd
+    #system "rm -rf $repo_dir/*";
+    say "done!";
+}
+
+sub push_dist {
+    my ( $dist ) = @_;
 
     my $repo_dir = Git::CPAN::Patch::Import::import_from_backpan(
         $dist,
         { %backpan_init_opts, "mkdir" => "", init_repo => 1 }
     );
 
-    unless( $repo_dir) {
+    unless( $repo_dir ) {
         say "No repository created for $dist.  Skipping";
-        next;
+        return;  
     }
 
     local $CWD = $repo_dir;
@@ -144,10 +185,7 @@ for my $dist (@dists) {
         system "git", "push", "origin", "--tags";
     }
 
-    # Delete everything but the .git/ directory to save space
-    # We name the directory specifically to avoid accidentally
-    # deleting everything should we be in the wrong cwd
-    system "rm -rf $repo_dir/*";
+    return $repo_dir;
 }
 
 
@@ -187,7 +225,7 @@ sub _do_github_action {
     });
 
     my $content = $response->content;
-    print "Github said: $content\n";
+    say "Github said: $content\n";
 
     return decode_json($content);
 }
@@ -246,6 +284,15 @@ sub filter_dists {
                 @_;
 }
 
+sub repo_dir_looks_ok {
+    my ( $repo_dir ) = @_;
+
+    return 0 unless defined $repo_dir                          # it's defined
+                 && $repo_dir =~ /[^\/]+/                       # and more than just /
+                 && -d File::Spec->catfile($repo_dir, '.git')  # and has a git repo 
+    ;
+    return 1;
+}
 
 sub do_with_back_off {
     my($number, $code) = @_;
