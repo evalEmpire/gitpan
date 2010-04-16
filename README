@@ -134,8 +134,8 @@ How do I update my module on gitpan?
 
 gitpan will automatically pull new releases from CPAN.
 
-Updates are currently happening sporatically pending finding hosting
-for the importer.
+Updates are currently happening sporatically pending setting up the
+hosting for the importer and improving logging and error recovery.
 
 
 Where can I get a list of all the repositories?
@@ -144,7 +144,7 @@ Where can I get a list of all the repositories?
 You can get it from github's API <http://develop.github.com> with the
 URL <http://github.com/api/v2/json/repos/show/gitpan>.  At the time of
 this writing the call is timing out.  Your alternative is to get a
-list of distributions from Parse::BACKPAN::Packages.
+list of distributions from BackPAN::Index.
 
 
 How can I help?
@@ -152,8 +152,8 @@ How can I help?
 
 See http://github.com/schwern/gitpan/issues for a list of open problems.
 
-You can also contribute by looking through imported CPAN distributions
-and checking for mistakes.
+You can also contribute by looking through imported CPAN distributions,
+checking for mistakes and reporting them as issues.
 
 
 I'm the author of X distribution and my real repository is over here!
@@ -166,6 +166,30 @@ interface to your releases so you don't have to.
 You can make your own development repository more visible by adding
 a repository resource to your release meta-data.  See
 http://module-build.sourceforge.net/META-spec-v1.4.html#resources
+
+
+I'm the author of X distribution, can I get commit access to gitPAN?
+--------------------------------------------------------------------
+
+Sorry, no.  gitPAN is intentionally read-only to provide a consistent
+interface over all of CPAN.  Allowing developers to commit directly to
+gitPAN would endanger this consistency.  In this sense, gitPAN is
+simply a read-only view on your releases.
+
+As the developer of the project, you should continue to develop
+against your regular repo.  However, it is helpful to fill in back
+history should you be missing it.  You can use the release tags and
+dates on the gitpan repo to place tags into your development repo.  If
+history is completely missing, you can splice your development
+repository on top of the gitpan repo.  See "How can I merge gitPAN's
+history with my module?" above.
+
+You could develop off a gitpan fork, but the actual development
+history of your project up to this point would be lost.  Merging your
+dev repo with gitpan is left as an exercise for the reader to do
+usefully.  If you tag your releases in a consistent manner and publish
+the location of your repository, gitpan doesn't offer anything new to
+the developer.
 
 
 I noticed a problem with a repository
