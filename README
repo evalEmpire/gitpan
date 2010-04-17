@@ -37,7 +37,7 @@ Why is gitPAN?
 --------------
 
 CPAN (and thus BackPAN) is a pile of tarballs organized by author.  It
-is difficult to get the complete history of a distribution, espeically
+is difficult to get the complete history of a distribution, especially
 one that has changed authors or is released by multiple authors (for
 example, Moose).  Because releases are regularly deleted from CPAN
 even sites like search.cpan.org provide an incomplete history.  Having
