@@ -171,8 +171,11 @@ sub push_dist {
         }
 
         # Sometimes we re-clone from gitpan and so the origin is wrong
-        system "git", "remote", "rm", "origin";
-        system "git", "remote", "add", "origin", "git\@github-gitpan:gitpan/$repo.git";
+        my $remote_url = remote_for("origin", "push");
+        if( !defined $remote_url or $remote_url !~ m{git\@github-gitpan} ) {
+            system "git", "remote", "rm", "origin";
+            system "git", "remote", "add", "origin", "git\@github-gitpan:gitpan/$repo.git";
+        }
 
         # sometimes github doesn't have the repo ready immediately after create_repo
         # returns, so if push fails try it again.
@@ -184,6 +187,18 @@ sub push_dist {
     }
 
     return $repo_dir;
+}
+
+
+sub remote_for {
+    my($remote, $action) = @_;
+
+    my @remotes = `git remote -v`;
+    for my $remote (@remotes) {
+        my($url) = $remote =~ /^\Q$remote\E \s+ (.*) \s+ \Q($action)\E$/x;
+        return $url if defined $url;
+    }
+    return;
 }
 
 
