@@ -46,11 +46,10 @@ GetOptions(
 my ( $year, $mon, $day ) = (localtime(time))[5,4,3];
 $year += 1900; $mon++;
 my $log_date = sprintf('%d-%d-%d', $year, $mon, $day);
-my $stdout_log = sprintf('%s-%s-%d.stdout.log', 'gitpan', $log_date, $$);
-my $stderr_log = sprintf('%s-%s-%d.stderr.log', 'gitpan', $log_date, $$);
+$opts{log} ||=  sprintf('%s-%s-%d.log', 'gitpan', $log_date, $$);
 
-open STDOUT, '>', $stdout_log or die "failed to open $stdout_log for writing: $!";
-open STDERR, '>', $stderr_log or die "failed to open $stderr_log for writing: $!";
+open STDOUT, '>', $opts{log}.'.out' or die "failed to open $opts{log}.out for writing: $!";
+open STDERR, '>', $opts{log}.'.err' or die "failed to open $opts{log}.err for writing: $!";
 
 my @dists;
 if( @ARGV ) {
