@@ -5,12 +5,9 @@ use warnings;
 
 use 5.010;
 
+use File::chmod;   # use File::chmod *before* autodie to avoid a cage-match
 use autodie;
-
-use Archive::Extract;
-$Archive::Extract::PREFER_BIN = 1;
-
-use File::chmod;
+use Archive::Extract; $Archive::Extract::PREFER_BIN = 1;
 use File::Find;
 use File::Basename;
 use File::Spec::Functions;
