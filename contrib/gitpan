@@ -43,14 +43,6 @@ GetOptions(
     "since=s",
 );
 
-my ( $year, $mon, $day ) = (localtime(time))[5,4,3];
-$year += 1900; $mon++;
-my $log_date = sprintf('%d-%d-%d', $year, $mon, $day);
-$opts{log} ||=  sprintf('%s-%s-%d.log', 'gitpan', $log_date, $$);
-
-open STDOUT, '>', $opts{log}.'.out' or die "failed to open $opts{log}.out for writing: $!";
-open STDERR, '>', $opts{log}.'.err' or die "failed to open $opts{log}.err for writing: $!";
-
 my @dists;
 if( @ARGV ) {
     @dists = @ARGV;
@@ -125,7 +117,7 @@ for my $dist (@dists) {
     say $dist_logf $dist_output;
     close $dist_logf or warn "failed to close $dist_log: $!";
 
-    next unless $repo_dir;
+    do { say "Skipping $dist - ",($@ ? "got error: $@" : "looks like no updates"); next; }  unless $repo_dir;
 
     die("Weird! $repo_dir doesn't look ok") unless repo_dir_looks_ok($repo_dir);
 
