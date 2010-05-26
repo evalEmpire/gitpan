@@ -46,11 +46,10 @@ GetOptions(
 my ( $year, $mon, $day ) = (localtime(time))[5,4,3];
 $year += 1900; $mon++;
 my $log_date = sprintf('%d-%d-%d', $year, $mon, $day);
-my $stdout_log = sprintf('%s-%s-%d.stdout.log', 'gitpan', $log_date, $$);
-my $stderr_log = sprintf('%s-%s-%d.stderr.log', 'gitpan', $log_date, $$);
+$opts{log} ||=  sprintf('%s-%s-%d.log', 'gitpan', $log_date, $$);
 
-open STDOUT, '>', $stdout_log or die "failed to open $stdout_log for writing: $!";
-open STDERR, '>', $stderr_log or die "failed to open $stderr_log for writing: $!";
+open STDOUT, '>', $opts{log}.'.out' or die "failed to open $opts{log}.out for writing: $!";
+open STDERR, '>', $opts{log}.'.err' or die "failed to open $opts{log}.err for writing: $!";
 
 my @dists;
 if( @ARGV ) {
@@ -171,8 +170,11 @@ sub push_dist {
         }
 
         # Sometimes we re-clone from gitpan and so the origin is wrong
-        system "git", "remote", "rm", "origin";
-        system "git", "remote", "add", "origin", "git\@github-gitpan:gitpan/$repo.git";
+        my $remote_url = remote_for("origin", "push");
+        if( !defined $remote_url or $remote_url !~ m{git\@github-gitpan} ) {
+            system "git", "remote", "rm", "origin";
+            system "git", "remote", "add", "origin", "git\@github-gitpan:gitpan/$repo.git";
+        }
 
         # sometimes github doesn't have the repo ready immediately after create_repo
         # returns, so if push fails try it again.
@@ -184,6 +186,18 @@ sub push_dist {
     }
 
     return $repo_dir;
+}
+
+
+sub remote_for {
+    my($remote, $action) = @_;
+
+    my @remotes = `git remote -v`;
+    for my $remote (@remotes) {
+        my($url) = $remote =~ /^\Q$remote\E \s+ (.*) \s+ \Q($action)\E$/x;
+        return $url if defined $url;
+    }
+    return;
 }
 
 
