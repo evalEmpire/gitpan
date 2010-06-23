@@ -10,6 +10,7 @@ $|++;
 
 use Git::CPAN::Patch::Import;
 use File::chdir;
+use File::Spec;
 use Getopt::Long;
 use Capture::Tiny qw/capture/;
 
@@ -80,6 +81,8 @@ else {
 @dists = filter_dists(@dists);
 
 @dists = sort { lc $a cmp lc $b } @dists if $opts{sort};
+
+$opts{tempdir} = File::Spec->rel2abs($opts{tempdir}) if $opts{tempdir};
 
 my %backpan_init_opts;
 $backpan_init_opts{"backpan"} = [split /,/, $opts{backpan}] if $opts{backpan};
