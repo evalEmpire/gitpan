@@ -31,6 +31,7 @@ my %opts = (
 GetOptions(
     \%opts,
     "backpan:s",
+    "backpan_index:s",
     "login=s",
     "token=s",
     "author=s",
@@ -88,6 +89,7 @@ my %backpan_init_opts;
 $backpan_init_opts{"backpan"} = [split /,/, $opts{backpan}] if $opts{backpan};
 $backpan_init_opts{"tempdir"} = $opts{tempdir} if $opts{tempdir};
 $backpan_init_opts{"update"}  = $opts{update};
+$backpan_init_opts{"backpan_index"}  = $opts{backpan_index} if $opts{backpan_index};
 
 say "Looking at @{[ scalar @dists ]} dists";
 
@@ -403,6 +405,10 @@ For example
     --backpan=file:///var/local/backpan,http://backpan.perl.org
 
 Defaults to http://backpan.perl.org/
+
+=head3 --backpan_index
+
+A URL to find the BackPAN::Index file.  Overrides the default.
 
 =head2 Building
 

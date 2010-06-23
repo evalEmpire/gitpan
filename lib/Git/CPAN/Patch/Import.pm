@@ -25,9 +25,14 @@ use BackPAN::Index;
 our $BackPAN_URL = "http://backpan.perl.org/";
 
 sub backpan_index {
+    my $class = shift;
+    my $opts = shift;
+
     state $backpan = do {
         say "Loading BackPAN index (this may take a while)";
-        BackPAN::Index->new;
+        my %opts;
+        $opts{backpan_index_url} = $opts->{backpan_index} if $opts->{backpan_index};
+        BackPAN::Index->new(\%opts);
     };
     return $backpan;
 }
@@ -267,7 +272,7 @@ sub import_from_backpan {
 
     local $CWD = $repo_dir;
 
-    my $backpan = $CLASS->backpan_index;
+    my $backpan = $CLASS->backpan_index($opts);
     my $dist = $backpan->dist($distname)
       or die "Error: no distributions found. ",
              "Are you sure you spelled the module name correctly?\n";
