@@ -115,8 +115,8 @@ for my $dist (@dists) {
 
     my $repo_dir;
     my $dist_output;
-    eval { $dist_output = capture { $repo_dir = push_dist( $dist ); }; };
-    say "push_dist failed: $@\n(output: $dist_output)" if $@;
+    eval { $dist_output = capture { $repo_dir = push_dist( $dist ); }; 1; } ||
+      say "push_dist failed: $@\n(output: $dist_output)";
     say $dist_logf $dist_output;
     close $dist_logf or warn "failed to close $dist_log: $!";
 
