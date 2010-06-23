@@ -254,7 +254,7 @@ sub github_action {
 
 sub is_too_many_requests {
     my $response = shift;
-    return $response->{error} && ($response->{error}[0]{error} =~ /too many requests/);
+    return ref $response->{error} && ($response->{error}[0]{error} =~ /too many requests/);
 }
 
 
