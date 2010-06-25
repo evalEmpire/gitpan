@@ -37,7 +37,7 @@ class Gitpan::Repo {
           return Git->repository( Directory => $self->directory );
       };
 
-    has gitpan  =>
+    has github  =>
       isa       => 'Gitpan::Github',
       is        => 'rw',
       required  => 1,
@@ -45,8 +45,6 @@ class Gitpan::Repo {
       default   => method {
           require Gitpan::Github;
           return Gitpan::Github->new(
-              owner     => 'gitpan',
-              login     => 'gitpan',
               repo      => $self->distname,
           );
       };

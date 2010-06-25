@@ -11,7 +11,21 @@ use Gitpan::Repo;
 my $repo = Gitpan::Repo->new( distname => "Foo-Bar" );
 isa_ok $repo, "Gitpan::Repo";
 
-is $repo->distname, "Foo-Bar";
-is $repo->directory, dir("Foo-Bar")->absolute;
+
+# repo data
+{
+    is $repo->distname, "Foo-Bar";
+    is $repo->directory, dir("Foo-Bar")->absolute;
+}
+
+
+# github
+{
+    my $gh = $repo->github;
+    isa_ok $gh, "Gitpan::Github";
+    is $gh->owner, "gitpan";
+    is $gh->login, "gitpan";
+    is $gh->repo,  "Foo-Bar";
+}
 
 done_testing;
