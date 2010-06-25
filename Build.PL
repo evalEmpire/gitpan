@@ -12,5 +12,10 @@ my $build = Module::Build->new(
         "Capture::Tiny"         => 0.08, # exception bug
         "BackPAN::Index"        => 0.39,
         "File::chdir"           => 0,
+        "perl5i::2"             => "v2.2.0",
+        "MooseX::Types"         => 0,
+        "Path::Class"           => 0,
+        "MooseX::Declare"       => 0,
+        "Net::GitHub::V2"       => 0,
     }
 );

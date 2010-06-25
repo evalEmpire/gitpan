@@ -1,0 +1,66 @@
+use MooseX::Declare;
+
+class Gitpan::Repo {
+    use perl5i::2;
+    use Path::Class;
+    use MooseX::Types;
+    use Git;
+
+    use overload
+      q[""]     => sub { return $self->distname },
+      fallback  => 1;
+
+    has distname        => 
+      isa       => Distname,
+      is        => 'ro',
+      required  => 1
+    ;
+
+    has directory       =>
+      isa       => AbsDir,
+      is        => 'rw',
+      required  => 1,
+      lazy      => 1,
+      default   => method {
+          return $self->distname;
+      }
+    ;
+
+    has git     =>
+      isa       => Object,
+      is        => 'rw',
+      required  => 1,
+      lazy      => 1,
+      default   => method {
+          $self->init_repo;
+          return Git->repository( Directory => $self->directory );
+      };
+
+    has gitpan  =>
+      isa       => 'Gitpan::Github',
+      is        => 'rw',
+      required  => 1,
+      lazy      => 1,
+      default   => {
+          require Gitpan::Github;
+          return Gitpan::Github->new(
+              owner     => 'gitpan',
+              login     => 'gitpan',
+          );
+      };
+
+    method init_repo {
+        if( !-e $self->directory ) {
+            $self->note("creating directory for $self");
+            $self->directory->mkpath;
+        }
+
+        if( !-e $self->directory->subdir(".git") ) {
+            $self->note("initializing repo for $self");
+            local $CWD = $self->directory;
+            Git::command_oneline("init");
+        }
+
+        return 1;
+    }
+}
