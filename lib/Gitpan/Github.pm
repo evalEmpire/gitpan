@@ -16,15 +16,15 @@ class Gitpan::Github extends Net::GitHub::V2 {
 
     method do_with_backoff(Int :$times=6, CodeRef :$code!, CodeRef :$check) {
         $check //= \&default_success_check;
-        my $return;
+
         for my $time (1..$times) {
-            $return = $code->();
-            last if $check->($self, $return);
+            my $return = $code->();
+            return $return if $check->($self, $return);
 
             sleep 2**$time;
         }
 
-        return $return;
+        return;
     }
 
     method default_success_check($response) {
