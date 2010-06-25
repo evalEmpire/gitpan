@@ -22,7 +22,8 @@ class Gitpan::Repo {
       required  => 1,
       lazy      => 1,
       default   => method {
-          return $self->distname;
+          require Path::Class::Dir;
+          return Path::Class::Dir->new($self->distname)->absolute;
       }
     ;
 

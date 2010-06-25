@@ -4,20 +4,19 @@ use MooseX::Types -declare => [qw(Dir Distname AbsDir)];
 use MooseX::Types::Moose qw(Object Str);
 
 subtype Dir,
-  as Object,
-  message { "A directory path" };
+  as "Path::Class::Dir";
 
 coerce Dir,
   from Str,
   via  {
       require Path::Class;
-      return Path::Class->dir($_);
+      return Path::Class::Dir->new($_);
   };
 
 
 subtype AbsDir,
   as Dir,
-  message { "An absolute directory " };
+  where { $_->is_absolute };
 
 coerce AbsDir,
   from Dir,
