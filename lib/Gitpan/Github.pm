@@ -1,6 +1,10 @@
 use MooseX::Declare;
 
-class Gitpan::Github extends Net::GitHub::V2 with Gitpan::Github::ResponseReader {
+class Gitpan::Github
+  extends Net::GitHub::V2
+  with Gitpan::Github::ResponseReader
+  with Gitpan::Github::CanBackoff
+{
     use perl5i::2;
     use Path::Class;
 
@@ -18,19 +22,6 @@ class Gitpan::Github extends Net::GitHub::V2 with Gitpan::Github::ResponseReader
       default   => method {
           return Gitpan::GitHub::Network->new( $self->args_to_pass );
       };
-
-    method do_with_backoff(Int :$times=6, CodeRef :$code!, CodeRef :$check) {
-        $check //= \&default_success_check;
-
-        for my $time (1..$times) {
-            my $return = $code->();
-            return $return if $check->($self, $return);
-
-            sleep 2**$time;
-        }
-
-        return;
-    }
 
     method default_success_check($response) {
         return 0 unless $response;
