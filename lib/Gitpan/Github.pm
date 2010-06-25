@@ -1,6 +1,6 @@
 use MooseX::Declare;
 
-class Gitpan::Github extends Net::GitHub::V2 {
+class Gitpan::Github extends Net::GitHub::V2 with Gitpan::Github::ResponseReader {
     use perl5i::2;
     use Path::Class;
 
@@ -13,6 +13,11 @@ class Gitpan::Github extends Net::GitHub::V2 {
 
     has "+login" =>
       default   => 'gitpan';
+
+    has "+network" =>
+      default   => method {
+          return Gitpan::GitHub::Network->new( $self->args_to_pass );
+      };
 
     method do_with_backoff(Int :$times=6, CodeRef :$code!, CodeRef :$check) {
         $check //= \&default_success_check;
@@ -31,18 +36,6 @@ class Gitpan::Github extends Net::GitHub::V2 {
         return 0 unless $response;
         return 0 if $self->is_too_many_requests($response);
         return 1;
-    }
-
-    method is_too_many_requests($response!) {
-        return $self->get_response_errors($response)->first(qr/too many requests/);
-    }
-
-    method get_response_errors($response!) {
-        my $error = $response->{error};
-        return wantarray ? () : [] if !defined $error;
-
-        my @errors = ref $error ? @$error : $error;
-        return wantarray ? @errors : \@errors;
     }
 
     method exists_on_github(Str :$repo, Str :$owner) {
