@@ -63,4 +63,8 @@ class Gitpan::Repo {
 
         return 1;
     }
+
+    method note(@args) {
+        # no op for now
+    }
 }

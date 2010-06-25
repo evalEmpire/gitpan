@@ -28,4 +28,15 @@ isa_ok $repo, "Gitpan::Repo";
     is $gh->repo,  "Foo-Bar";
 }
 
+
+# git
+{
+    my $git = $repo->git;
+    isa_ok $git, "Git";
+    ok -d $repo->directory;
+    END { $repo->directory->rmtree }
+
+    ok -d $repo->directory->subdir(".git");
+}
+
 done_testing;
