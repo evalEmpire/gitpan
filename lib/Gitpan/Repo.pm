@@ -3,11 +3,11 @@ use MooseX::Declare;
 class Gitpan::Repo {
     use perl5i::2;
     use Path::Class;
-    use MooseX::Types;
+    use Gitpan::Types qw(Distname AbsDir Dir);
     use Git;
 
     use overload
-      q[""]     => sub { return $self->distname },
+      q[""]     => method { return $self->distname },
       fallback  => 1;
 
     has distname        => 
@@ -27,7 +27,7 @@ class Gitpan::Repo {
     ;
 
     has git     =>
-      isa       => Object,
+      isa       => "Object",
       is        => 'rw',
       required  => 1,
       lazy      => 1,
@@ -41,11 +41,12 @@ class Gitpan::Repo {
       is        => 'rw',
       required  => 1,
       lazy      => 1,
-      default   => {
+      default   => method {
           require Gitpan::Github;
           return Gitpan::Github->new(
               owner     => 'gitpan',
               login     => 'gitpan',
+              repo      => $self->distname,
           );
       };
 
