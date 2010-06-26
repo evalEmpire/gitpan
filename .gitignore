@@ -13,3 +13,5 @@ nytprof*
 .DS_Store
 MYMETA.yml
 *.o
+gitpan-build
+
