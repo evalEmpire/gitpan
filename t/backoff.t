@@ -6,7 +6,7 @@ use Test::More;
 {
     package Foo;
     use Moose;
-    with "Gitpan::Github::CanBackoff";
+    with "Gitpan::CanBackoff";
 
     sub default_success_check {
         my $self = shift;

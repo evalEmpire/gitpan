@@ -1,6 +1,6 @@
 use MooseX::Declare;
 
-role Gitpan::Github::CanBackoff {
+role Gitpan::CanBackoff {
     use Time::HiRes qw(usleep);
 
     requires "default_success_check";

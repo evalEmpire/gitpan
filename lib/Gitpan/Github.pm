@@ -4,7 +4,7 @@ use Net::GitHub::V2::NoRepo;
 
 role Net::GitHub::V2::NoRepo
   with Gitpan::Github::ResponseReader
-  with Gitpan::Github::CanBackoff
+  with Gitpan::CanBackoff
 {
     method default_success_check($response) {
         return 0 unless $response;
