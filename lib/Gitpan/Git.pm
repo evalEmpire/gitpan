@@ -32,6 +32,26 @@ class Gitpan::Git extends Git::Repository {
         return 1;
     }
 
+    method remotes() {
+        my @remotes = $self->run("remote", "-v");
+        my %remotes;
+        for my $remote (@remotes) {
+            my($name, $url, $action) = $remote =~ m{^ (\S+) \s+ (.*?) \s+ \( (.*?) \) $}x;
+            $remotes{$name}{$action} = $url;
+        }
+
+        return \%remotes;
+    }
+
+    method remote( Str $name, Str $action = "push" ) {
+        return $self->remotes->{$name}{$action};
+    }
+
+    method change_remote( Str $name, Str $url ) {
+        $self->run( remote => rm => $name );
+        $self->run( remote => add => $name => $url );
+    }
+
     # Git::Repository isn't a Moose class
     CLASS->meta->make_immutable( inline_constructor => 0 );
 }

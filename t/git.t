@@ -39,4 +39,14 @@ SKIP: {
     ok ![$hooks_dir->children]->first(qr{\.sample$});
 }
 
+
+# Remotes
+{
+    is_deeply $git->remotes, {};
+    $git->change_remote( foo => "http://example.com" );
+
+    is $git->remotes->{foo}{push}, "http://example.com";
+    is $git->remote( "foo" ), "http://example.com";
+}
+
 done_testing;
