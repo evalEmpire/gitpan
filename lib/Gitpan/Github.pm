@@ -56,8 +56,19 @@ class Gitpan::Github
     has "+login" =>
       default   => 'gitpan';
 
-    method exists_on_github(Str :$repo, Str :$owner) {
+    method exists_on_github(Str :$repo, Str :$owner?) {
+        $owner //= $self->owner;
+
         my $info = $self->repos->show( $owner, $repo );
         return $self->get_response_errors($info)->size ? 0 : 1;
+    }
+
+    method create_repo( Str :$name, Str :$desc, Str :$homepage, Str :$is_public ) {
+        return $self->repos->create( $name, $desc, $homepage, $is_public );
+    }
+
+    method maybe_create( Str :$name, Str :$desc, Str :$homepage, Str :$is_public ) {
+        return $name if $self->exists_on_github($name);
+        return $self->create_repo( @_ );
     }
 }
