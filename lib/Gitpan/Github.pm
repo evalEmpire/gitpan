@@ -46,29 +46,30 @@ class Gitpan::Github
     use perl5i::2;
     use Path::Class;
 
-    # Net::GitHub requires a repo to initialize {which is kind of silly)
-    has "+repo" =>
-      default   => "bogus";
-
     has "+owner" =>
       default   => 'gitpan';
 
     has "+login" =>
       default   => 'gitpan';
 
-    method exists_on_github(Str :$repo, Str :$owner?) {
+    method exists_on_github( Str :$owner?, Str :$repo? ) {
         $owner //= $self->owner;
+        $repo  //= $self->repo;
 
         my $info = $self->repos->show( $owner, $repo );
         return $self->get_response_errors($info)->size ? 0 : 1;
     }
 
-    method create_repo( Str :$name, Str :$desc, Str :$homepage, Str :$is_public ) {
-        return $self->repos->create( $name, $desc, $homepage, $is_public );
+    method create_repo( Str :$repo?, Str :$desc, Str :$homepage, Str :$is_public ) {
+        $repo //= $self->repo;
+
+        return $self->repos->create( $repo, $desc, $homepage, $is_public );
     }
 
-    method maybe_create( Str :$name, Str :$desc, Str :$homepage, Str :$is_public ) {
-        return $name if $self->exists_on_github($name);
+    method maybe_create( Str :$repo?, Str :$desc, Str :$homepage, Str :$is_public ) {
+        $repo //= $self->repo;
+
+        return $repo if $self->exists_on_github();
         return $self->create_repo( @_ );
     }
 }

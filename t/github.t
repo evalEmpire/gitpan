@@ -7,14 +7,14 @@ use Test::More;
 
 use Gitpan::Github;
 
-my $gh = Gitpan::Github->new;
+my $gh = Gitpan::Github->new( repo => "gitpan" );
 isa_ok $gh, "Gitpan::Github";
 #isa_ok $gh->network, "Gitpan::Github::Network";
 
 
 # exists_on_github()
 {
-    ok $gh->exists_on_github( owner => "schwern", repo => "gitpan" );
+    ok $gh->exists_on_github( owner => "schwern" );
     ok !$gh->exists_on_github( owner => "schwern", repo => "super-python" );
 }
 
