@@ -1,6 +1,8 @@
 use MooseX::Declare;
 
-class Gitpan::Git extends Git::Repository {
+class Gitpan::Git
+  extends Git::Repository
+{
     use perl5i::2;
     use Path::Class;
     use Gitpan::Types qw(Dir);
@@ -51,6 +53,30 @@ class Gitpan::Git extends Git::Repository {
         $self->run( remote => rm => $name );
         $self->run( remote => add => $name => $url );
     }
+
+    method default_success_check($return) {
+        return $return ? 1 : 0;
+    }
+
+    method push( Str $remote = "origin", Str $branch = "master" ) {
+        # sometimes github doesn't have the repo ready immediately after create_repo
+        # returns, so if push fails try it again.
+        my $ok = do_with_backoff(
+            times => 3,
+            code  => sub {
+                eval { $self->run(push => $remote => $branch) } || return
+            },
+        );
+        return unless $ok;
+
+        $self->run( push => $remote => "--tags" );
+
+        return 1;
+    }
+
+    # At the bottom because it has to come before being made immutable
+    # but after default_succes_check is declared
+    with "Gitpan::CanBackoff";
 
     # Git::Repository isn't a Moose class
     CLASS->meta->make_immutable( inline_constructor => 0 );
