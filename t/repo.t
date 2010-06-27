@@ -32,7 +32,7 @@ isa_ok $repo, "Gitpan::Repo";
 # git
 {
     my $git = $repo->git;
-    isa_ok $git, "Git";
+    isa_ok $git, "Gitpan::Git";
     ok -d $repo->directory;
     END { $repo->directory->rmtree }
 
