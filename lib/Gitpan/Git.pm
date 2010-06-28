@@ -7,6 +7,7 @@ class Gitpan::Git
     use Path::Class;
     use Gitpan::Types qw(Dir);
     use Git::Repository;
+    use MooseX::AlwaysCoerce;
 
     method clean {
         $self->remove_sample_hooks;

@@ -45,6 +45,7 @@ class Gitpan::Github
 {
     use perl5i::2;
     use Path::Class;
+    use MooseX::AlwaysCoerce;
 
     has "+owner" =>
       default   => 'gitpan';

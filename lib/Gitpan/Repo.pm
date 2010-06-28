@@ -4,6 +4,7 @@ class Gitpan::Repo {
     use perl5i::2;
     use Path::Class;
     use Gitpan::Types qw(Distname AbsDir Dir);
+    use MooseX::AlwaysCoerce;
 
     use overload
       q[""]     => method { return $self->distname },
@@ -31,6 +32,7 @@ class Gitpan::Repo {
       is        => 'rw',
       required  => 1,
       lazy      => 1,
+      coerce    => 0,
       default   => method {
           require Gitpan::Git;
           return Gitpan::Git->create( init => $self->directory);
@@ -41,12 +43,19 @@ class Gitpan::Repo {
       is        => 'rw',
       required  => 1,
       lazy      => 1,
+      coerce    => 0,
       default   => method {
           require Gitpan::Github;
           return Gitpan::Github->new(
               repo      => $self->distname,
           );
       };
+
+    method exists_on_github() {
+        # Optimization, asking github is expensive
+        return 1 if $self->git->remote("origin") =~ /github.com/;
+        return $self->github->exists_on_github( $self->repo );
+    }
 
     method note(@args) {
         # no op for now
