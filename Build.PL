@@ -16,6 +16,7 @@ my $build = Module::Build->new(
         "MooseX::Types"         => 0,
         "Path::Class"           => 0,
         "MooseX::Declare"       => 0,
+        "MooseX::Path::Class"   => '0.05',
         "Net::GitHub::V2"       => 0,
         "Git::Repository"       => 1.04,  # unreleased version in schwern/Git-Repository
     }

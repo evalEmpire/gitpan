@@ -1,18 +1,8 @@
 package Gitpan::Types;
 
-use MooseX::Types -declare => [qw(Dir Distname AbsDir)];
+use MooseX::Types -declare => [qw(Distname AbsDir)];
+use MooseX::Types::Path::Class qw(Dir File);
 use MooseX::Types::Moose qw(Object Str);
-
-subtype Dir,
-  as "Path::Class::Dir";
-
-coerce Dir,
-  from Str,
-  via  {
-      require Path::Class;
-      return Path::Class::Dir->new($_);
-  };
-
 
 subtype AbsDir,
   as Dir,

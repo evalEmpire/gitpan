@@ -3,7 +3,7 @@ use MooseX::Declare;
 class Gitpan::Repo {
     use perl5i::2;
     use Path::Class;
-    use Gitpan::Types qw(Distname AbsDir Dir);
+    use Gitpan::Types qw(Distname AbsDir);
     use MooseX::AlwaysCoerce;
 
     use overload

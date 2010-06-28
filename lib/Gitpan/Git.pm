@@ -5,7 +5,7 @@ class Gitpan::Git
 {
     use perl5i::2;
     use Path::Class;
-    use Gitpan::Types qw(Dir);
+    use Gitpan::Types;
     use Git::Repository;
     use MooseX::AlwaysCoerce;
 
