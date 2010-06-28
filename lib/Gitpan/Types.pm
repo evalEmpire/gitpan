@@ -24,6 +24,12 @@ coerce AbsDir,
       return $_->absolute;
   };
 
+coerce AbsDir,
+  from Str,
+  via {
+      require Path::Class;
+      return Path::Class::Dir->new($_)->absolute;
+  };
 
 subtype Distname,
   as Str,
