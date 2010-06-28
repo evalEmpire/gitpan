@@ -2,7 +2,7 @@ package Gitpan::Types;
 
 use MooseX::Types -declare => [qw(Distname AbsDir)];
 use MooseX::Types::Path::Class qw(Dir File);
-use MooseX::Types::Moose qw(Object Str);
+use MooseX::Types::Moose qw(Object Str HashRef);
 
 subtype AbsDir,
   as Dir,

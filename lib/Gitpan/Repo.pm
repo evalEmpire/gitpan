@@ -5,6 +5,7 @@ class Gitpan::Repo {
     use Path::Class;
     use Gitpan::Types qw(Distname AbsDir);
     use MooseX::AlwaysCoerce;
+    use Gitpan::Github;
 
     use overload
       q[""]     => method { return $self->distname },
@@ -39,17 +40,25 @@ class Gitpan::Repo {
       };
 
     has github  =>
-      isa       => 'Gitpan::Github',
+      isa       => "Gitpan::Github|HashRef",
       is        => 'rw',
-      required  => 1,
       lazy      => 1,
-      coerce    => 0,
+      trigger   => sub {        # trigger doesn't take a method
+          my($self, $new, $old) = @_;
+
+          return $new if $new->isa("Gitpan::Github");
+          $self->github( $self->_new_github($new) );
+      },
       default   => method {
-          require Gitpan::Github;
-          return Gitpan::Github->new(
-              repo      => $self->distname,
-          );
+          return $self->_new_github;
       };
+
+    method _new_github(HashRef $args = {}) {
+        return Gitpan::Github->new(
+            repo      => $self->distname,
+            %$args,
+        );
+    }
 
     method exists_on_github() {
         # Optimization, asking github is expensive
