@@ -106,8 +106,12 @@ for my $dist (@dists) {
     # made into a dist called empty string.
     next if $dist =~ /^-[\d.]+$/;
 
+    my $repo = Gitpan::Repo->new(
+        distname => $dist,
+    );
+
     if( $opts{github} ) {
-        if( !$opts{update} and does_repo_exist("gitpan", $dist) ) {
+        if( !$opts{update} and $repo->exists_on_github ) {
             say "$dist already exists on github, skipping";
             next;
         }
