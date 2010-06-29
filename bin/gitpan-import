@@ -146,24 +146,24 @@ for my $dist (@dists) {
 sub push_dist {
     my ( $dist ) = @_;
 
+    my $repo = Gitpan::Repo->new(
+        distname  => $dist,
+        github    => {
+            token => $opts{token},
+            login => $opts{login},
+        }
+    );
+
+
     my $repo_dir = Git::CPAN::Patch::Import::import_from_backpan(
-        $dist,
-        { %backpan_init_opts, "mkdir" => "", init_repo => 1 }
+        $repo,
+        \%backpan_init_opts
     );
 
     unless( $repo_dir ) {
         say "No repository created for $dist.  Skipping";
         return;  
     }
-
-    my $repo = Gitpan::Repo->new(
-        distname  => $dist,
-        directory => $repo_dir,
-        github    => {
-            token => $opts{token},
-            login => $opts{login},
-        }
-    );
 
     $repo->git->clean;
 

@@ -52,72 +52,6 @@ sub _fix_permissions {
     }, $dir);
 }
 
-sub init_repo {
-    my $module = shift;
-    my $opts   = shift;
-
-    my $dirname = ".";
-    if ( defined $opts->{mkdir} ) {
-        ( $dirname = $opts->{mkdir} || $module ) =~ s/::/-/g;
-
-        if( -d $dirname ) {
-            die "$dirname already exists\n" unless $opts->{update};
-        }
-        else {
-            say "creating directory $dirname";
-
-            # mkpath() does not play nice with overloaded objects
-            mkpath "$dirname";
-        }
-    }
-
-    {
-        local $CWD = $dirname;
-
-        if ( -d '.git' ) {
-            if ( !$opts->{force} and !$opts->{update} ) {
-                die "Aborting: git repository already present.\n",
-                    "use '-force' if it's really what you want to do\n";
-            }
-        }
-        else {
-            Git::command_noisy('init');
-        }
-    }
-
-    return File::Spec->rel2abs($dirname);
-}
-
-
-sub releases_in_git {
-    my $repo = Git->repository;
-    return unless contains_git_revisions();
-    my @releases = map  { m{\bgit-cpan-version:\s*(\S+)}x; $1 }
-                   grep /^\s*git-cpan-version:/,
-                     $repo->command(log => '--pretty=format:%b');
-    return @releases;
-}
-
-
-sub rev_exists {
-    my $rev = shift;
-    my $repo = Git->repository;
-
-    return eval {
-        git_cmd_try {
-            $repo->command(["rev-parse", $rev], {STDERR=>1});
-        } "fail"
-    };
-}
-
-
-sub contains_git_revisions {
-    my $repo = Git->repository;
-
-    return unless -d ".git";
-    return rev_exists("HEAD");
-}
-
 
 sub import_one_backpan_release {
     my $release      = shift;
@@ -264,23 +198,20 @@ sub get_from_url {
 
 
 sub import_from_backpan {
-    my ( $distname, $opts ) = @_;
+    my ( $repo, $opts ) = @_;
 
-    $distname =~ s/::/-/g;
-
-    my $repo_dir = $opts->{init_repo} ? init_repo($distname, $opts) : $CWD;
-
+    my $repo_dir = $repo->directory;
     local $CWD = $repo_dir;
 
     my $backpan = $CLASS->backpan_index($opts);
-    my $dist = $backpan->dist($distname)
+    my $dist = $backpan->dist($repo->distname)
       or die "Error: no distributions found. ",
              "Are you sure you spelled the module name correctly?\n";
 
-    fixup_repository();
+    $repo->git->fixup_repository();
 
     my %existing_releases;
-    %existing_releases = map { $_ => 1 } releases_in_git() if $opts->{update};
+    %existing_releases = map { $_ => 1 } $repo->git->releases if $opts->{update};
     my $release_added = 0;
     for my $release ($dist->releases->search( undef, { order_by => "date" } )) {
         next if $existing_releases{$release->version};
@@ -312,29 +243,15 @@ sub import_from_backpan {
         }
     }
 
-    my $repo = Git->repository;
-    if( !rev_exists("master") ) {
-        $repo->command_noisy('checkout', '-t', '-b', 'master', 'cpan/master');
+    if( !$repo->git->revision_exists("master") ) {
+        $repo->git->run('checkout', '-t', '-b', 'master', 'cpan/master');
     }
     else {
-        $repo->command_noisy('checkout', 'master');
-        $repo->command_noisy('merge', 'cpan/master');
+        $repo->git->run('checkout', 'master');
+        $repo->git->run('merge', 'cpan/master');
     }
 
     return $repo_dir;
-}
-
-
-sub fixup_repository {
-    my $repo = Git->repository;
-
-    return unless -d ".git";
-
-    # We do our work in cpan/master, it might not exist if this
-    # repo was cloned from gitpan.
-    if( !rev_exists("cpan/master") and rev_exists("master") ) {
-        $repo->command_noisy('branch', '-t', 'cpan/master', 'master');
-    }
 }
 
 
