@@ -63,7 +63,7 @@ class Gitpan::Repo {
     method exists_on_github() {
         # Optimization, asking github is expensive
         return 1 if $self->git->remote("origin") =~ /github.com/;
-        return $self->github->exists_on_github( $self->repo );
+        return $self->github->exists_on_github();
     }
 
     method note(@args) {
