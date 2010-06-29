@@ -192,89 +192,6 @@ sub push_dist {
 }
 
 
-use LWP::UserAgent;
-use HTTP::Request::Common qw(POST);
-use JSON::XS;
-
-sub _do_github_action {
-    state $ua = LWP::UserAgent->new;
-
-    state $actions = {
-        repo_info   => sub {
-            my $opts = shift;
-            sprintf 'repos/show/%s/%s',
-              $opts->{user},
-              $opts->{name}
-        },
-    };
-
-    my $action = shift;
-    my $opts   = shift;
-
-    my $url = "http://github.com/api/v2/json/";
-    $url .= $actions->{$action}->($opts);
-
-    my $req = POST $url, [
-        %$opts
-    ];
-
-    # Sometimes github gets confused but sorts it out quickly
-    my $response = do_with_back_off(4, sub {
-        my $response = $ua->request($req);
-        return if $response->code == 500;
-        return $response;
-    });
-
-    my $content = $response->content;
-    say "Github said: $content\n";
-
-    return decode_json($content);
-}
-
-
-sub github_action {
-    my @args = @_;
-
-    my $response = do_with_back_off(6, sub {
-        my $response = _do_github_action(@args);
-
-        return if is_too_many_requests($response);
-        return $response;
-    });
-
-    return $response;
-}
-
-
-sub is_too_many_requests {
-    my $response = shift;
-    return ref $response->{error} && ($response->{error}[0]{error} =~ /too many requests/);
-}
-
-
-sub does_repo_exist {
-    my $user = shift;
-    my $repo = shift;
-
-    # This is far faster than asking github about every one
-    return 1 if -e "$repo/.git/refs/remotes/origin/";
-
-    return does_repo_exist_on_github($user, $repo);
-}
-
-sub does_repo_exist_on_github {
-    my $user = shift;
-    my $repo = shift;
-
-    my $response = github_action("repo_info", {
-        user    => $user,
-        name    => $repo
-    });
-    return 0 if $response->{error};
-    return 1;
-}
-
-
 sub filter_dists {
            # filter out garbage the BackPAN index picks up
     return grep !/^[\d._\-]+(\.U)?$/,
@@ -293,21 +210,6 @@ sub repo_dir_looks_ok {
                  && -d File::Spec->catfile($repo_dir, '.git')  # and has a git repo 
     ;
     return 1;
-}
-
-sub do_with_back_off {
-    my($number, $code) = @_;
-
-    my $ret;
-    for my $backoff (1..$number) {
-        $ret = $code->();
-        last if $ret;
-
-        sleep 2**$backoff;
-    }
-
-    die "Command failed after $number back off and retries" unless $ret;
-    return $ret;
 }
 
 
