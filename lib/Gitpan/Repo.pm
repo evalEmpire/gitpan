@@ -21,7 +21,6 @@ class Gitpan::Repo {
       isa       => AbsDir,
       is        => 'rw',
       required  => 1,
-      lazy      => 1,
       default   => method {
           require Path::Class::Dir;
           return Path::Class::Dir->new($self->distname)->absolute;
