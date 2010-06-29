@@ -33,4 +33,10 @@ isa_ok $gh, "Gitpan::Github";
     ok $gh->is_too_many_requests({ error => ["wibble", "too many requests"] });
 }
 
+
+# remote
+{
+    is $gh->remote, "git\@github-gitpan:gitpan/gitpan.git";
+}
+
 done_testing();

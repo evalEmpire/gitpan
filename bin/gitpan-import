@@ -176,7 +176,7 @@ sub push_dist {
         # Sometimes we re-clone from gitpan and so the origin is wrong
         my $remote_url = $repo->git->remote("origin");
         if( !defined $remote_url or $remote_url !~ m{git\@github-gitpan} ) {
-            $repo->git->change_remote("origin", "git\@github-gitpan:gitpan/$repo_name.git");
+            $repo->git->change_remote("origin", $repo->github->remote);
         }
 
         $repo->git->push;

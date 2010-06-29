@@ -53,6 +53,13 @@ class Gitpan::Github
     has "+login" =>
       default   => 'gitpan';
 
+    # This is necessary because you'll probably have two accounts on github
+    # and thus multiple ssh keys.
+    has "host" =>
+      isa       => 'Str',
+      is        => 'rw',
+      default   => 'github-gitpan';
+
     method exists_on_github( Str :$owner?, Str :$repo? ) {
         $owner //= $self->owner;
         $repo  //= $self->repo;
@@ -72,5 +79,9 @@ class Gitpan::Github
 
         return $repo if $self->exists_on_github();
         return $self->create_repo( @_ );
+    }
+
+    method remote {
+        return sprintf q[git@%s:%s/%s.git], $self->host, $self->owner, $self->repo;
     }
 }
