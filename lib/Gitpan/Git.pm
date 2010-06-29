@@ -55,14 +55,14 @@ class Gitpan::Git
         $self->run( remote => add => $name => $url );
     }
 
-    method default_success_check($return) {
+    method default_success_check($return?) {
         return $return ? 1 : 0;
     }
 
     method push( Str $remote = "origin", Str $branch = "master" ) {
         # sometimes github doesn't have the repo ready immediately after create_repo
         # returns, so if push fails try it again.
-        my $ok = do_with_backoff(
+        my $ok = $self->do_with_backoff(
             times => 3,
             code  => sub {
                 eval { $self->run(push => $remote => $branch) } || return

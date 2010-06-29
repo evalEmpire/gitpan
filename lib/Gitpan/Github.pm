@@ -6,7 +6,7 @@ role Net::GitHub::V2::NoRepo
   with Gitpan::Github::ResponseReader
   with Gitpan::CanBackoff
 {
-    method default_success_check($response) {
+    method default_success_check($response?) {
         return 0 unless $response;
 
         if( my $error = $self->is_network_error($response) ) {
