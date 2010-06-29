@@ -194,7 +194,6 @@ sub _do_github_action {
     state $ua = LWP::UserAgent->new;
 
     state $actions = {
-        delete_repo => sub { 'repos/delete' },
         repo_info   => sub {
             my $opts = shift;
             sprintf 'repos/show/%s/%s',
