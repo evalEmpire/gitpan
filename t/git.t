@@ -60,4 +60,15 @@ SKIP: {
     is_deeply [map { $_->dir_list(-1) } dir( $git->wc_path )->children], [".git"];
 }
 
+
+# revision_exists
+{
+    file( $git->wc_path, "foo" )->touch;
+    $git->run( add => "foo" );
+    $git->run( commit => "-m" => "testing" );
+
+    ok $git->revision_exists("master"),                 "revision_exists - true";
+    ok !$git->revision_exists("does_not_exist"),        "  false";
+}
+
 done_testing;

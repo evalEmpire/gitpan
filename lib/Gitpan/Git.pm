@@ -82,6 +82,19 @@ class Gitpan::Git
         }
     }
 
+    method revision_exists($revision) {
+        my $cmd = $self->command("rev-parse", $revision);
+        close $cmd->{stdin};
+        my @err = $cmd->{stderr}->getlines;
+
+        return 0 if @err;
+
+        $cmd->close;
+
+        return 1 if $cmd->{exit} == 0;
+        return 0;
+    }
+
     # At the bottom because it has to come before being made immutable
     # but after default_succes_check is declared
     with "Gitpan::CanBackoff";
