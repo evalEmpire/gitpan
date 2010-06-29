@@ -28,15 +28,26 @@ class Gitpan::Repo {
 
     has directory       =>
       isa       => AbsDir,
-      is        => 'rw',
+      is        => 'ro',
       required  => 1,
       lazy      => 1,
-      default   => method {
-          my $dir = dir($self->distname);
-          return $dir if $dir->is_absolute;
-          return $self->cwd->subdir($self->distname);
-      }
-    ;
+      default     => method {
+          $self->_make_absolute($self->distname);
+      },
+      initializer => sub {
+          my($self, $value, $setter) = @_;
+          $setter->( $self->_make_absolute($value) );
+      };
+
+    # Make sure the directory is absolute from the original cwd
+    method _make_absolute($dir?) {
+        $dir //= $self->distname;
+
+        $dir = dir($dir);
+        return $dir if $dir->is_absolute;
+        return $self->cwd->subdir($self->distname);        
+    }
+
 
     has git     =>
       isa       => "Gitpan::Git",
