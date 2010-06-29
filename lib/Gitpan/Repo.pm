@@ -17,13 +17,24 @@ class Gitpan::Repo {
       required  => 1,
     ;
 
+    has cwd     =>
+      isa       => AbsDir,
+      is        => 'ro',
+      required  => 1,
+      default   => method {
+          return dir()->absolute;
+      },
+      documentation => "The current working directory at time of object initialization";
+
     has directory       =>
       isa       => AbsDir,
       is        => 'rw',
       required  => 1,
+      lazy      => 1,
       default   => method {
-          require Path::Class::Dir;
-          return Path::Class::Dir->new($self->distname)->absolute;
+          my $dir = dir($self->distname);
+          return $dir if $dir->is_absolute;
+          return $self->cwd->subdir($self->distname);
       }
     ;
 
