@@ -95,6 +95,16 @@ class Gitpan::Git
         return 0;
     }
 
+
+    method fixup_repository {
+        # We do our work in cpan/master, it might not exist if this
+        # repo was cloned from gitpan.
+        if( !$self->revision_exists("cpan/master") and $self->revsion_exists("master") ) {
+            $self->run('branch', '-t', 'cpan/master', 'master');
+        }
+        return 1;
+    }
+
     # At the bottom because it has to come before being made immutable
     # but after default_succes_check is declared
     with "Gitpan::CanBackoff";
