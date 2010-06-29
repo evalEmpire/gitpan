@@ -96,10 +96,19 @@ class Gitpan::Git
     }
 
 
+    method releases {
+        return unless $self->revision_exists("HEAD");
+
+        my @releases = map  { m{\bgit-cpan-version:\s*(\S+)}x; $1 }
+                       grep /^\s*git-cpan-version:/,
+                         $self->run(log => '--pretty=format:%b');
+        return @releases;
+    }
+
     method fixup_repository {
         # We do our work in cpan/master, it might not exist if this
         # repo was cloned from gitpan.
-        if( !$self->revision_exists("cpan/master") and $self->revsion_exists("master") ) {
+        if( !$self->revision_exists("cpan/master") and $self->revision_exists("master") ) {
             $self->run('branch', '-t', 'cpan/master', 'master');
         }
         return 1;
