@@ -15,11 +15,6 @@ class Gitpan::Repo {
       isa       => Distname,
       is        => 'ro',
       required  => 1,
-      initializer => sub {
-          my($self, $orig, $setter, $attr) = @_;
-          $orig =~ s/::/-/g;
-          return $setter->($orig);
-      }
     ;
 
     has directory       =>

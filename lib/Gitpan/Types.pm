@@ -1,6 +1,6 @@
 package Gitpan::Types;
 
-use MooseX::Types -declare => [qw(Distname AbsDir)];
+use MooseX::Types -declare => [qw(Distname AbsDir Module)];
 use MooseX::Types::Path::Class qw(Dir File);
 use MooseX::Types::Moose qw(Object Str HashRef);
 
@@ -24,6 +24,18 @@ coerce AbsDir,
 subtype Distname,
   as Str,
   message { "A CPAN distribution name" },
-  where { !/\s/ };
+  where { !/\s/ and !/::/ };
+
+coerce Distname,
+  from Str,
+  via {
+      s/::/-/g;
+      return $_;
+  };
+
+subtype Module,
+  as Str,
+  message { "A CPAN module name " },
+  where { /^[A-Za-z]+ (?: :: \w+)+ /x };
 
 1;
