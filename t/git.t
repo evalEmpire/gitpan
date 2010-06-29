@@ -49,4 +49,15 @@ SKIP: {
     is $git->remote( "foo" ), "http://example.com";
 }
 
+
+# Remove working copy
+{
+    my $file = file( $git->wc_path, "foo" );
+    $file->touch;
+    ok -e $file;
+    $git->remove_working_copy;
+    ok !-e $file;
+    is_deeply [map { $_->dir_list(-1) } dir( $git->wc_path )->children], [".git"];
+}
+
 done_testing;

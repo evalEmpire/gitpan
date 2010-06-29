@@ -75,6 +75,13 @@ class Gitpan::Git
         return 1;
     }
 
+    method remove_working_copy {
+        for my $child ( dir($self->wc_path)->children ) {
+            next if $child->is_dir and $child->dir_list(-1) eq '.git';
+            $child->is_dir ? $child->rmtree : $child->remove;
+        }
+    }
+
     # At the bottom because it has to come before being made immutable
     # but after default_succes_check is declared
     with "Gitpan::CanBackoff";
