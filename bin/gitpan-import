@@ -137,7 +137,9 @@ for my $dist (@dists) {
     # Delete everything but the .git/ directory to save space
     # We name the directory specifically to avoid accidentally
     # deleting everything should we be in the wrong cwd
-    system "rm -rf $repo_dir/*";
+
+    $repo->git->remove_working_copy;
+
     say "done!";
 }
 
