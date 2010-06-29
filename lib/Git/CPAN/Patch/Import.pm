@@ -10,14 +10,13 @@ use autodie;
 use Archive::Extract; $Archive::Extract::PREFER_BIN = 1;
 use File::Find;
 use File::Basename;
-use File::Spec::Functions;
-use File::Temp qw(tempdir);
+use File::Temp;
 use File::Path;
 use File::chdir;
-use Cwd qw/ getcwd /;
 use version;
 use Git;
 use CLASS;
+use Path::Class;
 
 use CPANPLUS;
 use BackPAN::Index;
@@ -70,8 +69,10 @@ sub import_one_backpan_release {
     my $tmp_dir = File::Temp->newdir(
         $opts->{tempdir} ? (DIR     => $opts->{tempdir}) : ()
     );
+    $tmp_dir = dir($tmp_dir);
 
-    my $archive_file = catfile($tmp_dir, $release->filename);
+
+    my $archive_file = file($tmp_dir, $release->filename);
     mkpath dirname $archive_file;
 
     my $response;
@@ -112,8 +113,8 @@ sub import_one_backpan_release {
 
     my $tree = do {
         # don't overwrite the user's index
-        local $ENV{GIT_INDEX_FILE} = catfile($tmp_dir, "temp_git_index");
-        local $ENV{GIT_DIR} = catfile( getcwd(), '.git' );
+        local $ENV{GIT_INDEX_FILE} = file($tmp_dir, "temp_git_index");
+        local $ENV{GIT_DIR} = dir( '.git' )->absolute;
         local $ENV{GIT_WORK_TREE} = $dir;
 
         local $CWD = $dir;
