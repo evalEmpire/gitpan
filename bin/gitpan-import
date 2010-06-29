@@ -6,6 +6,9 @@ use strict;
 use warnings;
 use v5.10;
 
+use FindBin qw($Bin);
+use lib "$Bin/../lib";
+
 $|++;
 
 use Git::CPAN::Patch::Import;
@@ -13,6 +16,7 @@ use File::chdir;
 use File::Spec;
 use Getopt::Long;
 use Capture::Tiny qw/capture/;
+use Gitpan::Repo;
 
 # Github currently limits repo names to 100 characters
 use constant MAX_LENGTH_GITHUB_REPO_NAME => 100;
@@ -146,55 +150,39 @@ sub push_dist {
         return;  
     }
 
-    local $CWD = $repo_dir;
+    my $repo = Gitpan::Repo->new(
+        distname  => $dist,
+        directory => $repo_dir,
+        github    => {
+            token => $opts{token},
+            login => $opts{login},
+        }
+    );
 
-    system "rm .git/hooks/*.sample";
-    system "git", "gc";
+    $repo->git->clean;
 
     if( $opts{github} ) {
-        my $repo = "$dist";
-        if( !$opts{update} or !does_repo_exist_on_github($opts{login}, $dist) ) {
-            my $response = github_action("create_repo", {
-                login           => $opts{login},
-                token           => $opts{token},
+        my $repo_name = $repo->distname;
+
+        if( !$opts{update} ) {
+            $repo_name = $repo->github->maybe_create(
                 name            => $dist,
                 description     => "Release history of $dist",
                 homepage        => "http://search.cpan.org/dist/$dist/",
-                public          => 1,
-            });
-
-            $repo = $response->{repository}{name};
+                is_public          => 1,
+            );
         }
 
         # Sometimes we re-clone from gitpan and so the origin is wrong
-        my $remote_url = remote_for("origin", "push");
+        my $remote_url = $repo->git->remote("origin");
         if( !defined $remote_url or $remote_url !~ m{git\@github-gitpan} ) {
-            system "git", "remote", "rm", "origin";
-            system "git", "remote", "add", "origin", "git\@github-gitpan:gitpan/$repo.git";
+            $repo->git->change_remote("origin", "git\@github-gitpan:gitpan/$repo_name.git");
         }
 
-        # sometimes github doesn't have the repo ready immediately after create_repo
-        # returns, so if push fails try it again.
-        do_with_back_off(6, sub {
-            system "git", "push", "origin", "master";
-            return $? == 0;
-        });
-        system "git", "push", "origin", "--tags";
+        $repo->git->push;
     }
 
     return $repo_dir;
-}
-
-
-sub remote_for {
-    my($remote, $action) = @_;
-
-    my @remotes = `git remote -v`;
-    for my $remote (@remotes) {
-        my($url) = $remote =~ /^\Q$remote\E \s+ (.*) \s+ \Q($action)\E$/x;
-        return $url if defined $url;
-    }
-    return;
 }
 
 
@@ -206,7 +194,6 @@ sub _do_github_action {
     state $ua = LWP::UserAgent->new;
 
     state $actions = {
-        create_repo => sub { 'repos/create' },
         delete_repo => sub { 'repos/delete' },
         repo_info   => sub {
             my $opts = shift;
