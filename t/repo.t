@@ -19,6 +19,13 @@ isa_ok $repo, "Gitpan::Repo";
 }
 
 
+# Recover from a module name
+{
+    my $repo = Gitpan::Repo->new( distname => "This::That::Whatever" );
+    is $repo->distname, "This-That-Whatever";
+}
+
+
 # github
 {
     my $gh = $repo->github;
