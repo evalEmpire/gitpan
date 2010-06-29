@@ -200,6 +200,7 @@ sub get_from_url {
 sub import_from_backpan {
     my ( $repo, $opts ) = @_;
 
+    $repo->git;  # force the git repo to exist
     my $repo_dir = $repo->directory;
     local $CWD = $repo_dir;
 
