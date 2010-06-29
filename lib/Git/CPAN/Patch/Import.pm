@@ -54,6 +54,7 @@ sub _fix_permissions {
 
 
 sub import_one_backpan_release {
+    my $repo         = shift;
     my $release      = shift;
     my $opts         = shift;
     my $backpan_urls = ( ref $opts->{backpan}
@@ -61,14 +62,10 @@ sub import_one_backpan_release {
                        : [ $opts->{backpan} || $BackPAN_URL ]
                        );
 
-    my $repo = Git->repository;
+    my $git = $repo->git;
 
-    my( $last_commit, $last_version );
-
-    # figure out if there is already an imported module
-    if ( $last_commit = eval { $repo->command_oneline("rev-parse", "-q", "--verify", "cpan/master") } ) {
-        $last_version = $repo->command_oneline("cpan-last-version");
-    }
+    my $last_commit  = $git->last_commit;
+    my $last_version = $git->last_cpan_version;
 
     my $tmp_dir = File::Temp->newdir(
         $opts->{tempdir} ? (DIR     => $opts->{tempdir}) : ()
@@ -169,16 +166,16 @@ END
 
     # finally, update the fake branch and create a tag for convenience
     my $dist = $release->dist;
-    $repo->command_noisy('update-ref', '-m' => "import $dist", 'refs/heads/cpan/master', $commit );
+    $git->run('update-ref', '-m' => "import $dist", 'refs/heads/cpan/master', $commit );
 
     if( $version ) {
         my $tag = $version;
         $tag =~ s{^\.}{0.};  # git does not like a leading . as a tag name
         $tag =~ s{\.$}{};    # nor a trailing one
-        if( $repo->command( "tag", "-l" => $tag ) ) {
+        if( $git->run( "tag", "-l" => $tag ) ) {
             say "Tag $tag already exists, overwriting";
         }
-        $repo->command_noisy( "tag", "-f" => $tag, $commit );
+        $git->run( "tag", "-f" => $tag, $commit );
         say "created tag '$tag' ($commit)";
     }
 }
@@ -222,6 +219,7 @@ sub import_from_backpan {
 
         say "importing $release";
         import_one_backpan_release(
+            $repo,
             $release,
             $opts,
         );

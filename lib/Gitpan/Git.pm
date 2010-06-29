@@ -85,13 +85,11 @@ class Gitpan::Git
     method revision_exists($revision) {
         my $cmd = $self->command("rev-parse", $revision);
         close $cmd->{stdin};
-        my @err = $cmd->{stderr}->getlines;
-
-        return 0 if @err;
-
+        my @out = $cmd->{stdout}->getlines;
         $cmd->close;
 
-        return 1 if $cmd->{exit} == 0;
+        return 0 if $cmd->{exit};
+        return 1 if @out;
         return 0;
     }
 
@@ -112,6 +110,21 @@ class Gitpan::Git
             $self->run('branch', '-t', 'cpan/master', 'master');
         }
         return 1;
+    }
+
+    method last_commit {
+        return eval { $self->run("rev-parse", "-q", "--verify", "cpan/master") };
+    }
+
+    method last_cpan_version {
+        my $last_commit = $self->last_commit;
+        return unless $last_commit;
+
+        my $last = $self->run( log => '--pretty=format:%b', '-n', 1, $last_commit );
+        $last =~ /git-cpan-module:\ (.*?) \s+ git-cpan-version:\ (.*?) \s*$/sx
+          or croak "Couldn't parse git message:\n$last\n";
+
+        return $2;
     }
 
     # At the bottom because it has to come before being made immutable
