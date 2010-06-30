@@ -132,6 +132,8 @@ sub import_one_backpan_release {
     my $author = $CLASS->cpanplus->author_tree($release->cpanid);
     $ENV{GIT_AUTHOR_NAME}  ||= $author->author;
     $ENV{GIT_AUTHOR_EMAIL} ||= $author->email;
+    $ENV{GIT_COMMITTER_NAME}  = 'gitpan';
+    $ENV{GIT_COMMITTER_EMAIL} = 'schwern+gitpan@gmail.com';
 
     my @parents = grep { $_ } $last_commit;
 
