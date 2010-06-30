@@ -68,17 +68,22 @@ class Gitpan::Github
         return $self->get_response_errors($info)->size ? 0 : 1;
     }
 
-    method create_repo( Str :$repo?, Str :$desc, Str :$homepage, Str :$is_public ) {
+    method create_repo( Str :$repo?, Str :$desc, Str :$homepage, Bool :$is_public = 1 ) {
         $repo //= $self->repo;
 
         return $self->repos->create( $repo, $desc, $homepage, $is_public );
     }
 
-    method maybe_create( Str :$repo?, Str :$desc, Str :$homepage, Str :$is_public ) {
+    method maybe_create( Str :$repo?, Str :$desc, Str :$homepage, Bool :$is_public ) {
         $repo //= $self->repo;
 
         return $repo if $self->exists_on_github();
-        return $self->create_repo( @_ );
+        return $self->create_repo(
+            repo        => $repo,
+            desc        => $desc,
+            homepage    => $homepage,
+            is_public   => $is_public
+        );
     }
 
     method remote {
