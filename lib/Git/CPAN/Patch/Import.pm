@@ -243,7 +243,7 @@ sub import_from_backpan {
         }
     }
 
-    if( !$repo->git->revision_exists("master") ) {
+    if( !$repo->git->revision_exists("master") && $repo->git->revision_exists("cpan/master") ) {
         $repo->git->run('checkout', '-t', '-b', 'master', 'cpan/master');
     }
     else {
