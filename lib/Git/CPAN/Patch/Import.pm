@@ -189,7 +189,7 @@ sub get_from_url {
     my $ua = LWP::UserAgent->new;
 
     my $req = HTTP::Request->new( GET => $url );
-    my $res = $ua->request($req, $file);
+    my $res = $ua->request($req, $file."");
 
     return $res;
 }
