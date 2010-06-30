@@ -74,7 +74,7 @@ class Gitpan::Github
         return $self->repos->create( $repo, $desc, $homepage, $is_public );
     }
 
-    method maybe_create( Str :$repo?, Str :$desc, Str :$homepage, Bool :$is_public ) {
+    method maybe_create( Str :$repo?, Str :$desc, Str :$homepage, Bool :$is_public = 1 ) {
         $repo //= $self->repo;
 
         return $repo if $self->exists_on_github();
