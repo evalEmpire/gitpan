@@ -70,10 +70,9 @@ sub import_one_backpan_release {
         $opts->{tempdir} ? (DIR     => $opts->{tempdir}) : ()
     );
     $tmp_dir = dir($tmp_dir);
-
+    $tmp_dir->mkpath;
 
     my $archive_file = file($tmp_dir, $release->filename);
-    mkpath dirname $archive_file;
 
     my $response;
     for my $backpan_url (@$backpan_urls) {
