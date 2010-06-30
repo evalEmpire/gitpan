@@ -83,14 +83,8 @@ class Gitpan::Git
     }
 
     method revision_exists($revision) {
-        my $cmd = $self->command("rev-parse", $revision);
-        close $cmd->{stdin};
-        my @out = $cmd->{stdout}->getlines;
-        $cmd->close;
-
-        return 0 if $cmd->{exit};
-        return 1 if @out;
-        return 0;
+        my $rev = eval { $self->run("rev-parse", $revision) } || return 0;
+        return 1;
     }
 
 
