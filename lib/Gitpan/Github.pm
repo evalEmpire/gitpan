@@ -89,4 +89,17 @@ class Gitpan::Github
     method remote {
         return sprintf q[git@%s:%s/%s.git], $self->host, $self->owner, $self->repo;
     }
+
+    method change_repo_info(%changes) {
+        %changes = map { +"values[$_]" => $changes{$_} } keys %changes;
+        return 1 unless keys %changes;
+
+        my $owner = $self->owner;
+        my $repo  = $self->repo;
+        return $self->repos->get_json_to_obj_authed(
+            "repos/show/$owner/$repo",
+            %changes,
+            "repository"
+        );
+    }
 }
