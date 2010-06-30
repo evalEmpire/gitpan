@@ -170,14 +170,10 @@ sub push_dist {
     if( $opts{github} ) {
         my $repo_name = $repo->distname;
 
-        if( !$opts{update} ) {
-            $repo_name = $repo->github->maybe_create(
-                name            => $dist,
-                description     => "Release history of $dist",
-                homepage        => "http://search.cpan.org/dist/$dist/",
-                is_public          => 1,
-            );
-        }
+        $repo_name = $repo->github->maybe_create(
+            desc     => "Release history of $dist",
+            homepage => "http://search.cpan.org/dist/$dist/",
+        );
 
         # Sometimes we re-clone from gitpan and so the origin is wrong
         my $remote_url = $repo->git->remote("origin");
