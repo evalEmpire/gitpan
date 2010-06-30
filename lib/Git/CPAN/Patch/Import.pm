@@ -242,12 +242,14 @@ sub import_from_backpan {
         }
     }
 
-    if( !$repo->git->revision_exists("master") && $repo->git->revision_exists("cpan/master") ) {
-        $repo->git->run('checkout', '-t', '-b', 'master', 'cpan/master');
-    }
-    else {
-        $repo->git->run('checkout', 'master');
-        $repo->git->run('merge', 'cpan/master');
+    if( $repo->git->revision_exists("cpan/master") ) {
+        if( !$repo->git->revision_exists("master") ) {
+            $repo->git->run('checkout', '-t', '-b', 'master', 'cpan/master');
+        }
+        else {
+            $repo->git->run('checkout', 'master');
+            $repo->git->run('merge', 'cpan/master');
+        }
     }
 
     return $repo_dir;
