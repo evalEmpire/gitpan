@@ -175,6 +175,11 @@ sub push_dist {
             homepage => "http://search.cpan.org/dist/$dist/",
         );
 
+        $repo->github->change_repo_info(
+            has_issues  => 0,
+            has_wiki    => 0,
+        );
+
         # Sometimes we re-clone from gitpan and so the origin is wrong
         my $remote_url = $repo->git->remote("origin");
         if( !defined $remote_url or $remote_url !~ m{git\@github-gitpan} ) {
