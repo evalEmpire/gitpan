@@ -5,7 +5,7 @@ use Test::More;
 
 {
     package Foo;
-    use Moose;
+    use Mouse;
     with "Gitpan::CanBackoff";
 
     sub default_success_check {
