@@ -1,41 +1,49 @@
 package Gitpan::Types;
 
-use MooseX::Types -declare => [qw(Distname AbsDir Module)];
-use MooseX::Types::Path::Class qw(Dir File);
-use MooseX::Types::Moose qw(Object Str HashRef);
+use Mouse::Util::TypeConstraints;
 
-subtype AbsDir,
-  as Dir,
+class_type "Path::Class::Dir";
+class_type "Path::Class::File";
+
+subtype "Gitpan::AbsDir",
+  as "Path::Class::Dir",
   where { $_->is_absolute };
 
-coerce AbsDir,
-  from Dir,
+coerce "Gitpan::AbsDir",
+  from "Path::Class::Dir",
   via {
       return $_->absolute;
   };
 
-coerce AbsDir,
-  from Str,
+coerce "Gitpan::AbsDir",
+  from "Str",
   via {
       require Path::Class;
       return Path::Class::Dir->new($_)->absolute;
   };
 
-subtype Distname,
-  as Str,
+coerce "Path::Class::Dir",
+  from "Str",
+  via {
+      require Path::Class;
+      return Path::Class::Dir->new($_);
+  };
+
+coerce "Path::Class::File",
+  from "Str",
+  via {
+      require Path::Class;
+      return Path::Class::File->new($_);
+  };
+
+subtype "Gitpan::Distname",
+  as "Str",
   message { "A CPAN distribution name" },
   where { !/\s/ and !/::/ };
 
-coerce Distname,
-  from Str,
-  via {
-      s/::/-/g;
-      return $_;
-  };
-
-subtype Module,
-  as Str,
+subtype "Gitpan::Module",
+  as "Str",
   message { "A CPAN module name " },
-  where { /^[A-Za-z]+ (?: :: \w+)+ /x };
+  where { /^[A-Za-z]+ (?: :: \w+)* /x };
 
 1;
