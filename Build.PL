@@ -9,17 +9,15 @@ my $build = Module::Build->new(
     dist_name           => 'gitpan',
     dist_version        => '0.01',
     requires            => {
-        "Capture::Tiny"         => 0.08, # exception bug
         "BackPAN::Index"        => 0.39,
+        "Capture::Tiny"         => 0.08, # exception bug
         "File::chdir"           => 0,
-        "perl5i::2"             => "v2.2.0",
-        "MooseX::Types"         => 0,
-        "MooseX::Types::Path::Class"   => '0.05',
-        "MooseX::AlwaysCoerce"  => 0,
-        "Path::Class"           => 0,
-        "MooseX::Declare"       => 0,
-        "Net::GitHub::V2"       => 0,
-        "Git::Repository"       => 1.04,  # unreleased version in schwern/Git-Repository
         "Getopt::Long::Descriptive"    => 0.085,
+        "Git::Repository"       => 1.29,
+        "Method::Signatures"    => 0,
+        "Mouse"                 => 0,
+        "Path::Class"           => 0,
+        "perl5i::2"             => "v2.2.0",
+        "Net::GitHub::V3"       => 0,
     }
 );
