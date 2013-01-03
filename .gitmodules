@@ -1,3 +1,6 @@
 [submodule "submodules/Test-TypeConstraints"]
 	path = submodules/Test-TypeConstraints
 	url = git://github.com/schwern/p5-test-type_constraints.git
+[submodule "submodules/Git-Repository"]
+	path = submodules/Git-Repository
+	url = git://github.com/schwern/Git-Repository.git

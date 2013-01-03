@@ -1,5 +1,7 @@
 #!/usr/bin/perl
 
+use lib 'submodules/Git-Repository/lib';
+
 use perl5i::2;
 use Path::Class;
 use File::Temp qw(tempdir);
@@ -9,22 +11,22 @@ use Test::More;
 use Gitpan::Git;
 
 my $Repo_Dir = dir(tempdir( CLEANUP => 1 ))->resolve;
-my $git = Gitpan::Git->create( init => $Repo_Dir );
+my $git = Gitpan::Git->init( $Repo_Dir );
 isa_ok $git, "Gitpan::Git";
 
 # Check the repo was created
 {
     ok -d $Repo_Dir;
     ok -d $Repo_Dir->subdir(".git");
-    is $git->wc_path, $Repo_Dir;
+    is $git->work_tree, $Repo_Dir;
 }
 
 
 # Can we use an existing repo?
 {
-    my $copy = Gitpan::Git->create( init => $Repo_Dir );
+    my $copy = Gitpan::Git->init( $Repo_Dir );
     isa_ok $copy, "Gitpan::Git";
-    is $copy->wc_path, $Repo_Dir;
+    is $copy->work_tree, $Repo_Dir;
 }
 
 
@@ -52,18 +54,18 @@ SKIP: {
 
 # Remove working copy
 {
-    my $file = file( $git->wc_path, "foo" );
+    my $file = file( $git->work_tree, "foo" );
     $file->touch;
     ok -e $file;
     $git->remove_working_copy;
     ok !-e $file;
-    is_deeply [map { $_->dir_list(-1) } dir( $git->wc_path )->children], [".git"];
+    is_deeply [map { $_->dir_list(-1) } dir( $git->work_tree )->children], [".git"];
 }
 
 
 # revision_exists
 {
-    file( $git->wc_path, "foo" )->touch;
+    file( $git->work_tree, "foo" )->touch;
     $git->run( add => "foo" );
     $git->run( commit => "-m" => "testing" );
 
