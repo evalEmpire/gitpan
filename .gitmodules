@@ -4,3 +4,6 @@
 [submodule "submodules/Git-Repository"]
 	path = submodules/Git-Repository
 	url = git://github.com/schwern/Git-Repository.git
+[submodule "submodules/Net-HTTP"]
+	path = submodules/Net-HTTP
+	url = git://github.com/doy/net-http.git
