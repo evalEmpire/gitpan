@@ -1,105 +1,94 @@
-use MooseX::Declare;
+package Gitpan::Github;
 
-use Net::GitHub::V2::NoRepo;
+use Mouse;
+extends 'Net::GitHub::V3';
 
-role Net::GitHub::V2::NoRepo
-  with Gitpan::Github::ResponseReader
-  with Gitpan::CanBackoff
+use version; our $VERSION = qv("v2.0.0");
+
+use perl5i::2;
 {
-    method default_success_check($response?) {
-        return 0 unless $response;
+    no warnings 'redefine';
+    use Method::Signatures;
+}
+use Path::Class;
 
-        if( my $error = $self->is_network_error($response) ) {
-            croak "Looks like the network is down: $error";
-        }
+has "owner" =>
+  is            => 'ro',
+  isa           => 'Str',
+  default       => 'gitpan',
+;
 
-        return 0 if $self->is_too_many_requests($response);
-        return 1;
+has "+access_token" =>
+  default       => sub {
+      return $ENV{GITPAN_GITHUB_ACCESS_TOKEN} ||
+             # A read only token for testing
+             "f58a7dfa0f749ccb521c8da38f9649e2eff2434f"
+  };
+
+# This is necessary because you'll probably have two accounts on github
+# and thus multiple ssh keys.
+has "host" =>
+  is        => 'rw',
+  isa       => 'Str',
+  default   => 'github-gitpan';
+
+method BUILD( HashRef $args ) {
+    if( $self->owner && $self->repo ) {
+        $self->set_default_user_repo($self->owner, $self->repo);
     }
 
-
-    # Monkey patch the baseline JSON fetcher in Net::GitHub::V2
-    # to be more robust
-    {
-        my $orig = Net::GitHub::V2::NoRepo->can("get_json_to_obj");
-        my $new  = sub {
-            my $self = shift;
-            my @args = @_;
-
-            $self->do_with_backoff(
-                times        => 6,
-                code         => sub {
-                    return $self->$orig(@args);
-                }
-            );
-        };
-
-        no warnings 'redefine';
-        *get_json_to_obj = $new;
-    }
+    return $self;
 }
 
-
-class Gitpan::Github
-  extends Net::GitHub::V2
-{
-    use perl5i::2;
-    use Path::Class;
-    use MooseX::AlwaysCoerce;
-
-    has "+owner" =>
-      default   => 'gitpan';
-
-    has "+login" =>
-      default   => 'gitpan';
-
-    # This is necessary because you'll probably have two accounts on github
-    # and thus multiple ssh keys.
-    has "host" =>
-      isa       => 'Str',
-      is        => 'rw',
-      default   => 'github-gitpan';
-
-    method exists_on_github( Str :$owner?, Str :$repo? ) {
-        $owner //= $self->owner;
-        $repo  //= $self->repo;
-
-        my $info = $self->repos->show( $owner, $repo );
-        return $self->get_response_errors($info)->size ? 0 : 1;
+method exists_on_github( Str :$owner //= $self->owner, Str :$repo //= $self->repo ) {
+    my $repo_obj;
+    try {
+        $repo_obj = $self->repos->get($owner, $repo);
     }
+    catch {
+        when( /^Not Found\b/ ) {
+            return 0
+        }
+        default {
+            croak "Error checking if a $owner/$repo exists: $_";
+        }
+    };
 
-    method create_repo( Str :$repo?, Str :$desc, Str :$homepage, Bool :$is_public = 1 ) {
-        $repo //= $self->repo;
+    return $repo_obj ? 1 : 0;
+}
 
-        return $self->repos->create( $repo, $desc, $homepage, $is_public );
-    }
+method create_repo( Str :$repo?, Str :$desc, Str :$homepage ) {
+    $repo //= $self->repo;
 
-    method maybe_create( Str :$repo?, Str :$desc, Str :$homepage, Bool :$is_public = 1 ) {
-        $repo //= $self->repo;
+    return $self->repos->create(
+        org             => $self->owner,
+        name            => $repo,
+        description     => $desc,
+        homepage        => $homepage,
+        has_issues      => 0,
+        has_wiki        => 0,
+    );
+}
 
-        return $repo if $self->exists_on_github();
-        return $self->create_repo(
-            repo        => $repo,
-            desc        => $desc,
-            homepage    => $homepage,
-            is_public   => $is_public
-        );
-    }
+method maybe_create( Str :$repo?, Str :$desc, Str :$homepage ) {
+    $repo //= $self->repo;
 
-    method remote {
-        return sprintf q[git@%s:%s/%s.git], $self->host, $self->owner, $self->repo;
-    }
+    return $repo if $self->exists_on_github();
+    return $self->create_repo(
+        repo        => $repo,
+        desc        => $desc,
+        homepage    => $homepage,
+    );
+}
 
-    method change_repo_info(%changes) {
-        %changes = map { +"values[$_]" => $changes{$_} } keys %changes;
-        return 1 unless keys %changes;
+method remote( Str :$owner //= $self->owner, Str :$repo //= $self->repo ) {
+    return sprintf q[git@%s:%s/%s.git], $self->host, $owner, $repo;
+}
 
-        my $owner = $self->owner;
-        my $repo  = $self->repo;
-        return $self->repos->get_json_to_obj_authed(
-            "repos/show/$owner/$repo",
-            %changes,
-            "repository"
-        );
-    }
+method change_repo_info(%changes) {
+    return 1 unless keys %changes;
+
+    return $self->repos->get($self->owner, $self->repo)->update(
+        \%changes,
+    );
 }
