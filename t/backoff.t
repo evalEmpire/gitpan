@@ -3,6 +3,8 @@
 use perl5i::2;
 use Test::More;
 
+use lib 'inc';
+
 {
     package Foo;
     use Mouse;

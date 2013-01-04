@@ -3,6 +3,8 @@
 use strict;
 use warnings;
 
+use lib 'inc';
+
 use Path::Class;
 use Test::More;
 

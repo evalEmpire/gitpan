@@ -1,0 +1,278 @@
+=head1 NAME
+
+Git::Repository::Tutorial - Control git from Perl using Git::Repository
+
+=head1 SYNOPSIS
+
+    use Git::Repository;
+
+    # do cool stuff with Git, using the following advice
+
+=head1 HOW-TO
+
+A L<Git::Repository> object represents an actual Git repository,
+against which you can I<run> commands.
+
+=head2 Obtain a Git::Repository object from an existing repository
+
+If your script is expected to run against a repository in the current
+directory (like most Git commands), let L<Git::Repository> handle
+the magic:
+
+    $r = Git::Repository->new();
+
+If the repository has a working copy (work tree):
+
+    $r = Git::Repository->new( work_tree => $dir );
+
+If the repository is a bare repository, or you prefer to provide
+the F<.git> directory location:
+
+    $r = Git::Repository->new( git_dir => $gitdir );
+
+If the work tree and the git directory are in unrelated locations,
+you can also provide both:
+
+    $r = Git::Repository->new( work_tree => $dir, git_dir => $gitdir );
+
+The constructor also accepts an option hash. The various options
+are detailed in the manual page for L<Git::Repository::Command>.
+
+=head2 Run any git command
+
+Git commands can be run against an existing L<Git::Repository> object,
+or against the class itself (in which case, git will try to deduce its
+context from the current directory and the environment).
+
+The pattern for running commands is always the same:
+
+    $r->run( $command => @arguments, \%options );
+
+The C<$command> and C<@arguments> are identical to those you'd pass to
+the C<git> command-line tool. The options hash contains options, as
+described in the manual page for L<Git::Repository::Command>.
+
+=head2 Create a new repository
+
+Sometime, you'll need to create the Git repository from scratch:
+
+    # git version 1.6.5 and above
+    Git::Repository->run( init => $dir );
+    $r = Git::Repository->new( work_tree => $dir );
+
+    # any older git requires the command to be run in the work tree,
+    # so we use the cwd option
+    Git::Repository->run( init => { cwd => $dir } );
+    $r = Git::Repository->new( work_tree => $dir );
+
+Note that the old C<create()> method is obsolete, warns and will be removed
+in a future version.
+
+=head2 Clone a repository
+
+Cloning works the same way:
+
+    Git::Repository->run( clone => $url => $dir );
+    $r = Git::Repository->new( $dir );
+
+=head2 Run a simple command
+
+When you don't really care about the output of the command, just call
+it:
+
+    $r->run( add => '.' );
+    $r->run( commit => '-m', 'my commit message' );
+
+In case of an error or warning, L<Git::Repository> will C<croak()> or
+C<carp()> appropriately.
+
+=head2 Silence warnings for some Git commands
+
+Some Git porcelain commands provide additional information on C<STDERR>.
+One typical example is C<git checkout>:
+
+    $ git checkout mybranch
+    Switched to branch 'mybranch'
+
+The C<run()> method of L<Git::Repository> treats all output on C<STDERR>
+as a warning. Therefore, the following code:
+
+    $r->run( checkout => 'mybranch' );
+
+will output a warning like this one:
+
+    Switched to branch 'mybranch' at myscript.pl line 10.
+
+In such a case, you can use the C<quiet> option to silence the warning
+for a single command:
+
+    $r->run( checkout => 'mybranch', { quiet => 1 } );
+
+To silence I<all> warnings, you can pass the C<quiet> option during the
+creation of the original repository object:
+
+    my $r = Git::Repository->new( { quiet => 1 } );
+
+This is not recommended, as it might hide important information from you.
+
+=head2 Process normal and error output
+
+The C<run()> command doesn't capture C<STDERR>: it only warns (or dies)
+if something was printed on it. To be able to actually capture error
+output, C<command()> must be used.
+
+    my $cmd = $r->command( @cmd );
+    my @errput = $cmd->stderr->getlines();
+    $cmd->close;
+
+C<run()> also captures all output at once, which can lead to unnecessary
+memory consumption when capturing the output of some really verbose
+commands.
+
+    my $cmd = $r->command( log => '--pretty=oneline', '--all' );
+    my $log = $cmd->stdout;
+    while (<$log>) {
+        ...;
+    }
+    $cmd->close;
+
+Of course, as soon as one starts reading and writing to an external
+process' communication handles, a risk of blocking exists.
+I<Caveat emptor>.
+
+=head2 Provide input on standard input
+
+Use the C<input> option:
+
+    my $commit = $r->run( 'commit-tree', $tree, '-p', $parent,
+        { input => $message } );
+
+=head2 Change the environment of a command
+
+Use the C<env> option:
+
+    $r->run(
+        'commit', '-m', 'log message',
+        {   env => {
+                GIT_COMMITTER_NAME  => 'Git::Repository',
+                GIT_COMMITTER_EMAIL => 'book@cpan.org',
+            },
+        },
+    );
+
+See L<Git::Repository::Command> for other available options.
+
+=head2 Process the output of B<git log>
+
+When creating a tool that needs to process the output of B<git log>,
+you should always define precisely the expected format using the
+I<--pretty> option, and choose a format that is easy to parse.
+
+Assuming B<git log> will output the default format will eventually
+lead to problems, for example when the user's git configuration defines
+C<format.pretty> to be something else than the default of C<medium>.
+
+See also L<Git::Repository::Plugin::Log> for adding to your
+L<Git::Repository> objects a C<log()> method that will parse the log
+output for you.
+
+=head2 Process the output of B<git shortlog>
+
+B<git shortlog> behaves differently when it detects it's not attached
+to a terminal. In that case, it just tries to read some B<git log>
+output from its standard input.
+
+So this oneliner will hang, because B<git shortlog> is waiting for some
+data from the program connected to its standard input (the oneliner):
+
+    perl -MGit::Repository -le 'print scalar Git::Repository->run( shortlog => -5 )'
+
+Whereas this one will "work" (as in "immediately return with no output"):
+
+    perl -MGit::Repository -le 'print scalar Git::Repository->run( shortlog => -5, { input => "" } )'
+
+So, you need to give B<git shortlog> I<some> input (from B<git log>):
+
+    perl -MGit::Repository -le 'print scalar Git::Repository->run( shortlog => { input => scalar Git::Repository->run( log => -5 ) } )'
+
+If the log output is large, you'll probably be better off with something
+like the following:
+
+    use Git::Repository;
+
+    # start both git commands
+    my $log = Git::Repository->command('log')->stdout;
+    my $cmd = Git::Repository->command( shortlog => -ens );
+
+    # feed one with the output of the other
+    my $in = $cmd->stdin;
+    print {$in} $_ while <$log>;
+    close $in;
+
+    # and do something with the output
+    print $cmd->stdout->getlines;
+
+=head2 Wrap git in a sudo call
+
+If for a given repository you want to wrap all calls to git in a C<sudo>
+call, you can use the C<git> option with an array ref:
+
+    my $r = Git::Repository->new( { git => [qw( sudo -u nobody git )] } );
+
+In this case, every call to git from C<$r> will actually call
+C<sudo -u nobody git>.
+
+=head2 Use submodules
+
+Because L<Git::Repository> automatically sets the C<GIT_DIR> and
+C<GIT_WORK_TREE> environment variables, some C<submodule> sub-commands
+may fail. For example:
+
+    $r->run( submodule => add => $repository => 'sub' );
+
+will give the following error:
+
+    error: pathspec 'sub' did not match any file(s) known to git.
+
+To avoid this error, you should enforce the removal of the C<GIT_WORK_TREE>
+variable from the environment in which the command is run:
+
+    $r->run(
+        submodule => add => $repository => 'sub',
+        { env => { GIT_WORK_TREE => undef } }
+    );
+
+Note that L<System::Command> version 1.04 is required to be able to remove
+variables from the environment.
+
+=head2 Sort git versions
+
+Basically, you need to recreate the C<cmp> operator for Git versions,
+using the I<private> C<_version_gt()> method (which accepts two parameters):
+
+    @sorted_versions = sort {
+        Git::Repository::_version_gt( $a, $b )
+            || -Git::Repository::_version_gt( $b, $a )
+    } @versions;
+
+
+=head2 Add specialized methods to your Git::Repository objects
+
+Have a look at L<Git::Repository::Plugin> and L<Git::Repository::Plugin::Log>,
+to learn how to add your own methods to L<Git::Repository>.
+
+=head1 AUTHOR
+
+Philippe Bruhat (BooK), C<< <book at cpan.org> >>
+
+=head1 COPYRIGHT
+
+Copyright 2010-2012 Philippe Bruhat (BooK), all rights reserved.
+
+=head1 LICENSE
+
+This documentation is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+=cut
+

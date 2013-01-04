@@ -3,11 +3,18 @@
 use strict;
 use warnings;
 
-use Module::Build;
+use lib 'inc';
 
-my $build = Module::Build->new(
+use MyBuilder;
+
+my $build = MyBuilder->new(
     dist_name           => 'gitpan',
     dist_version        => '0.01',
+    dist_author         => 'Michael G. Schwern <schwern@pobox.com>',
+    dist_abstract       => "Put each CPAN distribution into its own Github repo",
+
+    module_name         => 'Gitpan',
+
     requires            => {
         "BackPAN::Index"        => 0.39,
         "Capture::Tiny"         => 0.08, # exception bug
@@ -21,3 +28,4 @@ my $build = Module::Build->new(
         "Net::GitHub::V3"       => 0,
     }
 );
+$build->create_build_script;
