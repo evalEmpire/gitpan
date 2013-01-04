@@ -216,6 +216,8 @@ github.com for a generous donation of space and support and angry unicorns
 Yanick Champoux for git-cpan-patch which does most of the work.
 ftp.funet.fi for an rsync-able BackPAN mirror.
 Michael Schwern glued it all together.
+Integra Telecom has generously donated bandwidth and server space for
+  gitpan and our own BackPAN mirror.
 
 
 How can I contact gitPAN?
