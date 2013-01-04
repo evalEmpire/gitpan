@@ -6,10 +6,7 @@ extends 'Net::GitHub::V3';
 use version; our $VERSION = qv("v2.0.0");
 
 use perl5i::2;
-{
-    no warnings 'redefine';
-    use Method::Signatures;
-}
+use Method::Signatures;
 use Path::Class;
 
 has "owner" =>

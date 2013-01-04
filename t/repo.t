@@ -23,7 +23,7 @@ isa_ok $repo, "Gitpan::Repo";
 
 # Recover from a module name
 {
-    my $repo = Gitpan::Repo->new( distname => "This::That::Whatever" );
+    my $repo = Gitpan::Repo->new( modulename => "This::That::Whatever" );
     is $repo->distname, "This-That-Whatever";
 }
 
@@ -33,13 +33,13 @@ isa_ok $repo, "Gitpan::Repo";
     my $gh = $repo->github;
     isa_ok $gh, "Gitpan::Github";
     is $gh->owner, "gitpan";
-    is $gh->login, "gitpan";
     is $gh->repo,  "Foo-Bar";
 
-    $gh = $repo->github({ login => "wibble", token => 12345 });
+    $repo->github({ login => "wibble", access_token => 12345 });
+    $gh = $repo->github;
     isa_ok $gh, "Gitpan::Github";
     is $gh->login, "wibble";
-    is $gh->token, 12345;
+    is $gh->access_token, 12345;
     is $gh->owner, "gitpan";
     is $gh->repo,  "Foo-Bar";
 
@@ -47,15 +47,15 @@ isa_ok $repo, "Gitpan::Repo";
         distname  => "Test-This",
         directory => "foo/bar",
         github    => {
-            token => 54321,
-            login => 12345,
+            access_token => 54321,
+            login        => 12345,
         }
     );
     isa_ok $repo2, "Gitpan::Repo";
     $gh = $repo2->github;
     isa_ok $gh, "Gitpan::Github";
     is $gh->login, "12345";
-    is $gh->token, "54321";
+    is $gh->access_token, "54321";
     is $gh->owner, "gitpan";
     is $gh->repo,  "Test-This";
 }
