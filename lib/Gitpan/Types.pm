@@ -2,6 +2,7 @@ package Gitpan::Types;
 
 use Mouse::Util::TypeConstraints;
 
+class_type "BackPAN::Index";
 class_type "Path::Class::Dir";
 class_type "Path::Class::File";
 
