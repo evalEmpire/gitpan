@@ -8,7 +8,7 @@ use lib 'inc';
 {
     package Foo;
     use Mouse;
-    with "Gitpan::CanBackoff";
+    with "Gitpan::Role::CanBackoff";
 
     sub default_success_check {
         my $self = shift;

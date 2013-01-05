@@ -2,7 +2,7 @@ package Gitpan::Git;
 
 use Mouse;
 extends 'Git::Repository';
-with "Gitpan::CanBackoff";
+with "Gitpan::Role::CanBackoff";
 
 use perl5i::2;
 use Method::Signatures;

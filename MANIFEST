@@ -17,11 +17,11 @@ inc/Net/HTTPS.pm
 inc/Test/Git.pm
 inc/Test/TypeConstraints.pm
 lib/Git/CPAN/Patch/Import.pm
-lib/Gitpan/CanBackoff.pm
 lib/Gitpan/Git.pm
 lib/Gitpan/Github.pm
 lib/Gitpan/Github/ResponseReader.pm
 lib/Gitpan/Repo.pm
+lib/Gitpan/Role/CanBackoff.pm
 lib/Gitpan/Types.pm
 MANIFEST			This list of files
 MANIFEST.SKIP

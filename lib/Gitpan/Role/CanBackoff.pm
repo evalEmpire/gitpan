@@ -1,4 +1,4 @@
-package Gitpan::CanBackoff;
+package Gitpan::Role::CanBackoff;
 
 use Mouse::Role;
 requires "default_success_check";
