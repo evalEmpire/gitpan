@@ -7,7 +7,6 @@ inc/Net/HTTP.pm
 inc/Net/HTTP/Methods.pm
 inc/Net/HTTP/NB.pm
 inc/Net/HTTPS.pm
-inc/Test/TypeConstraints.pm
 lib/Git/CPAN/Patch/Import.pm
 lib/Gitpan/Git.pm
 lib/Gitpan/Github.pm

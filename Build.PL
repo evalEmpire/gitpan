@@ -26,6 +26,10 @@ my $build = MyBuilder->new(
         "Path::Class"           => 0,
         "perl5i::2"             => "v2.2.0",
         "Net::GitHub::V3"       => 0,
-    }
+    },
+
+    test_requires       => {
+        "Test::TypeConstraints" => 0.05,
+    },
 );
 $build->create_build_script;

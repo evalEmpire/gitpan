@@ -1,6 +1,3 @@
-[submodule "submodules/Test-TypeConstraints"]
-	path = submodules/Test-TypeConstraints
-	url = git://github.com/schwern/p5-test-type_constraints.git
 [submodule "submodules/Net-HTTP"]
 	path = submodules/Net-HTTP
 	url = git://github.com/doy/net-http.git
