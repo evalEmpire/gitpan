@@ -1,5 +1,8 @@
 package Git::CPAN::Patch::Import;
 
+# This isn't going to be used in the rewrite.  It exists as a reference to
+# the old working code to be rebuilt.
+
 use strict;
 use warnings;
 
