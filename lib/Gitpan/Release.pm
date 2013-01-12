@@ -59,7 +59,7 @@ has author =>
       return $self->cpanplus->author_tree->{$cpanid};
   };
 
-has unpack_dir =>
+has work_dir =>
   is            => 'ro',
   isa           => 'File::Temp::Dir',
   lazy          => 1,
@@ -73,8 +73,13 @@ has archive_file =>
   isa           => 'Path::Class::File',
   lazy          => 1,
   default       => method {
-      return Path::Class::File->new( $self->unpack_dir, $self->filename );
+      return Path::Class::File->new( $self->work_dir, $self->filename );
   };
+
+has extract_dir =>
+  is            => 'rw',
+  isa           => 'Path::Class::Dir',
+  coerce        => 1;
 
 method get {
     my $res = $self->ua->get(
@@ -85,4 +90,20 @@ method get {
     croak "File not fully retrieved" unless -s $self->archive_file == $self->size;
 
     return $res;
+}
+
+method extract {
+    my $archive = $self->archive_file;
+    my $dir     = $self->work_dir;
+
+    croak "$archive does not exist, did you get it?" unless -e $archive;
+
+    require Archive::Extract;
+    my $ae = Archive::Extract->new( archive => $archive );
+    croak "Couldn't extract $archive to $dir because ". $ae->error
+      unless $ae->extract( to => $self->work_dir );
+
+    $self->extract_dir( $ae->extract_path );
+
+    return $self->extract_dir;
 }
