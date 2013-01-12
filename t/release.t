@@ -24,9 +24,21 @@ note "The basics"; {
     );
     isa_ok $pony, "Gitpan::Release";
 
-    is $pony->backpan_file->path, "authors/id/D/DC/DCANTRELL/Acme-Pony-1.1.1.tar.gz";
+    is $pony->path, "authors/id/D/DC/DCANTRELL/Acme-Pony-1.1.1.tar.gz";
 }
 
 
+note "Author info"; {
+    my $pony = Gitpan::Release->new(
+        distname => 'Acme-Pony',
+        version  => '1.1.1'
+    );
+    isa_ok $pony, "Gitpan::Release";
+
+    my $author = $pony->author;
+    isa_ok $author, "CPANPLUS::Module::Author";
+    is $author->cpanid, "DCANTRELL";
+    like $author->author, qr{Cantrell}i;
+}
+
 done_testing;
-        
