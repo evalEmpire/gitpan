@@ -20,6 +20,7 @@ my $build = MyBuilder->new(
         "Capture::Tiny"         => 0.08, # exception bug
         'CPANPLUS'              => 0.9133,
         "File::chdir"           => 0,
+        "File::chmod"           => 0.32,
         "Getopt::Long::Descriptive"    => 0.085,
         "Git::Repository"       => 1.300,
         "Method::Signatures"    => 0,

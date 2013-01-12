@@ -2,6 +2,7 @@ package Gitpan::Release;
 
 use Mouse;
 use Gitpan::Types;
+use File::chmod;  # use before autodie to avoid being blown over
 use perl5i::2;
 use Method::Signatures;
 
@@ -105,5 +106,21 @@ method extract {
 
     $self->extract_dir( $ae->extract_path );
 
+    $self->fix_permissions;
+
     return $self->extract_dir;
+}
+
+# Make sure the archive files are readable and the directories are traversable.
+method fix_permissions {
+    return unless -d $self->extract_dir;
+
+    chmod "u+rx", $self->extract_dir;
+
+    require File::Find;
+    File::Find::find(sub {
+        -d $_ ? chmod "u+rx", $_ : chmod "u+r", $_;
+    }, $self->extract_dir);
+
+    return;
 }
