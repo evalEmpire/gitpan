@@ -18,6 +18,7 @@ my $build = MyBuilder->new(
     requires            => {
         "BackPAN::Index"        => 0.39,
         "Capture::Tiny"         => 0.08, # exception bug
+        'CPANPLUS'              => 0.9133,
         "File::chdir"           => 0,
         "Getopt::Long::Descriptive"    => 0.085,
         "Git::Repository"       => 1.300,
