@@ -34,3 +34,11 @@ method backpan_releases {
         { path => { 'not like', '%.ppm' } },
         { order_by => { -asc => "date" } } );
 }
+
+method release(Str :$version) {
+    require Gitpan::Release;
+    return Gitpan::Release->new(
+        distname        => $self->name,
+        version         => $version
+    );
+}

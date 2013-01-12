@@ -30,4 +30,13 @@ note "The basics"; {
     is $first_release->version, '1.1.1';
 }
 
+note "release"; {
+    my $dist = $CLASS->new( name => "Acme-Pony" );
+
+    my $release = $dist->release( version => '1.1.1' );
+    isa_ok $release, "Gitpan::Release";
+    is $release->distname, "Acme-Pony";
+    is $release->version,  "1.1.1";
+}
+
 done_testing;
