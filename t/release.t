@@ -41,4 +41,20 @@ note "Author info"; {
     like $author->author, qr{Cantrell}i;
 }
 
+
+note "get"; {
+    my $pony = new_ok "Gitpan::Release", [
+        distname => 'Acme-Pony',
+        version  => '1.1.1'
+    ];
+
+    my $file = $pony->archive_file;
+    like $file, qr{Acme-Pony};
+    ok !-e $file;
+
+    my $res = $pony->get;
+    ok $res->is_success;
+    ok -e $file;
+}
+
 done_testing;
