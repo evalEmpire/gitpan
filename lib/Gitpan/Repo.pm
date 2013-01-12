@@ -53,7 +53,6 @@ has github  =>
   lazy      => 1,
   coerce    => 0,
   trigger   => method($new, $old?) {
-      $DB::single = 1;
       return $new if $new->isa("Gitpan::Github");
       my $gh = $self->_new_github($new);
       $self->github( $gh );
