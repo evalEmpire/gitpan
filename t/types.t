@@ -36,4 +36,12 @@ note "Dist and module types"; {
     type_isnt "123::Foo",         "Gitpan::Module";
 }
 
+note "URI coercion"; {
+    type_isa "http://example.com", "URI", "str to URI coercion",   coerce => sub {
+        isa_ok $_[0], "URI";
+        is $_[0], "http://example.com";
+    };
+}
+
+
 done_testing;

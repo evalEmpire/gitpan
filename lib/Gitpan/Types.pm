@@ -9,6 +9,7 @@ class_type "Gitpan::Dist";
 class_type "Gitpan::Repo";
 class_type "Path::Class::Dir";
 class_type "Path::Class::File";
+class_type "URI";
 
 subtype "Gitpan::AbsDir",
   as "Path::Class::Dir",
@@ -50,5 +51,12 @@ subtype "Gitpan::Module",
   as "Str",
   message { "A CPAN module name " },
   where { /^[A-Za-z]+ (?: :: \w+)* /x };
+
+coerce "URI",
+  from "Str",
+  via {
+      require URI;
+      return URI->new($_);
+  };
 
 1;
