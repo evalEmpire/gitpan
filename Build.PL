@@ -28,9 +28,11 @@ my $build = MyBuilder->new(
         "Path::Class"           => 0,
         "perl5i::2"             => "v2.2.0",
         "Net::GitHub::V3"       => 0,
+        "YAML::XS"              => 0,
     },
 
     test_requires       => {
+        "Test::Most"            => 0,
         "Test::TypeConstraints" => 0.05,
     },
 );
