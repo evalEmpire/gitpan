@@ -22,7 +22,7 @@ isa_ok $gh, "Gitpan::Github";
 
 # remote
 {
-    is $gh->remote( repo => "gitpan" ), "git\@github-gitpan:gitpan/gitpan.git";
+    is $gh->remote( repo => "gitpan" ), "git\@github.com:gitpan/gitpan.git";
 }
 
 done_testing();

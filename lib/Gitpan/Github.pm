@@ -22,12 +22,10 @@ has "+access_token" =>
              "f58a7dfa0f749ccb521c8da38f9649e2eff2434f"
   };
 
-# This is necessary because you'll probably have two accounts on github
-# and thus multiple ssh keys.
-has "host" =>
+has "remote_host" =>
   is        => 'rw',
   isa       => 'Str',
-  default   => 'github-gitpan';
+  default   => 'github.com';
 
 method BUILD( HashRef $args ) {
     if( $self->owner && $self->repo ) {
@@ -79,7 +77,7 @@ method maybe_create( Str :$repo?, Str :$desc, Str :$homepage ) {
 }
 
 method remote( Str :$owner //= $self->owner, Str :$repo //= $self->repo ) {
-    return sprintf q[git@%s:%s/%s.git], $self->host, $owner, $repo;
+    return sprintf q[git@%s:%s/%s.git], $self->remote_host, $owner, $repo;
 }
 
 method change_repo_info(%changes) {
