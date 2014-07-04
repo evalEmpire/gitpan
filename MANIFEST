@@ -1,16 +1,10 @@
-.gitmodules
 bin/gitpan
 bin/gitpan-import
 Build.PL
 inc/MyBuilder.pm
-inc/Net/HTTP.pm
-inc/Net/HTTP/Methods.pm
-inc/Net/HTTP/NB.pm
-inc/Net/HTTPS.pm
 lib/Git/CPAN/Patch/Import.pm
 lib/Gitpan/Git.pm
 lib/Gitpan/Github.pm
-lib/Gitpan/Github/ResponseReader.pm
 lib/Gitpan/Repo.pm
 lib/Gitpan/Role/CanBackoff.pm
 lib/Gitpan/Types.pm

@@ -1,5 +1,0 @@
-This directory contains other Perl modules which, for various reasons,
-we need patched versions of.  These point at specific repositories and
-branches.
-
-They're not run out of here, but rather installed and checked into inc.

@@ -1,7 +1,5 @@
 #!/usr/bin/perl
 
-use lib 'inc';
-
 use perl5i::2;
 use Path::Class;
 use File::Temp qw(tempdir);

@@ -3,8 +3,6 @@
 use strict;
 use warnings;
 
-use lib 'inc';
-
 use Test::More;
 
 use Gitpan::Github;
@@ -15,8 +13,8 @@ isa_ok $gh, "Gitpan::Github";
 
 # exists_on_github()
 {
-    ok $gh->exists_on_github( owner => "schwern", repo => "gitpan" );
-    ok !$gh->exists_on_github( owner => "schwern", repo => "super-python" );
+    ok $gh->exists_on_github( owner => "evalEmpire", repo => "gitpan" );
+    ok !$gh->exists_on_github( owner => "evalEmpire", repo => "super-python" );
 }
 
 

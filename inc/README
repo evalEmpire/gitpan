@@ -1,2 +1,0 @@
-This directory is both for custom code needed to build Gitpan (MyBuilder.pm) and
-versions of CPAN modules specially patched for Gitpan and installed from submodules/

@@ -1,3 +1,0 @@
-[submodule "submodules/Net-HTTP"]
-	path = submodules/Net-HTTP
-	url = git://github.com/doy/net-http.git
