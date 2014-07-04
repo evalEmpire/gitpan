@@ -41,10 +41,10 @@ method exists_on_github( Str :$owner //= $self->owner, Str :$repo //= $self->rep
         $repo_obj = $self->repos->get($owner, $repo);
     }
     catch {
-        when( /^Not Found\b/ ) {
+        if( /^Not Found\b/ ) {
             return 0
         }
-        default {
+        else {
             croak "Error checking if a $owner/$repo exists: $_";
         }
     };
