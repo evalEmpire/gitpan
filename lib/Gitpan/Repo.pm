@@ -47,8 +47,10 @@ has git     =>
       return Gitpan::Git->init($self->directory);
   };
 
+use Mouse::Util::TypeConstraints qw(class_type);
+class_type("Gitpan::Github");  # Work around a Mouse bug in type unions
 has github  =>
-  isa       => "Gitpan::Github|HashRef",
+  isa       => 'HashRef|Gitpan::Github',
   is        => 'rw',
   lazy      => 1,
   coerce    => 0,

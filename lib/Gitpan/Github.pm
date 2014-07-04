@@ -1,6 +1,7 @@
 package Gitpan::Github;
 
-use Mouse;
+use Moo;
+use Types::Standard qw(Str);
 extends 'Net::GitHub::V3';
 
 use version; our $VERSION = qv("v2.0.0");
@@ -11,11 +12,10 @@ use Path::Class;
 
 has "owner" =>
   is            => 'ro',
-  isa           => 'Str',
-  default       => 'gitpan',
-;
+  isa           => Str,
+  default       => 'gitpan';
 
-has "+access_token" =>
+has '+access_token' =>
   default       => sub {
       return $ENV{GITPAN_GITHUB_ACCESS_TOKEN} ||
              # A read only token for testing
@@ -24,7 +24,7 @@ has "+access_token" =>
 
 has "remote_host" =>
   is        => 'rw',
-  isa       => 'Str',
+  isa       => Str,
   default   => 'github.com';
 
 method BUILD( HashRef $args ) {
