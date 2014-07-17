@@ -28,7 +28,7 @@ my $build = MyBuilder->new(
         "Mouse"                 => 0,
         "Path::Class"           => 0,
         "perl5i::2"             => "v2.2.0",
-        "Net::GitHub::V3"       => '0.60',
+        "Net::GitHub::V3"       => '0.62',
         "Types::Standard"       => '0.044',
         "YAML::XS"              => 0,
     },
