@@ -19,6 +19,21 @@ subtest defaults => sub {
 } or BAIL_OUT("config didn't pass basic tests, this is bad");
 
 
+subtest env_GITPAN_CONFIG_DIR => sub {
+    my $tempdir = Path::Class::tempdir;
+    my $config_file = $tempdir->file(".gitpan");
+    local $ENV{GITPAN_CONFIG_DIR} = $tempdir;
+
+    my $config_data = {
+        github          => { token => "fromenv" },
+    };
+    DumpFile($config_file, $config_data);
+
+    my $config = new_ok $CLASS;
+    is_deeply $config->config, { github => { token => "fromenv" } };
+};
+
+
 subtest read_config => sub {
     my $tempdir = Path::Class::tempdir;
     my $config_file  = $tempdir->file("test.gitpan");

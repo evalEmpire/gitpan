@@ -18,7 +18,10 @@ has search_dirs =>
   is            => 'ro',
   isa           => 'ArrayRef[Path::Class::Dir]',
   default       => method {
-      return [dir("."), dir($ENV{HOME})]
+      return [
+          map { dir($_) } grep { defined && length }
+            $ENV{GITPAN_CONFIG_DIR}, ".", $ENV{HOME}
+      ];
   };
 
 has config_file =>
@@ -64,8 +67,9 @@ Gitpan::Config - Configuration object for gitpan
 
 This is an object to access the Gitpan configuration.
 
-By default, the configuration file is stored in F<.gitpan> in either
-the current working directory or the home directory.
+By default, the configuration file is stored in F<.gitpan>.  It is
+looked for in GITPAN_CONFIG_DIR (environment variable), the current
+working directory or the home directory in that order.
 
 The format of the config file is YAML.
 
@@ -77,6 +81,12 @@ are "overlays".  Values in an overlay will replace the normal values.
 
 Currently the only recognized overlay is "test" used while testing
 Gitpan.
+
+=head1 ENVIRONMENT
+
+=head3 GITPAN_CONFIG_DIR
+
+If set, it will look for the configuration file in this directory first.
 
 =head1 SEE ALSO
 
