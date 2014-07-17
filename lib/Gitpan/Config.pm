@@ -46,6 +46,45 @@ has use_overlays =>
       return $self->is_test ? ["test"] : [];
   };
 
+
+=head1 NAME
+
+Gitpan::Config - Configuration object for gitpan
+
+=head1 SYNOPSIS
+
+    # A Config object should generally not be created directly,
+    # but via Gitpan::Role::HasConfig like so.
+    my $config = $object->config;
+
+    # Get some data out of the config.
+    my $github_token = $config->config->{github}{token};
+
+=head1 DESCRIPTION
+
+This is an object to access the Gitpan configuration.
+
+By default, the configuration file is stored in F<.gitpan> in either
+the current working directory or the home directory.
+
+The format of the config file is YAML.
+
+=head2 Overlays
+
+Sometimes you want to change some config values in certain situations,
+such as when testing, without duplicating everything.  For this there
+are "overlays".  Values in an overlay will replace the normal values.
+
+Currently the only recognized overlay is "test" used while testing
+Gitpan.
+
+=head1 SEE ALSO
+
+L<Gitpan::Role::HasConfig>
+
+=cut
+
+
 method search_for_config_file {
     my $filename = $self->config_filename;
     my $dirs = $self->search_dirs;
