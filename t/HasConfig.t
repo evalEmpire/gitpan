@@ -11,7 +11,7 @@ note "Setup test class"; {
 
 note "basics"; {
     my $obj = Some::Class->new;
-    isa_ok $obj->config, "Gitpan::Config";
+    isa_ok $obj->config, "Gitpan::ConfigFile";
 }
 
 done_testing;

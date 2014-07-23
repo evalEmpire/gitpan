@@ -6,7 +6,7 @@ use Method::Signatures;
 
 has config =>
   is            => 'ro',
-  isa           => "Gitpan::Config",
+  isa           => "Gitpan::ConfigFile",
   lazy          => 1,
   default       => method {
       my $config_class = $self->config_class;
@@ -17,7 +17,7 @@ has config =>
 has config_class =>
   is            => 'ro',
   isa           => 'Str',
-  default       => "Gitpan::Config";
+  default       => "Gitpan::ConfigFile";
 
 
 =head1 NAME
@@ -49,13 +49,13 @@ Normally there is no need to set the config.
 
 =head3 config_class
 
-What sub-class of L<Gitpan::Config> should be used to instanciate the
+What sub-class of L<Gitpan::ConfigFile> should be used to instanciate the
 config object.
 
-Defaults to L<Gitpan::Config>.
+Defaults to L<Gitpan::ConfigFile>.
 
 =head1 SEE ALSO
 
-L<Gitpan::Config>
+L<Gitpan::ConfigFile>
 
 =cut

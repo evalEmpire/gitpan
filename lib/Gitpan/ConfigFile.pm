@@ -1,4 +1,4 @@
-package Gitpan::Config;
+package Gitpan::ConfigFile;
 
 use Mouse;
 use Gitpan::Types;
@@ -52,11 +52,11 @@ has use_overlays =>
 
 =head1 NAME
 
-Gitpan::Config - Configuration object for gitpan
+Gitpan::ConfigFile - Configuration file for Gitpan
 
 =head1 SYNOPSIS
 
-    # A Config object should generally not be created directly,
+    # A ConfigFile object should generally not be created directly,
     # but via Gitpan::Role::HasConfig like so.
     my $config = $object->config;
 

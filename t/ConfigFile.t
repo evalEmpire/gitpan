@@ -5,7 +5,7 @@ use Test::Most;
 use Path::Class;
 use YAML::XS qw(DumpFile);
 
-my $CLASS = 'Gitpan::Config';
+my $CLASS = 'Gitpan::ConfigFile';
 require_ok $CLASS;
 
 subtest defaults => sub {
