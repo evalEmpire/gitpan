@@ -16,6 +16,8 @@ my $build = MyBuilder->new(
     module_name         => 'Gitpan',
 
     requires            => {
+        perl                    => '5.18.1',
+
         "BackPAN::Index"        => 0.39,
         "Capture::Tiny"         => 0.08, # exception bug
         'CPANPLUS'              => 0.9133,
@@ -27,8 +29,8 @@ my $build = MyBuilder->new(
         "Moo"                   => '1.004002',
         "Mouse"                 => 0,
         "Path::Class"           => 0,
-        "perl5i::2"             => "v2.2.0",
-        "Net::GitHub::V3"       => '0.62',
+        "perl5i::2"             => "v2.13.0",
+        "Net::GitHub::V3"       => '0.60',
         "Types::Standard"       => '0.044',
         "YAML::XS"              => 0,
     },

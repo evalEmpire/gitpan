@@ -5,6 +5,7 @@ use Gitpan::Types;
 use perl5i::2;
 use Method::Signatures;
 use Path::Class;
+use Gitpan::Config;
 
 use YAML::XS qw(LoadFile);
 
@@ -32,7 +33,7 @@ has config_file =>
 
 has config =>
   is            => 'ro',
-  isa           => 'HashRef',
+  isa           => 'Gitpan::Config',
   lazy          => 1,
   builder       => 'read_config_file';
 
@@ -108,12 +109,15 @@ method search_for_config_file {
 }
 
 method read_config_file {
+    my $config_data;
     if( my $file = $self->config_file ) {
-        return $self->_apply_overlays( LoadFile( $file ) );
+        $config_data = $self->_apply_overlays( LoadFile( $file ) );
     }
     else {
-        return {};
+        $config_data = {};
     }
+
+    return Gitpan::Config->new($config_data);
 }
 
 method _apply_overlays( HashRef $config ) {
