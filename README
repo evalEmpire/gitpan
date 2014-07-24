@@ -1,14 +1,3 @@
-A placeholder for the gitPAN project so it can have an issue tracker,
-wiki and all that.
-
-There is very little code written for gitpan.  It is mostly just gluing
-together other people's work:  Leon's Parse::BACKPAN::Packages and Yanick's
-git-cpan-patch.  The patched versions of these necessary to make gitpan
-work are linked in as git submodules.
-
-FAQ
-***
-
 What is gitPAN?
 ---------------
 
@@ -64,7 +53,7 @@ Where is gitPAN?
 The repositories are on github.com at http://github.com/gitpan
 (watch out, it may overload your browser).
 
-Code, discussion, and issues can be had at http://github.com/schwern/gitpan.
+Code, discussion, and issues can be had at http://github.com/evalEmpire/gitpan.
 
 
 How do I access a distribution on gitPAN?
@@ -150,7 +139,7 @@ list of distributions from BackPAN::Index.
 How can I help?
 ---------------
 
-See http://github.com/schwern/gitpan/issues for a list of open problems.
+See http://github.com/evalEmpire/gitpan/issues for a list of open problems.
 
 You can also contribute by looking through imported CPAN distributions,
 checking for mistakes and reporting them as issues.
@@ -195,7 +184,7 @@ the developer.
 I noticed a problem with a repository
 -------------------------------------
 
-Please report it at <http://github.com/schwern/gitpan/issues> or to
+Please report it at <http://github.com/evalEmpire/gitpan/issues> or to
 schwern+github@gmail.com.
 
 
@@ -223,6 +212,6 @@ How can I contact gitPAN?
 
 Email:   schwern+gitpan@gmail.com
 Web:     http://github.com/gitpan/
-Dev:     http://github.com/schwern/gitpan
-Issues:  http://github.com/schwern/gitpan/issues
+Dev:     http://github.com/evalEmpire/gitpan
+Issues:  http://github.com/evalEmpire/gitpan/issues
 Twitter: #gitpan
