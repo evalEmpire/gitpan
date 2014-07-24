@@ -58,3 +58,5 @@
 #!end included /Users/schwern/perl5/perlbrew/perls/perl-5.16.2-threads/lib/5.16.2/ExtUtils/MANIFEST.SKIP
 
 submodules/
+^\.travis\.yml$
+
