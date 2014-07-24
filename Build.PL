@@ -15,6 +15,10 @@ my $build = MyBuilder->new(
 
     module_name         => 'Gitpan',
 
+    configure_requires  => {
+        "Module::Build"         => 0.42, # For test_requires
+    },
+
     requires            => {
         perl                    => '5.18.1',
 
