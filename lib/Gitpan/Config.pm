@@ -4,79 +4,72 @@ use Mouse;
 use Gitpan::Types;
 use perl5i::2;
 use Method::Signatures;
-use Path::Class;
 
-use YAML::XS qw(LoadFile);
-
-has config_filename =>
+has "github_owner" =>
   is            => 'ro',
   isa           => 'Str',
-  default       => ".gitpan";
+  default       => 'gitpan';
 
-# Search from first to last.
-has search_dirs =>
+has "github_access_token" =>
   is            => 'ro',
-  isa           => 'ArrayRef[Path::Class::Dir]',
-  default       => method {
-      return [dir("."), dir($ENV{HOME})]
+  isa           => 'Str',
+  default       => sub {
+      return $ENV{GITPAN_GITHUB_ACCESS_TOKEN} ||
+             # A read only token for testing
+             "f58a7dfa0f749ccb521c8da38f9649e2eff2434f"
   };
 
-has config_file =>
+has "github_remote_host" =>
   is            => 'ro',
-  isa           => 'Maybe[Path::Class::File]',
-  lazy          => 1,
-  builder       => 'search_for_config_file';
+  isa           => 'Str',
+  default       => 'github.com';
 
-has config =>
-  is            => 'ro',
-  isa           => 'HashRef',
-  lazy          => 1,
-  builder       => 'read_config_file';
 
-has is_test     =>
-  is            => 'ro',
-  isa           => 'Bool',
-  default       => 1;
+=head1 NAME
 
-has use_overlays =>
-  is            => 'ro',
-  isa           => 'ArrayRef',
-  lazy          => 1,
-  default       => method {
-      return $self->is_test ? ["test"] : [];
-  };
+Gitpan::Config - Configuration of Gitpan
 
-method search_for_config_file {
-    my $filename = $self->config_filename;
-    my $dirs = $self->search_dirs;
+=head1 DESCRIPTION
 
-    if( my $dir = $dirs->first(sub{ -e file($_, $filename) }) ) {
-        return file($dir, $filename);
-    }
-    else {
-        return;
-    }
-}
+Contains the configuration for Gitpan as read from a
+L<Gitpan::ConfigFile>.
 
-method read_config_file {
-    if( my $file = $self->config_file ) {
-        return $self->_apply_overlays( LoadFile( $file ) );
-    }
-    else {
-        return {};
-    }
-}
+Gitpan classes should not hard code values or defaults, instead they
+should be used here.
 
-method _apply_overlays( HashRef $config ) {
-    # Don't want them in the final config.
-    my $overlays = delete $config->{overlays};
+Gitpan classes should gain access to Gitpan::Config via
+L<Gitpan::Role::HasConfig>.
 
-    $self->use_overlays->foreach( func($key) {
-        my $overlay = $overlays->{$key};
-        return unless $overlay;
+=head2 Methods
 
-        $config = $config->merge($overlay);
-    });
+=head3 github_owner
 
-    return $config;
-}
+The Github account (owner) whose repositories we're accessing.
+
+Defaults to 'gitpan'.
+
+=head3 github_access_token
+
+The Github API access token used to access the github_owner's account.
+
+Defaults to the GITPAN_GITHUB_ACCESS_TOKEN environment variable or a
+read-only token for testing purposes.
+
+=head3 github_remote_host
+
+The remote host for Github.
+
+Defaults to github.com.
+
+=head1 ENVIRONMENT
+
+=head3 GITPAN_GITHUB_ACCESS_TOKEN
+
+See L</github_access_token>.
+
+=head1 NOTES
+
+Configuration is very simple and flat right now.  This may change once
+the configuration becomes more complicated.
+
+=cut

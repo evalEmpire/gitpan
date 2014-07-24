@@ -1,12 +1,23 @@
 #!/usr/bin/env perl
 
+use v5.18;
 use perl5i::2;
 use Test::Most;
 use Path::Class;
 use YAML::XS qw(DumpFile);
 
-my $CLASS = 'Gitpan::Config';
+my $CLASS = 'Gitpan::ConfigFile';
 require_ok $CLASS;
+
+
+# Test just the values in the Gitpan::Config object we care about,
+# ignore defaults and the like.
+func test_config($config, $want) {
+    $want->each( func($method, $value) {
+        is $config->$method, $value;
+    });
+}
+
 
 subtest defaults => sub {
     my $config = new_ok $CLASS;
@@ -19,13 +30,28 @@ subtest defaults => sub {
 } or BAIL_OUT("config didn't pass basic tests, this is bad");
 
 
+subtest env_GITPAN_CONFIG_DIR => sub {
+    my $tempdir = Path::Class::tempdir;
+    my $config_file = $tempdir->file(".gitpan");
+    local $ENV{GITPAN_CONFIG_DIR} = $tempdir;
+
+    my $config_data = {
+        github_access_token => "fromenv",
+    };
+    DumpFile($config_file, $config_data);
+
+    my $config = new_ok $CLASS;
+    test_config( $config->config, { github_access_token => "fromenv" } );
+};
+
+
 subtest read_config => sub {
     my $tempdir = Path::Class::tempdir;
     my $config_file  = $tempdir->file("test.gitpan");
 
     my $config_data = {
-        github          => { token => "123abc" },
-        overlays        => { foo => { github => { token => "deadbeef" } } }
+        github_access_token    => "123abc",
+        overlays        => { foo => { github_access_token => "deadbeef" } }
     };
     DumpFile($config_file, $config_data);
 
@@ -35,7 +61,7 @@ subtest read_config => sub {
     ];
 
     is $config->config_file, $config_file;
-    is_deeply $config->config, { github => { token => "123abc" } };
+    test_config( $config->config, { github_access_token => "123abc" } );
 };
 
 subtest overlays => sub {
@@ -43,8 +69,9 @@ subtest overlays => sub {
     my $config_file  = $tempdir->file("test.gitpan");
 
     my $config_data = {
-        github          => { token => "123abc", foo => "bar" },
-        overlays        => { test => { github => { token => "deadbeef" } } }
+        github_access_token     => "123abc",
+        github_remote_host      => "example.com",
+        overlays                => { test => { github_access_token => "deadbeef" } }
     };
     DumpFile($config_file, $config_data);
 
@@ -54,7 +81,10 @@ subtest overlays => sub {
     ];
 
     is $config->config_file, $config_file;
-    is_deeply $config->config, { github => { token => "deadbeef", foo => "bar" } };
+    test_config( $config->config, {
+        github_access_token     => "deadbeef",
+        github_remote_host      => "example.com"
+    });
 };
 
 done_testing;
