@@ -5,11 +5,11 @@ use Test::Most;
 
 note "Setup test classes"; {
     package Some::Class1;
-    use Mouse;
+    use Moo;
     with 'Gitpan::Role::HasConfig';
 
     package Some::Class2;
-    use Mouse;
+    use Moo;
     with 'Gitpan::Role::HasConfig';
 }
 

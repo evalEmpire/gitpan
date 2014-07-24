@@ -1,16 +1,19 @@
 package Gitpan::Role::HasConfig;
 
-use Gitpan::ConfigFile;
-use Gitpan::Config;
-use Mouse::Role;
 use perl5i::2;
 use Method::Signatures;
+
+use Moo::Role;
+use Types::Standard qw(InstanceOf);
+
+use Gitpan::ConfigFile;
+use Gitpan::Config;
 
 my $Config;
 
 has config =>
   is            => 'ro',
-  isa           => "Gitpan::Config",
+  isa           => InstanceOf["Gitpan::Config"],
   lazy          => 1,
   default       => method {
       return $Config //= Gitpan::ConfigFile->new->config;
