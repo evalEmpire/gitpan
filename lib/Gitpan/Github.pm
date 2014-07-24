@@ -3,6 +3,7 @@ package Gitpan::Github;
 use Moo;
 use Types::Standard qw(Str);
 extends 'Net::GitHub::V3';
+with 'Gitpan::Role::HasConfig';
 
 use version; our $VERSION = qv("v2.0.0");
 
@@ -13,19 +14,24 @@ use Path::Class;
 has "owner" =>
   is            => 'ro',
   isa           => Str,
-  default       => 'gitpan';
+  lazy          => 1,
+  default       => method {
+      return $self->config->github_owner;
+  };
 
 has '+access_token' =>
-  default       => sub {
-      return $ENV{GITPAN_GITHUB_ACCESS_TOKEN} ||
-             # A read only token for testing
-             "f58a7dfa0f749ccb521c8da38f9649e2eff2434f"
+  lazy          => 1,
+  default       => method {
+      return $self->config->github_access_token;
   };
 
 has "remote_host" =>
-  is        => 'rw',
-  isa       => Str,
-  default   => 'github.com';
+  is            => 'rw',
+  isa           => Str,
+  lazy          => 1,
+  default       => method {
+      return $self->config->github_remote_host;
+  };
 
 method BUILD( HashRef $args ) {
     if( $self->owner && $self->repo ) {
