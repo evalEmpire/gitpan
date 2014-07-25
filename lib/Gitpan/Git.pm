@@ -9,9 +9,20 @@ use Method::Signatures;
 use Path::Class;
 use Gitpan::Types;
 
+my $Committer_Email = 'schwern+gitpan@pobox.com';
+my $Committer_Name  = 'Gitpan';
+
 method init( $class: Path::Class::Dir $repo_dir ) {
     $class->run( init => $repo_dir );
-    return $class->new( work_tree => $repo_dir );
+    return $class->new(
+        work_tree => $repo_dir,
+        {
+            env => {
+                GIT_COMMITTER_EMAIL => $Committer_Email,
+                GIT_COMMITTER_NAME  => $Committer_Name,
+            }
+        },
+    );
 }
 
 method clean {

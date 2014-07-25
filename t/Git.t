@@ -8,6 +8,9 @@ use Test::More;
 
 use Gitpan::Git;
 
+# Simulate a non-configured system as when testing on Travis.
+local $ENV{GIT_COMMITTER_NAME} = '';
+
 my $Repo_Dir = dir(tempdir( CLEANUP => 1 ))->resolve;
 my $git = Gitpan::Git->init( $Repo_Dir );
 isa_ok $git, "Gitpan::Git";
