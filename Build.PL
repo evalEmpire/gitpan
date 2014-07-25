@@ -29,6 +29,7 @@ my $build = MyBuilder->new(
         "File::chmod"           => 0.32,
         "Getopt::Long::Descriptive"    => 0.085,
         "Git::Repository"       => 1.300,
+        "Git::Repository::Log"  => 1.312,
         "Method::Signatures"    => 0,
         "Moo"                   => '1.004002',
         "Mouse"                 => 0,

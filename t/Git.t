@@ -74,4 +74,19 @@ SKIP: {
     ok !$git->revision_exists("does_not_exist"),        "  false";
 }
 
+
+# commit & log
+{
+    file( $git->work_tree, "bar" )->touch;
+    $git->run( add => "bar" );
+    $git->run( commit => "-m" => "testing commit author" );
+
+    my($last_log) = $git->log("-1");
+    is $last_log->committer_email, 'schwern+gitpan@pobox.com';
+    is $last_log->committer_name,  'Gitpan';
+    is $last_log->author_email,    'schwern+gitpan@pobox.com';
+    is $last_log->author_name,     'Gitpan';
+}
+
+
 done_testing;
