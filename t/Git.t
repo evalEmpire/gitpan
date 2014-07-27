@@ -1,8 +1,7 @@
 #!/usr/bin/perl
 
 use perl5i::2;
-use Path::Class;
-use File::Temp qw(tempdir);
+use Path::Tiny;
 
 use Test::More;
 
@@ -11,14 +10,14 @@ use Gitpan::Git;
 # Simulate a non-configured system as when testing on Travis.
 local $ENV{GIT_COMMITTER_NAME} = '';
 
-my $Repo_Dir = dir(tempdir( CLEANUP => 1 ))->resolve;
+my $Repo_Dir = Path::Tiny->tempdir->realpath;
 my $git = Gitpan::Git->init( $Repo_Dir );
 isa_ok $git, "Gitpan::Git";
 
 # Check the repo was created
 {
     ok -d $Repo_Dir;
-    ok -d $Repo_Dir->subdir(".git");
+    ok -d $Repo_Dir->child(".git");
     is $git->work_tree, $Repo_Dir;
 }
 
@@ -33,7 +32,7 @@ isa_ok $git, "Gitpan::Git";
 
 # Test our cleanup routines
 SKIP: {
-    my $hooks_dir = $Repo_Dir->subdir(".git", "hooks");
+    my $hooks_dir = $Repo_Dir->child(".git", "hooks");
 
     skip "No hooks dir" unless -d $hooks_dir;
     skip "No sample hooks" unless [$hooks_dir->children]->first(qr{\.sample$});
@@ -55,18 +54,18 @@ SKIP: {
 
 # Remove working copy
 {
-    my $file = file( $git->work_tree, "foo" );
+    my $file = $git->work_tree->child("foo");
     $file->touch;
     ok -e $file;
     $git->remove_working_copy;
     ok !-e $file;
-    is_deeply [map { $_->dir_list(-1) } dir( $git->work_tree )->children], [".git"];
+    is_deeply [map { $_->basename } $git->work_tree->children], [".git"];
 }
 
 
 # revision_exists
 {
-    file( $git->work_tree, "foo" )->touch;
+    $git->work_tree->child("foo")->touch;
     $git->run( add => "foo" );
     $git->run( commit => "-m" => "testing" );
 
@@ -77,7 +76,7 @@ SKIP: {
 
 # commit & log
 {
-    file( $git->work_tree, "bar" )->touch;
+    $git->work_tree->child("bar")->touch;
     $git->run( add => "bar" );
     $git->run( commit => "-m" => "testing commit author" );
 

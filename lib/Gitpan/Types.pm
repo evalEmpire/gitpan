@@ -1,5 +1,6 @@
 package Gitpan::Types;
 
+use perl5i::2;
 use Mouse::Util::TypeConstraints;
 
 class_type "BackPAN::Index";
@@ -7,16 +8,15 @@ class_type "File::Temp::Dir";
 class_type "File::Temp";
 class_type "Gitpan::Dist";
 class_type "Gitpan::Repo";
-class_type "Path::Class::Dir";
-class_type "Path::Class::File";
+class_type "Path::Tiny";
 class_type "URI";
 
 subtype "Gitpan::AbsDir",
-  as "Path::Class::Dir",
+  as "Path::Tiny",
   where { $_->is_absolute };
 
 coerce "Gitpan::AbsDir",
-  from "Path::Class::Dir",
+  from "Path::Tiny",
   via {
       return $_->absolute;
   };
@@ -24,22 +24,13 @@ coerce "Gitpan::AbsDir",
 coerce "Gitpan::AbsDir",
   from "Str",
   via {
-      require Path::Class;
-      return Path::Class::Dir->new($_)->absolute;
+      return $_->path->absolute;
   };
 
-coerce "Path::Class::Dir",
+coerce "Path::Tiny",
   from "Str",
   via {
-      require Path::Class;
-      return Path::Class::Dir->new($_);
-  };
-
-coerce "Path::Class::File",
-  from "Str",
-  via {
-      require Path::Class;
-      return Path::Class::File->new($_);
+      return $_->path;
   };
 
 subtype "Gitpan::Distname",

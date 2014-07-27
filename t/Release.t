@@ -72,7 +72,7 @@ note "extract"; {
     my $path = $pony->extract;
     is $path, $pony->extract_dir;
     ok -d $path;
-    ok -e $path->file("Makefile.PL");
+    ok -e $path->child("Makefile.PL");
 }
 
 done_testing;

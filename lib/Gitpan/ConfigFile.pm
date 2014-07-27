@@ -4,7 +4,6 @@ use Mouse;
 use Gitpan::Types;
 use perl5i::2;
 use Method::Signatures;
-use Path::Class;
 use Gitpan::Config;
 
 use YAML::XS qw(LoadFile);
@@ -17,17 +16,19 @@ has config_filename =>
 # Search from first to last.
 has search_dirs =>
   is            => 'ro',
-  isa           => 'ArrayRef[Path::Class::Dir]',
+  isa           => 'ArrayRef[Path::Tiny]',
+  coerce        => 1,
   default       => method {
       return [
-          map { dir($_) } grep { defined && length }
+          map { $_->path } grep { defined && length }
             $ENV{GITPAN_CONFIG_DIR}, ".", $ENV{HOME}
       ];
   };
 
 has config_file =>
   is            => 'ro',
-  isa           => 'Maybe[Path::Class::File]',
+  isa           => 'Maybe[Path::Tiny]',
+  coerce        => 1,
   lazy          => 1,
   builder       => 'search_for_config_file';
 
@@ -100,8 +101,8 @@ method search_for_config_file {
     my $filename = $self->config_filename;
     my $dirs = $self->search_dirs;
 
-    if( my $dir = $dirs->first(sub{ -e file($_, $filename) }) ) {
-        return file($dir, $filename);
+    if( my $dir = $dirs->first(sub{ -e $_->path->child($filename) }) ) {
+        return $dir->path->child($filename);
     }
     else {
         return;

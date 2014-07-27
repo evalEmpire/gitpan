@@ -3,7 +3,7 @@
 use v5.18;
 use perl5i::2;
 use Test::Most;
-use Path::Class;
+use Path::Tiny;
 use YAML::XS qw(DumpFile);
 
 my $CLASS = 'Gitpan::ConfigFile';
@@ -31,8 +31,8 @@ subtest defaults => sub {
 
 
 subtest env_GITPAN_CONFIG_DIR => sub {
-    my $tempdir = Path::Class::tempdir;
-    my $config_file = $tempdir->file(".gitpan");
+    my $tempdir = Path::Tiny->tempdir;
+    my $config_file = $tempdir->child(".gitpan");
     local $ENV{GITPAN_CONFIG_DIR} = $tempdir;
 
     my $config_data = {
@@ -46,8 +46,8 @@ subtest env_GITPAN_CONFIG_DIR => sub {
 
 
 subtest read_config => sub {
-    my $tempdir = Path::Class::tempdir;
-    my $config_file  = $tempdir->file("test.gitpan");
+    my $tempdir = Path::Tiny->tempdir;
+    my $config_file  = $tempdir->child("test.gitpan");
 
     my $config_data = {
         github_access_token    => "123abc",
@@ -65,8 +65,8 @@ subtest read_config => sub {
 };
 
 subtest overlays => sub {
-    my $tempdir = Path::Class::tempdir;
-    my $config_file  = $tempdir->file("test.gitpan");
+    my $tempdir = Path::Tiny->tempdir;
+    my $config_file  = $tempdir->child("test.gitpan");
 
     my $config_data = {
         github_access_token     => "123abc",

@@ -6,18 +6,18 @@ use Test::TypeConstraints;
 use Gitpan::Types;
 
 note "Path types"; {
-    type_isa "/foo/bar/baz.txt", "Path::Class::File", "str to file coercion",   coerce => sub {
-        isa_ok $_[0], "Path::Class::File";
+    type_isa "/foo/bar/baz.txt", "Path::Tiny", "str to file coercion",   coerce => sub {
+        isa_ok $_[0], "Path::Tiny";
         is $_[0], "/foo/bar/baz.txt";
     };
 
-    type_isa "/what/stuff",      "Path::Class::Dir",  "str to dir coercion",    coerce => sub {
-        isa_ok $_[0], "Path::Class::Dir";
+    type_isa "/what/stuff",      "Path::Tiny",  "str to dir coercion",    coerce => sub {
+        isa_ok $_[0], "Path::Tiny";
         is $_[0], "/what/stuff";
     };
 
     type_isa "/up/down/left",    "Gitpan::AbsDir",    "str to absdir coercion", coerce => sub {
-        isa_ok $_[0], "Path::Class::Dir";
+        isa_ok $_[0], "Path::Tiny";
         is $_[0], "/up/down/left";
     };
 

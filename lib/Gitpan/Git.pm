@@ -7,13 +7,12 @@ with "Gitpan::Role::CanBackoff";
 
 use perl5i::2;
 use Method::Signatures;
-use Path::Class;
 use Gitpan::Types;
 
 my $Gitpan_Email = 'schwern+gitpan@pobox.com';
 my $Gitpan_Name  = 'Gitpan';
 
-method init( $class: Path::Class::Dir $repo_dir ) {
+method init( $class: Path::Tiny $repo_dir ) {
     $class->run( init => $repo_dir );
     return $class->new(
         work_tree => $repo_dir,
@@ -34,7 +33,7 @@ method clean {
 }
 
 method hooks_dir {
-    return dir($self->git_dir)->subdir("hooks");
+    return $self->git_dir->path->child("hooks");
 }
 
 method garbage_collect {
@@ -109,9 +108,9 @@ method push( Str $remote = "origin", Str $branch = "master" ) {
 }
 
 method remove_working_copy {
-    for my $child ( dir($self->work_tree)->children ) {
-        next if $child->is_dir and $child->dir_list(-1) eq '.git';
-        $child->is_dir ? $child->rmtree : $child->remove;
+    for my $child ( $self->work_tree->children ) {
+        next if $child->is_dir and $child->basename eq '.git';
+        $child->is_dir ? $child->remove_tree : $child->remove;
     }
 }
 
@@ -154,7 +153,7 @@ method last_cpan_version {
 }
 
 method work_tree {
-    return dir($self->SUPER::work_tree);
+    return $self->SUPER::work_tree->path;
 }
 
 
