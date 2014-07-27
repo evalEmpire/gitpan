@@ -9,7 +9,6 @@ use version; our $VERSION = qv("v2.0.0");
 
 use perl5i::2;
 use Method::Signatures;
-use Path::Class;
 
 has "owner" =>
   is            => 'ro',

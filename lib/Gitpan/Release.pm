@@ -2,11 +2,8 @@ package Gitpan::Release;
 
 use Mouse;
 use Gitpan::Types;
-use File::chmod;  # use before autodie to avoid being blown over
 use perl5i::2;
 use Method::Signatures;
-
-use Path::Class ();
 
 with
   'Gitpan::Role::HasBackpanIndex',
@@ -62,24 +59,25 @@ has author =>
 
 has work_dir =>
   is            => 'ro',
-  isa           => 'File::Temp::Dir',
+  isa           => 'Path::Tiny',
   lazy          => 1,
   default       => method {
-      require File::Temp;
-      return File::Temp->newdir;
+      require Path::Tiny;
+      return Path::Tiny->tempdir;
   };
 
 has archive_file =>
   is            => 'ro',
-  isa           => 'Path::Class::File',
+  isa           => 'Path::Tiny',
+  coerce        => 1,
   lazy          => 1,
   default       => method {
-      return Path::Class::File->new( $self->work_dir, $self->filename );
+      return $self->work_dir->path->child( $self->filename );
   };
 
 has extract_dir =>
   is            => 'rw',
-  isa           => 'Path::Class::Dir',
+  isa           => 'Path::Tiny',
   coerce        => 1;
 
 method get {
@@ -115,11 +113,11 @@ method extract {
 method fix_permissions {
     return unless -d $self->extract_dir;
 
-    chmod "u+rx", $self->extract_dir;
+    $self->extract_dir->chmod("u+rx");
 
     require File::Find;
     File::Find::find(sub {
-        -d $_ ? chmod "u+rx", $_ : chmod "u+r", $_;
+        -d $_ ? $_->path->chmod("u+rx") : $_->path->chmod("u+r");
     }, $self->extract_dir);
 
     return;

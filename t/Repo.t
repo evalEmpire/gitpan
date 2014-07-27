@@ -1,10 +1,8 @@
 #!/usr/bin/perl
 
-use strict;
-use warnings;
+use perl5i::2;
 
-use Path::Class;
-use Test::More;
+use Test::Most;
 
 use Gitpan::Repo;
 
@@ -12,22 +10,19 @@ my $repo = Gitpan::Repo->new( distname => "Foo-Bar" );
 isa_ok $repo, "Gitpan::Repo";
 
 
-# repo data
-{
+note "repo data"; {
     is $repo->distname, "Foo-Bar";
-    is $repo->directory, dir("Foo-Bar")->absolute;
+    is $repo->directory, "Foo-Bar"->path->absolute;
 }
 
 
-# Recover from a module name
-{
+note "Recover from a module name"; {
     my $repo = Gitpan::Repo->new( modulename => "This::That::Whatever" );
     is $repo->distname, "This-That-Whatever";
 }
 
 
-# github
-{
+note "github"; {
     my $gh = $repo->github;
     isa_ok $gh, "Gitpan::Github";
     is $gh->owner, "gitpan";
@@ -59,14 +54,13 @@ isa_ok $repo, "Gitpan::Repo";
 }
 
 
-# git
-{
+note "git"; {
     my $git = $repo->git;
     isa_ok $git, "Gitpan::Git";
     ok -d $repo->directory;
-    END { $repo->directory->rmtree }
+    END { $repo->directory->remove_tree }
 
-    ok -d $repo->directory->subdir(".git");
+    ok -d $repo->directory->child(".git");
 }
 
 done_testing;

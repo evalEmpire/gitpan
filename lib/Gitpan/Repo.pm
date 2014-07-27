@@ -4,7 +4,6 @@ use Mouse;
 
 use perl5i::2;
 use Method::Signatures;
-use Path::Class;
 use Gitpan::Types;
 use Gitpan::Github;
 
@@ -23,7 +22,7 @@ has cwd     =>
   coerce    => 1,
   required  => 1,
   default   => method {
-      return dir()->absolute;
+      return "."->path->absolute;
   },
   documentation => "The current working directory at time of object initialization";
 
