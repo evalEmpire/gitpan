@@ -36,7 +36,9 @@ my $build = MyBuilder->new(
         "Path::Tiny"            => 0.054,       # symbolic chmod()
         "perl5i::2"             => "v2.13.0",
         "Net::GitHub::V3"       => '0.60',
-        "Types::Standard"       => '0.044',
+        "Type::Library"         => 0.046,
+        "Type::Utils"           => 0.046,
+        "Types::Standard"       => 0.046,
         "YAML::XS"              => 0,
     },
 
