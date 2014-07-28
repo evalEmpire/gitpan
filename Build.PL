@@ -23,7 +23,7 @@ my $build = MyBuilder->new(
         perl                    => '5.18.1',
 
         "BackPAN::Index"        => 0.39,
-        "Capture::Tiny"         => 0.08, # exception bug
+        "Capture::Tiny"         => 0.08,        # exception bug
         'CPANPLUS'              => 0.9133,
         "File::chdir"           => 0,
         "File::chmod"           => 0.32,
@@ -33,6 +33,7 @@ my $build = MyBuilder->new(
         "Method::Signatures"    => 0,
         "Moo"                   => '1.004002',
         "Mouse"                 => 0,
+        "Path::Tiny"            => 0.054,       # symbolic chmod()
         "perl5i::2"             => "v2.13.0",
         "Net::GitHub::V3"       => '0.60',
         "Types::Standard"       => '0.044',

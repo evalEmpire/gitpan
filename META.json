@@ -33,6 +33,7 @@
             "Moo" : "1.004002",
             "Mouse" : "0",
             "Net::GitHub::V3" : "0.60",
+            "Path::Tiny" : "0.054",
             "Types::Standard" : "0.044",
             "YAML::XS" : "0",
             "perl" : "v5.18.1",
