@@ -6,23 +6,24 @@ use Method::Signatures;
 use Moo;
 use Git::Repository qw(Log);
 extends 'Git::Repository';
-with "Gitpan::Role::CanBackoff";
+with "Gitpan::Role::CanBackoff",
+     "Gitpan::Role::HasConfig";
 
 use Gitpan::Types ":types";
 
-my $Gitpan_Email = 'schwern+gitpan@pobox.com';
-my $Gitpan_Name  = 'Gitpan';
-
 method init( $class: Path::Tiny $repo_dir ) {
     $class->run( init => $repo_dir );
+
+    my $config = $class->config;
+
     return $class->SUPER::new(
         work_tree => $repo_dir,
         {
             env => {
-                GIT_COMMITTER_EMAIL => $Gitpan_Email,
-                GIT_COMMITTER_NAME  => $Gitpan_Name,
-                GIT_AUTHOR_EMAIL    => $Gitpan_Email,
-                GIT_AUTHOR_NAME     => $Gitpan_Name,
+                GIT_COMMITTER_EMAIL => $config->committer_email,
+                GIT_COMMITTER_NAME  => $config->committer_name,
+                GIT_AUTHOR_EMAIL    => $config->committer_email,
+                GIT_AUTHOR_NAME     => $config->committer_name,
             }
         },
     );

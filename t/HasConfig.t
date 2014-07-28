@@ -23,4 +23,8 @@ note "Config is shared"; {
     is $obj1->config->mo->id, $obj2->config->mo->id;
 }
 
+note "As class method"; {
+    isa_ok( Some::Class1->config, "Gitpan::Config" );
+}
+
 done_testing;

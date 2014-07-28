@@ -5,6 +5,16 @@ use Gitpan::Types;
 use perl5i::2;
 use Method::Signatures;
 
+has committer_email =>
+  is            => 'ro',
+  isa           => 'Str',
+  default       => 'schwern+gitpan@pobox.com';
+
+has committer_name =>
+  is            => 'ro',
+  isa           => 'Str',
+  default       => 'Gitpan';
+
 has "github_owner" =>
   is            => 'ro',
   isa           => 'Str',
