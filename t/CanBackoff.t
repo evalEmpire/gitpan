@@ -5,7 +5,7 @@ use Test::More;
 
 {
     package Foo;
-    use Mouse;
+    use Moo;
     with "Gitpan::Role::CanBackoff";
 
     sub default_success_check {

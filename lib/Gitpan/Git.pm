@@ -1,20 +1,21 @@
 package Gitpan::Git;
 
-use Mouse;
+use perl5i::2;
+use Method::Signatures;
+
+use Moo;
 use Git::Repository qw(Log);
 extends 'Git::Repository';
 with "Gitpan::Role::CanBackoff";
 
-use perl5i::2;
-use Method::Signatures;
-use Gitpan::Types;
+use Gitpan::Types ":types";
 
 my $Gitpan_Email = 'schwern+gitpan@pobox.com';
 my $Gitpan_Name  = 'Gitpan';
 
 method init( $class: Path::Tiny $repo_dir ) {
     $class->run( init => $repo_dir );
-    return $class->new(
+    return $class->SUPER::new(
         work_tree => $repo_dir,
         {
             env => {
@@ -155,7 +156,3 @@ method last_cpan_version {
 method work_tree {
     return $self->SUPER::work_tree->path;
 }
-
-
-# Git::Repository isn't a Moose class
-CLASS->meta->make_immutable( inline_constructor => 0 );

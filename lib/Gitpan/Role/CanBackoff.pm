@@ -1,7 +1,11 @@
 package Gitpan::Role::CanBackoff;
 
-use Mouse::Role;
+use perl5i::2;
+
+use Moo::Role;
 requires "default_success_check";
+
+use Gitpan::MooTypes ':types';
 
 use Method::Signatures;
 use Time::HiRes qw(usleep);
