@@ -22,7 +22,7 @@ Gitpan::Role::HasConfig - Per object access to the config
 
     {
         package Some::Class;
-        use Mouse;
+        use Gitpan::OO;
         with 'Gitpan::Role::HasConfig';
     }
 
