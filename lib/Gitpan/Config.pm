@@ -1,26 +1,26 @@
 package Gitpan::Config;
 
-use Moo;
+use Gitpan::OO;
 use Gitpan::MooTypes;
 use perl5i::2;
 use Method::Signatures;
 
-has committer_email =>
+haz committer_email =>
   is            => 'ro',
   isa           => Str,
   default       => 'schwern+gitpan@pobox.com';
 
-has committer_name =>
+haz committer_name =>
   is            => 'ro',
   isa           => Str,
   default       => 'Gitpan';
 
-has "github_owner" =>
+haz "github_owner" =>
   is            => 'ro',
   isa           => Str,
   default       => 'gitpan';
 
-has "github_access_token" =>
+haz "github_access_token" =>
   is            => 'ro',
   isa           => Str,
   default       => sub {
@@ -29,7 +29,7 @@ has "github_access_token" =>
              "f58a7dfa0f749ccb521c8da38f9649e2eff2434f"
   };
 
-has "github_remote_host" =>
+haz "github_remote_host" =>
   is            => 'ro',
   isa           => Str,
   default       => 'github.com';

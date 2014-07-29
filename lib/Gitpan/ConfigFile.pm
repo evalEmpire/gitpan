@@ -1,6 +1,6 @@
 package Gitpan::ConfigFile;
 
-use Moo;
+use Gitpan::OO;
 use Gitpan::MooTypes;
 use perl5i::2;
 use Method::Signatures;
@@ -8,13 +8,13 @@ use Gitpan::Config;
 
 use YAML::XS qw(LoadFile);
 
-has config_filename =>
+haz config_filename =>
   is            => 'ro',
   isa           => Str,
   default       => ".gitpan";
 
 # Search from first to last.
-has search_dirs =>
+haz search_dirs =>
   is            => 'ro',
   isa           => ArrayRef[Path],
   default       => method {
@@ -24,24 +24,24 @@ has search_dirs =>
       ];
   };
 
-has config_file =>
+haz config_file =>
   is            => 'ro',
   isa           => Maybe[Path],
   lazy          => 1,
   builder       => 'search_for_config_file';
 
-has config =>
+haz config =>
   is            => 'ro',
   isa           => InstanceOf['Gitpan::Config'],
   lazy          => 1,
   builder       => 'read_config_file';
 
-has is_test     =>
+haz is_test     =>
   is            => 'ro',
   isa           => Bool,
   default       => 1;
 
-has use_overlays =>
+haz use_overlays =>
   is            => 'ro',
   isa           => ArrayRef,
   lazy          => 1,

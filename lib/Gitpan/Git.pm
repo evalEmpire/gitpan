@@ -3,13 +3,13 @@ package Gitpan::Git;
 use perl5i::2;
 use Method::Signatures;
 
-use Moo;
+use Gitpan::OO;
 use Git::Repository qw(Log);
 extends 'Git::Repository';
 with "Gitpan::Role::CanBackoff",
      "Gitpan::Role::HasConfig";
 
-use Gitpan::Types ":types";
+use Gitpan::MooTypes;
 
 method init( $class: Path::Tiny $repo_dir ) {
     $class->run( init => $repo_dir );

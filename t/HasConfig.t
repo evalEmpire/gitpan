@@ -5,11 +5,11 @@ use Test::Most;
 
 note "Setup test classes"; {
     package Some::Class1;
-    use Moo;
+    use Gitpan::OO;
     with 'Gitpan::Role::HasConfig';
 
     package Some::Class2;
-    use Moo;
+    use Gitpan::OO;
     with 'Gitpan::Role::HasConfig';
 }
 
