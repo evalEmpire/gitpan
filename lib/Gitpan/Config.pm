@@ -1,27 +1,37 @@
 package Gitpan::Config;
 
-use Mouse;
+use Gitpan::OO;
 use Gitpan::Types;
 use perl5i::2;
 use Method::Signatures;
 
-has "github_owner" =>
+haz committer_email =>
   is            => 'ro',
-  isa           => 'Str',
+  isa           => Str,
+  default       => 'schwern+gitpan@pobox.com';
+
+haz committer_name =>
+  is            => 'ro',
+  isa           => Str,
+  default       => 'Gitpan';
+
+haz "github_owner" =>
+  is            => 'ro',
+  isa           => Str,
   default       => 'gitpan';
 
-has "github_access_token" =>
+haz "github_access_token" =>
   is            => 'ro',
-  isa           => 'Str',
+  isa           => Str,
   default       => sub {
       return $ENV{GITPAN_GITHUB_ACCESS_TOKEN} ||
              # A read only token for testing
              "f58a7dfa0f749ccb521c8da38f9649e2eff2434f"
   };
 
-has "github_remote_host" =>
+haz "github_remote_host" =>
   is            => 'ro',
-  isa           => 'Str',
+  isa           => Str,
   default       => 'github.com';
 
 

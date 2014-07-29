@@ -8,7 +8,7 @@ use Test::More;
 
 {
     package Some::Class;
-    use Mouse;
+    use Gitpan::OO;
     with 'Gitpan::Role::HasBackpanIndex';
 }
 

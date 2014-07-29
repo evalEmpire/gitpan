@@ -4,20 +4,14 @@ use perl5i::2;
 use Method::Signatures;
 
 use Moo::Role;
-use Types::Standard qw(InstanceOf);
+use Gitpan::Types;
 
 use Gitpan::ConfigFile;
-use Gitpan::Config;
 
-my $Config;
-
-has config =>
-  is            => 'ro',
-  isa           => InstanceOf["Gitpan::Config"],
-  lazy          => 1,
-  default       => method {
-      return $Config //= Gitpan::ConfigFile->new->config;
-  };
+method config() {
+    state $config;
+    return $config //= Gitpan::ConfigFile->new->config;
+}
 
 
 =head1 NAME
@@ -28,7 +22,7 @@ Gitpan::Role::HasConfig - Per object access to the config
 
     {
         package Some::Class;
-        use Mouse;
+        use Gitpan::OO;
         with 'Gitpan::Role::HasConfig';
     }
 
@@ -41,13 +35,13 @@ With this role your object will have access to the Gitpan configuration.
 
 The configuration is shared by all.
 
-=head2 Accessors
+=head2 Methods
 
 =head3 config
 
 Returns the shared L<Gitpan::Config> object.
 
-Normally there is no need to set the config.
+This can be called as a class or object method.
 
 =head1 SEE ALSO
 

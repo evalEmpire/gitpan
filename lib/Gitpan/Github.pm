@@ -1,7 +1,7 @@
 package Gitpan::Github;
 
-use Moo;
-use Types::Standard qw(Str);
+use Gitpan::OO;
+use Gitpan::Types;
 extends 'Net::GitHub::V3';
 with 'Gitpan::Role::HasConfig';
 
@@ -10,7 +10,7 @@ use version; our $VERSION = qv("v2.0.0");
 use perl5i::2;
 use Method::Signatures;
 
-has "owner" =>
+haz "owner" =>
   is            => 'ro',
   isa           => Str,
   lazy          => 1,
@@ -18,13 +18,13 @@ has "owner" =>
       return $self->config->github_owner;
   };
 
-has '+access_token' =>
+haz '+access_token' =>
   lazy          => 1,
   default       => method {
       return $self->config->github_access_token;
   };
 
-has "remote_host" =>
+haz "remote_host" =>
   is            => 'rw',
   isa           => Str,
   lazy          => 1,

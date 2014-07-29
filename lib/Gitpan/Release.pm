@@ -1,6 +1,6 @@
 package Gitpan::Release;
 
-use Mouse;
+use Gitpan::OO;
 use Gitpan::Types;
 use perl5i::2;
 use Method::Signatures;
@@ -10,19 +10,19 @@ with
   'Gitpan::Role::HasCPANPLUS',
   'Gitpan::Role::HasUA';
 
-has distname =>
+haz distname =>
   is            => 'ro',
-  isa           => 'Gitpan::Distname',
+  isa           => DistName,
   required      => 1;
 
-has version =>
+haz version =>
   is            => 'ro',
-  isa           => 'Str',
+  isa           => Str,
   required      => 1;
 
-has backpan_release =>
+haz backpan_release =>
   is            => 'ro',
-  isa           => 'BackPAN::Index::Release',
+  isa           => InstanceOf['BackPAN::Index::Release'],
   lazy          => 1,
   handles       => [qw(
       cpanid
@@ -35,9 +35,9 @@ has backpan_release =>
       return $self->backpan_index->releases($self->distname)->single({ version => $self->version });
   };
 
-has backpan_file     =>
+haz backpan_file     =>
   is            => 'ro',
-  isa           => 'BackPAN::Index::File',
+  isa           => InstanceOf['BackPAN::Index::File'],
   lazy          => 1,
   handles       => [qw(
       path
@@ -48,37 +48,34 @@ has backpan_file     =>
       $self->backpan_release->path;
   };
 
-has author =>
+haz author =>
   is            => 'ro',
-  isa           => 'CPANPLUS::Module::Author',
+  isa           => InstanceOf['CPANPLUS::Module::Author'],
   lazy          => 1,
   default       => method {
       my $cpanid = $self->cpanid;
       return $self->cpanplus->author_tree->{$cpanid};
   };
 
-has work_dir =>
+haz work_dir =>
   is            => 'ro',
-  isa           => 'Path::Tiny',
+  isa           => Path,
   lazy          => 1,
   default       => method {
       require Path::Tiny;
       return Path::Tiny->tempdir;
   };
 
-has archive_file =>
+haz archive_file =>
   is            => 'ro',
-  isa           => 'Path::Tiny',
-  coerce        => 1,
+  isa           => Path,
   lazy          => 1,
   default       => method {
       return $self->work_dir->path->child( $self->filename );
   };
 
-has extract_dir =>
-  is            => 'rw',
-  isa           => 'Path::Tiny',
-  coerce        => 1;
+haz extract_dir =>
+  isa           => Path;
 
 method get {
     my $res = $self->ua->get(

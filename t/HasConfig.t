@@ -5,11 +5,11 @@ use Test::Most;
 
 note "Setup test classes"; {
     package Some::Class1;
-    use Moo;
+    use Gitpan::OO;
     with 'Gitpan::Role::HasConfig';
 
     package Some::Class2;
-    use Moo;
+    use Gitpan::OO;
     with 'Gitpan::Role::HasConfig';
 }
 
@@ -21,6 +21,10 @@ note "Config is shared"; {
     isa_ok $obj2->config, "Gitpan::Config";
 
     is $obj1->config->mo->id, $obj2->config->mo->id;
+}
+
+note "As class method"; {
+    isa_ok( Some::Class1->config, "Gitpan::Config" );
 }
 
 done_testing;

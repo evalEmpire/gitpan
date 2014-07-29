@@ -14,6 +14,9 @@ subtest "github defaults" => sub {
     is $config->github_owner,           'gitpan';
     is $config->github_access_token,    'f58a7dfa0f749ccb521c8da38f9649e2eff2434f';
     is $config->github_remote_host,     'github.com';
+
+    is $config->committer_name,         'Gitpan';
+    is $config->committer_email,        'schwern+gitpan@pobox.com';
 };
 
 
@@ -24,6 +27,5 @@ subtest "github_access_token env" => sub {
 
     is $config->github_access_token,    'deadbeef';
 };
-
 
 done_testing;

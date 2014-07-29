@@ -3,12 +3,12 @@ package Gitpan::Role::HasBackpanIndex;
 use perl5i::2;
 use Method::Signatures;
 
-use Mouse::Role;
+use Moo::Role;
 use Gitpan::Types;
 
 has backpan_index =>
   is            => 'rw',
-  isa           => 'BackPAN::Index',
+  isa           => InstanceOf['BackPAN::Index'],
   lazy          => 1,
   builder       => "default_backpan_index";
 

@@ -3,12 +3,12 @@ package Gitpan::Role::HasCPANPLUS;
 use perl5i::2;
 use Method::Signatures;
 
-use Mouse::Role;
+use Moo::Role;
 use Gitpan::Types;
 
 has cpanplus =>
   is            => 'rw',
-  isa           => 'CPANPLUS::Backend',
+  isa           => InstanceOf['CPANPLUS::Backend'],
   lazy          => 1,
   builder       => 'default_cpanplus';
 
