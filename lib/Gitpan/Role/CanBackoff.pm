@@ -5,7 +5,7 @@ use perl5i::2;
 use Moo::Role;
 requires "default_success_check";
 
-use Gitpan::MooTypes;
+use Gitpan::Types;
 
 use Method::Signatures;
 use Time::HiRes qw(usleep);

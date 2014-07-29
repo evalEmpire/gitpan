@@ -32,7 +32,6 @@ my $build = MyBuilder->new(
         "Git::Repository::Log"  => 1.312,
         "Method::Signatures"    => 0,
         "Moo"                   => '1.004002',
-        "Mouse"                 => 0,
         "Path::Tiny"            => 0.054,       # symbolic chmod()
         "perl5i::2"             => "v2.13.0",
         "Net::GitHub::V3"       => '0.60',

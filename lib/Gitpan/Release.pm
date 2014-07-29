@@ -1,7 +1,7 @@
 package Gitpan::Release;
 
 use Gitpan::OO;
-use Gitpan::MooTypes;
+use Gitpan::Types;
 use perl5i::2;
 use Method::Signatures;
 

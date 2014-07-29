@@ -9,7 +9,7 @@ extends 'Git::Repository';
 with "Gitpan::Role::CanBackoff",
      "Gitpan::Role::HasConfig";
 
-use Gitpan::MooTypes;
+use Gitpan::Types;
 
 method init( $class: Path::Tiny $repo_dir ) {
     $class->run( init => $repo_dir );

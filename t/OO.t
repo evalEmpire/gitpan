@@ -7,7 +7,7 @@ note "haz"; {
     {
         package Foo;
         use Gitpan::OO;
-        use Gitpan::MooTypes;
+        use Gitpan::Types;
 
         has "stuff" =>
           is        => 'rw';

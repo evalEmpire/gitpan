@@ -1,53 +1,66 @@
 package Gitpan::Types;
 
 use perl5i::2;
-use Mouse::Util::TypeConstraints;
+use Type::Library -base;
+use Type::Utils -all;
+BEGIN { extends "Types::Standard" }
+
+sub import {
+    # Export :types by default.
+    push @_, ":types" if @_ == 1;
+    goto __PACKAGE__->can("SUPER::import");
+}
 
 class_type "BackPAN::Index";
-class_type "File::Temp::Dir";
-class_type "File::Temp";
 class_type "Gitpan::Dist";
 class_type "Gitpan::Repo";
-class_type "Path::Tiny";
-class_type "URI";
 
-subtype "Gitpan::AbsDir",
-  as "Path::Tiny",
-  where { $_->is_absolute };
 
-coerce "Gitpan::AbsDir",
-  from "Path::Tiny",
-  via {
-      return $_->absolute;
-  };
+declare "Path",
+  as InstanceOf["Path::Tiny"];
 
-coerce "Gitpan::AbsDir",
-  from "Str",
-  via {
-      return $_->path->absolute;
-  };
-
-coerce "Path::Tiny",
-  from "Str",
+coerce "Path",
+  from Str,
   via {
       return $_->path;
   };
 
-subtype "Gitpan::Distname",
-  as "Str",
+
+declare "AbsPath",
+  as "Path",
+  where { $_->is_absolute };
+
+coerce "AbsPath",
+  from "Path",
+  via {
+      return $_->absolute;
+  };
+
+coerce "AbsPath",
+  from Str,
+  via {
+      return $_->path->absolute;
+  };
+
+
+declare "DistName",
+  as Str,
   message { "A CPAN distribution name" },
   where { !/\s/ and !/::/ };
 
-subtype "Gitpan::Module",
-  as "Str",
+
+declare "ModuleName",
+  as Str,
   message { "A CPAN module name " },
   where { /^[A-Za-z]+ (?: :: \w+)* /x };
 
+
+declare "URI",
+  as InstanceOf["URI"];
+
 coerce "URI",
-  from "Str",
+  from Str,
   via {
       require URI;
       return URI->new($_);
   };
-
-1;
