@@ -3,12 +3,12 @@ package Gitpan::Role::HasUA;
 use perl5i::2;
 use Method::Signatures;
 
-use Mouse::Role;
-use Gitpan::Types;
+use Moo::Role;
+use Gitpan::MooTypes;
 
 has ua =>
   is            => 'rw',
-  isa           => 'LWP::UserAgent',
+  isa           => InstanceOf['LWP::UserAgent'],
   lazy          => 1,
   builder       => 'default_ua';
 
