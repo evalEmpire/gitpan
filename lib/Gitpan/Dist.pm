@@ -1,7 +1,7 @@
 package Gitpan::Dist;
 
-use Mouse;
-use Gitpan::Types;
+use Moo;
+use Gitpan::MooTypes;
 
 use perl5i::2;
 use Method::Signatures;
@@ -10,12 +10,12 @@ with 'Gitpan::Role::HasBackpanIndex';
 
 has name =>
   is            => 'ro',
-  isa           => 'Gitpan::Distname',
+  isa           => DistName,
   required      => 1;
 
 has repo =>
   is            => 'ro',
-  isa           => 'Gitpan::Repo',
+  isa           => InstanceOf['Gitpan::Repo'],
   lazy          => 1,
   default       => method {
       require Gitpan::Repo;

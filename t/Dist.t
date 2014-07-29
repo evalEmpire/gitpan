@@ -12,7 +12,7 @@ my $CLASS = 'Gitpan::Dist';
 require_ok $CLASS;
 
 note "Required args"; {
-    throws_ok { $CLASS->new } qr/Attribute.*name.*required/;
+    throws_ok { $CLASS->new } qr/^Missing required arguments: name/;
 }
 
 note "The basics"; {
