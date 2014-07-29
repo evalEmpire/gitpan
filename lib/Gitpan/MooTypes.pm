@@ -5,6 +5,12 @@ use Type::Library -base;
 use Type::Utils -all;
 BEGIN { extends "Types::Standard" }
 
+sub import {
+    # Export :types by default.
+    push @_, ":types" if @_ == 1;
+    goto __PACKAGE__->can("SUPER::import");
+}
+
 class_type "BackPAN::Index";
 class_type "Gitpan::Dist";
 class_type "Gitpan::Repo";

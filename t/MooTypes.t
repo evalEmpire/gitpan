@@ -3,7 +3,7 @@
 use perl5i::2;
 use Test::More;
 use Test::TypeConstraints;
-use Gitpan::MooTypes qw(:types);
+use Gitpan::MooTypes;
 
 note "Path types"; {
     type_isa "/foo/bar/baz.txt", Path, "str to file coercion",   coerce => sub {

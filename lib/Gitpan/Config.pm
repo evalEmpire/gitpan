@@ -1,7 +1,7 @@
 package Gitpan::Config;
 
 use Moo;
-use Gitpan::MooTypes ":types";
+use Gitpan::MooTypes;
 use perl5i::2;
 use Method::Signatures;
 

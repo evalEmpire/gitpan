@@ -1,7 +1,7 @@
 package Gitpan::Github;
 
 use Moo;
-use Gitpan::MooTypes ':types';
+use Gitpan::MooTypes;
 extends 'Net::GitHub::V3';
 with 'Gitpan::Role::HasConfig';
 

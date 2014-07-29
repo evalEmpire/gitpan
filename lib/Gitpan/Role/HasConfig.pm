@@ -4,7 +4,7 @@ use perl5i::2;
 use Method::Signatures;
 
 use Moo::Role;
-use Gitpan::MooTypes qw(:types);
+use Gitpan::MooTypes;
 
 use Gitpan::ConfigFile;
 use Gitpan::Config;
