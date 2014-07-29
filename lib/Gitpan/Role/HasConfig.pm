@@ -7,7 +7,6 @@ use Moo::Role;
 use Gitpan::MooTypes;
 
 use Gitpan::ConfigFile;
-use Gitpan::Config;
 
 method config() {
     state $config;
