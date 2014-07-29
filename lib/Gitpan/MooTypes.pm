@@ -22,7 +22,6 @@ declare "Path",
 coerce "Path",
   from Str,
   via {
-      print "Path coercion\n";
       return $_->path;
   };
 
