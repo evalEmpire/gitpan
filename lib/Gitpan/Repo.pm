@@ -1,44 +1,42 @@
 package Gitpan::Repo;
 
-use Mouse;
-
 use perl5i::2;
 use Method::Signatures;
-use Gitpan::Types;
+
+use Gitpan::OO;
+use Gitpan::MooTypes;
+
 use Gitpan::Github;
 
 use overload
   q[""]     => method { return $self->distname },
   fallback  => 1;
 
-has distname        => 
-  isa       => 'Gitpan::Distname',
+haz distname        => 
+  isa       => DistName,
   is        => 'ro',
   required  => 1;
 
-has cwd     =>
-  isa       => 'Gitpan::AbsDir',
+haz cwd     =>
+  isa       => AbsPath,
   is        => 'ro',
-  coerce    => 1,
   required  => 1,
   default   => method {
       return "."->path->absolute;
   },
   documentation => "The current working directory at time of object initialization";
 
-has directory =>
-  isa       => 'Gitpan::AbsDir',
+haz directory =>
+  isa       => AbsPath,
   is        => 'ro',
   required  => 1,
   lazy      => 1,
-  coerce    => 1,
   default     => method {
       $self->distname;
   };
 
-has git     =>
-  isa       => "Gitpan::Git",
-  is        => 'rw',
+haz git     =>
+  isa       => InstanceOf["Gitpan::Git"],
   required  => 1,
   lazy      => 1,
   default   => method {
@@ -46,10 +44,8 @@ has git     =>
       return Gitpan::Git->init($self->directory);
   };
 
-use Mouse::Util::TypeConstraints qw(class_type);
-class_type("Gitpan::Github");  # Work around a Mouse bug in type unions
-has github  =>
-  isa       => 'HashRef|Gitpan::Github',
+haz github  =>
+  isa       => HashRef|InstanceOf['Gitpan::Github'],
   is        => 'rw',
   lazy      => 1,
   coerce    => 0,
