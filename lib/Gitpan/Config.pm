@@ -1,28 +1,28 @@
 package Gitpan::Config;
 
-use Mouse;
-use Gitpan::Types;
+use Moo;
+use Gitpan::MooTypes ":types";
 use perl5i::2;
 use Method::Signatures;
 
 has committer_email =>
   is            => 'ro',
-  isa           => 'Str',
+  isa           => Str,
   default       => 'schwern+gitpan@pobox.com';
 
 has committer_name =>
   is            => 'ro',
-  isa           => 'Str',
+  isa           => Str,
   default       => 'Gitpan';
 
 has "github_owner" =>
   is            => 'ro',
-  isa           => 'Str',
+  isa           => Str,
   default       => 'gitpan';
 
 has "github_access_token" =>
   is            => 'ro',
-  isa           => 'Str',
+  isa           => Str,
   default       => sub {
       return $ENV{GITPAN_GITHUB_ACCESS_TOKEN} ||
              # A read only token for testing
@@ -31,7 +31,7 @@ has "github_access_token" =>
 
 has "github_remote_host" =>
   is            => 'ro',
-  isa           => 'Str',
+  isa           => Str,
   default       => 'github.com';
 
 
