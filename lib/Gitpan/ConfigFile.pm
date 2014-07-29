@@ -1,7 +1,7 @@
 package Gitpan::ConfigFile;
 
-use Mouse;
-use Gitpan::Types;
+use Moo;
+use Gitpan::MooTypes;
 use perl5i::2;
 use Method::Signatures;
 use Gitpan::Config;
@@ -10,14 +10,13 @@ use YAML::XS qw(LoadFile);
 
 has config_filename =>
   is            => 'ro',
-  isa           => 'Str',
+  isa           => Str,
   default       => ".gitpan";
 
 # Search from first to last.
 has search_dirs =>
   is            => 'ro',
-  isa           => 'ArrayRef[Path::Tiny]',
-  coerce        => 1,
+  isa           => ArrayRef[Path],
   default       => method {
       return [
           map { $_->path } grep { defined && length }
@@ -27,25 +26,24 @@ has search_dirs =>
 
 has config_file =>
   is            => 'ro',
-  isa           => 'Maybe[Path::Tiny]',
-  coerce        => 1,
+  isa           => Maybe[Path],
   lazy          => 1,
   builder       => 'search_for_config_file';
 
 has config =>
   is            => 'ro',
-  isa           => 'Gitpan::Config',
+  isa           => InstanceOf['Gitpan::Config'],
   lazy          => 1,
   builder       => 'read_config_file';
 
 has is_test     =>
   is            => 'ro',
-  isa           => 'Bool',
+  isa           => Bool,
   default       => 1;
 
 has use_overlays =>
   is            => 'ro',
-  isa           => 'ArrayRef',
+  isa           => ArrayRef,
   lazy          => 1,
   default       => method {
       return $self->is_test ? ["test"] : [];
