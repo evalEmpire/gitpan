@@ -11,7 +11,7 @@ with "Gitpan::Role::CanBackoff",
 
 use Gitpan::Types;
 
-method init( $class: Path::Tiny :$repo_dir ) {
+method init( $class: Path::Tiny :$repo_dir = Path::Tiny->tempdir ) {
     $class->run( init => $repo_dir );
 
     return $class->_new_git($repo_dir);
@@ -19,16 +19,23 @@ method init( $class: Path::Tiny :$repo_dir ) {
 
 # $url should be a URI|Path but Method::Signatures does not understand
 # Type::Tiny (yet)
-method clone( $class: Str :$url, Path::Tiny :$repo_dir ) {
-    $class->run( clone => $url, $repo_dir, { quiet => 1 } );
+method clone(
+    $class:
+    Str :$url,
+    Path::Tiny :$repo_dir = Path::Tiny->tempdir,
+    ArrayRef :$options = []
+) {
+    $class->run( clone => $url, $repo_dir, @$options, { quiet => 1 } );
 
     return $class->_new_git($repo_dir);
 }
 
+haz '_store_work_tree';
+
 method _new_git($class: Path::Tiny $repo_dir) {
     my $config = $class->config;
 
-    return $class->SUPER::new(
+    my $self = $class->SUPER::new(
         work_tree => $repo_dir,
         {
             env => {
@@ -39,6 +46,12 @@ method _new_git($class: Path::Tiny $repo_dir) {
             }
         },
     );
+
+    # This is a hack to keep a temp directory from destroying itself when
+    # Git::Repository stringifies the $repo_dir object.
+    $self->_store_work_tree($repo_dir);
+
+    return $self;
 }
 
 method clean {
@@ -105,13 +118,13 @@ method default_success_check($return?) {
     return $return ? 1 : 0;
 }
 
-method push( Str $remote = "origin", Str $branch = "master" ) {
+method push( Str $remote //= "origin", Str $branch //= "master" ) {
     # sometimes github doesn't have the repo ready immediately after create_repo
     # returns, so if push fails try it again.
     my $ok = $self->do_with_backoff(
         times => 3,
         code  => sub {
-            eval { $self->run(push => $remote => $branch) } || return
+            eval { $self->run(push => $remote => $branch, { quiet => 1 }) } || return
         },
     );
     return unless $ok;

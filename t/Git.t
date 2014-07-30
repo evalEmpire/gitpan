@@ -88,16 +88,15 @@ SKIP: {
 }
 
 
-note "clone"; {
-    my $origin_dir = Path::Tiny->tempdir;
-    my $clone_dir  = Path::Tiny->tempdir;
-
-    my $origin = Gitpan::Git->init( repo_dir => $origin_dir );
+note "clone, push, pull"; {
+    my $origin = Gitpan::Git->init();
     $origin->work_tree->child("foo")->touch;
     $origin->run( add => "foo" );
     $origin->run( commit => "-m" => "testing clone" );
 
-    my $clone = Gitpan::Git->clone( url => $origin_dir.'', repo_dir => $clone_dir );
+    my $clone = Gitpan::Git->clone(
+        url => $origin->work_tree.'',
+    );
 
     ok -e $clone->work_tree->child("foo"), "working directory cloned";
 
@@ -105,6 +104,7 @@ note "clone"; {
     my($clone_log1)  = $clone->log("-1");
     is $origin_log1->commit, $clone_log1->commit, "commit ids cloned";
 
+    # Test pull
     $origin->work_tree->child("bar")->touch;
     $origin->run( add => "bar" );
     $origin->run( commit => "-m" => "adding bar" );
@@ -116,6 +116,23 @@ note "clone"; {
     my($origin_log2) = $origin->log("-1");
     my($clone_log2)  = $clone->log("-1");
     is $origin_log2->commit, $clone_log2->commit, "commit ids pulled";
+
+    # Test push
+    my $bare = Gitpan::Git->clone(
+        url      => $origin->work_tree.'',
+        options  => [ "--bare" ]
+    );
+    my $clone2 = Gitpan::Git->clone(
+        url      => $bare->git_dir.'',
+    );
+    $clone2->work_tree->child("baz")->touch;
+    $clone2->run( add => "baz" );
+    $clone2->run( commit => "-m" => "adding baz" );
+
+    $clone2->push;
+    my($bare_log)   = $bare->log("-1");
+    my($clone2_log) = $clone2->log("-1");
+    is $bare_log->commit, $clone2_log->commit, "push";
 }
 
 done_testing;
