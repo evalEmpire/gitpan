@@ -22,11 +22,11 @@ func test_config($config, $want) {
 subtest defaults => sub {
     my $config = new_ok $CLASS;
 
-    ok $config->is_test;
+    ok !$config->is_test;
     is $config->config_filename, ".gitpan";
     is_deeply $config->search_dirs, [".", $ENV{HOME}];
-    isa_ok $config->config, 'HASH', "config should always return something";
-    is_deeply $config->use_overlays, ["test"];
+    isa_ok $config->config, 'Gitpan::Config', "config should always return something";
+    is_deeply $config->use_overlays, [];
 } or BAIL_OUT("config didn't pass basic tests, this is bad");
 
 
@@ -78,6 +78,7 @@ subtest overlays => sub {
     my $config = new_ok $CLASS, [
         config_filename         => 'test.gitpan',
         search_dirs             => [$tempdir],
+        is_test                 => 1,
     ];
 
     is $config->config_file, $config_file;

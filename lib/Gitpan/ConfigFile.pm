@@ -39,7 +39,7 @@ haz config =>
 haz is_test     =>
   is            => 'ro',
   isa           => Bool,
-  default       => 1;
+  default       => 0;
 
 haz use_overlays =>
   is            => 'ro',
