@@ -121,6 +121,16 @@ method push( Str $remote = "origin", Str $branch = "master" ) {
     return 1;
 }
 
+method pull( Str $remote //= "origin", Str $branch //= "master" ) {
+    my $ok = $self->do_with_backoff(
+        times => 3,
+        code  => sub {
+            eval { $self->run(pull => $remote => $branch, { quiet => 1 }) } || return
+        },
+    );
+    return $ok;
+}
+
 method remove_working_copy {
     for my $child ( $self->work_tree->children ) {
         next if $child->is_dir and $child->basename eq '.git';

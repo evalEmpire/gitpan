@@ -101,10 +101,21 @@ note "clone"; {
 
     ok -e $clone->work_tree->child("foo"), "working directory cloned";
 
-    my($origin_log) = $origin->log("-1");
-    my($clone_log)  = $clone->log("-1");
+    my($origin_log1) = $origin->log("-1");
+    my($clone_log1)  = $clone->log("-1");
+    is $origin_log1->commit, $clone_log1->commit, "commit ids cloned";
 
-    is $origin_log->commit, $clone_log->commit, "commit ids cloned";
+    $origin->work_tree->child("bar")->touch;
+    $origin->run( add => "bar" );
+    $origin->run( commit => "-m" => "adding bar" );
+
+    $clone->pull;
+
+    ok -e $clone->work_tree->child("bar"), "pulled new file";
+
+    my($origin_log2) = $origin->log("-1");
+    my($clone_log2)  = $clone->log("-1");
+    is $origin_log2->commit, $clone_log2->commit, "commit ids pulled";
 }
 
 done_testing;
