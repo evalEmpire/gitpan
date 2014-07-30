@@ -11,9 +11,21 @@ with "Gitpan::Role::CanBackoff",
 
 use Gitpan::Types;
 
-method init( $class: Path::Tiny $repo_dir ) {
+method init( $class: Path::Tiny :$repo_dir ) {
     $class->run( init => $repo_dir );
 
+    return $class->_new_git($repo_dir);
+}
+
+# $url should be a URI|Path but Method::Signatures does not understand
+# Type::Tiny (yet)
+method clone( $class: Str :$url, Path::Tiny :$repo_dir ) {
+    $class->run( clone => $url, $repo_dir, { quiet => 1 } );
+
+    return $class->_new_git($repo_dir);
+}
+
+method _new_git($class: Path::Tiny $repo_dir) {
     my $config = $class->config;
 
     return $class->SUPER::new(

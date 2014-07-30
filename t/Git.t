@@ -11,7 +11,7 @@ use Gitpan::Git;
 local $ENV{GIT_COMMITTER_NAME} = '';
 
 my $Repo_Dir = Path::Tiny->tempdir->realpath;
-my $git = Gitpan::Git->init( $Repo_Dir );
+my $git = Gitpan::Git->init( repo_dir => $Repo_Dir );
 isa_ok $git, "Gitpan::Git";
 
 # Check the repo was created
@@ -24,7 +24,7 @@ isa_ok $git, "Gitpan::Git";
 
 # Can we use an existing repo?
 {
-    my $copy = Gitpan::Git->init( $Repo_Dir );
+    my $copy = Gitpan::Git->init( repo_dir => $Repo_Dir );
     isa_ok $copy, "Gitpan::Git";
     is $copy->work_tree, $Repo_Dir;
 }
@@ -87,5 +87,24 @@ SKIP: {
     is $last_log->author_name,     'Gitpan';
 }
 
+
+note "clone"; {
+    my $origin_dir = Path::Tiny->tempdir;
+    my $clone_dir  = Path::Tiny->tempdir;
+
+    my $origin = Gitpan::Git->init( repo_dir => $origin_dir );
+    $origin->work_tree->child("foo")->touch;
+    $origin->run( add => "foo" );
+    $origin->run( commit => "-m" => "testing clone" );
+
+    my $clone = Gitpan::Git->clone( url => $origin_dir.'', repo_dir => $clone_dir );
+
+    ok -e $clone->work_tree->child("foo"), "working directory cloned";
+
+    my($origin_log) = $origin->log("-1");
+    my($clone_log)  = $clone->log("-1");
+
+    is $origin_log->commit, $clone_log->commit, "commit ids cloned";
+}
 
 done_testing;
