@@ -35,6 +35,5 @@ t/HasUA.t
 t/lib/Gitpan/Test.pm
 t/OO.t
 t/Release.t
-t/simple_import.t
 t/Test.t
 t/Types.t
