@@ -8,8 +8,8 @@ lib/Gitpan/ConfigFile.pm
 lib/Gitpan/Dist.pm
 lib/Gitpan/Git.pm
 lib/Gitpan/Github.pm
+lib/Gitpan/OO.pm
 lib/Gitpan/Release.pm
-lib/Gitpan/Repo.pm
 lib/Gitpan/Role/CanBackoff.pm
 lib/Gitpan/Role/HasBackpanIndex.pm
 lib/Gitpan/Role/HasConfig.pm
@@ -21,6 +21,7 @@ MANIFEST.SKIP
 META.json
 META.yml
 README
+t/.gitpan
 t/CanBackoff.t
 t/Config.t
 t/ConfigFile.t
@@ -31,6 +32,9 @@ t/HasBackpanIndex.t
 t/HasConfig.t
 t/HasCPANPLUS.t
 t/HasUA.t
+t/lib/Gitpan/Test.pm
+t/OO.t
 t/Release.t
-t/Repo.t
+t/simple_import.t
+t/Test.t
 t/Types.t
