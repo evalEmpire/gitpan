@@ -18,7 +18,8 @@ note "exists_on_github()"; {
 
 
 note "remote"; {
-    is $gh->remote( repo => "gitpan" ), "git\@github.com:gitpan-test/gitpan.git";
+    like $gh->remote( repo => "gitpan" ),
+         qr{^https://.*?:\@github.com/gitpan-test/gitpan.git};
 }
 
 done_testing();

@@ -87,8 +87,13 @@ method maybe_create(
     );
 }
 
-method remote( Str :$owner //= $self->owner, Str :$repo //= $self->repo ) {
-    return sprintf q[git@%s:%s/%s.git], $self->remote_host, $owner, $repo;
+method remote(
+    Str :$token //= $self->access_token,
+    Str :$owner //= $self->owner,
+    Str :$repo  //= $self->repo,
+    Str :$host  //= $self->remote_host,
+) {
+    return qq[https://$token:\@$host/$owner/$repo.git];
 }
 
 method change_repo_info(%changes) {
