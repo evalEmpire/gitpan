@@ -6,6 +6,7 @@ use Method::Signatures;
 use Gitpan::OO;
 use Gitpan::Types;
 
+use Gitpan::Git;
 use Gitpan::Github;
 
 use overload
@@ -40,13 +41,15 @@ haz git     =>
   required  => 1,
   lazy      => 1,
   default   => method {
-      require Gitpan::Git;
-      return Gitpan::Git->init($self->directory);
+      local $SIG{__DIE__};  # Moo bug
+      my $github = $self->github;
+      $github->maybe_create;
+
+      return Gitpan::Git->clone(repo_dir => $self->directory, url => $github->remote);
   };
 
 haz github  =>
   isa       => HashRef|InstanceOf['Gitpan::Github'],
-  is        => 'rw',
   lazy      => 1,
   coerce    => 0,
   trigger   => method($new, $old?) {
