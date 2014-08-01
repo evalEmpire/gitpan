@@ -44,3 +44,12 @@ method release(Str :$version) {
         version         => $version
     );
 }
+
+method releases_to_import() {
+    my $backpan_releases = $self->backpan_releases;
+    my @backpan_versions = map { $_->version } $backpan_releases->all;
+
+    my $gitpan_releases = $self->repo->git->releases;
+
+    return @backpan_versions->diff($gitpan_releases);
+}

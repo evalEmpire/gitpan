@@ -157,12 +157,9 @@ method revision_exists(Str $revision) {
 }
 
 method releases {
-    return unless $self->revision_exists("HEAD");
+    return [] unless $self->revision_exists("HEAD");
 
-    my @releases = map  { m{\bgit-cpan-version:\s*(\S+)}x; $1 }
-                   grep /^\s*git-cpan-version:/,
-                     $self->run(log => '--pretty=format:%b');
-    return @releases;
+    return [map { s{^version/}{}; $_ } $self->run(tag => '-l', 'version/*')];
 }
 
 method fixup_repository {
