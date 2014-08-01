@@ -42,6 +42,7 @@ my $build = MyBuilder->new(
     },
 
     test_requires       => {
+        "Import::Into"          => '1.002000',
         "Test::Most"            => 0,
         "Test::TypeConstraints" => 0.05,
     },
