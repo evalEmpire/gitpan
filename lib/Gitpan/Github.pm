@@ -57,22 +57,28 @@ method exists_on_github( Str :$owner //= $self->owner, Str :$repo //= $self->rep
     return $repo_obj ? 1 : 0;
 }
 
-method create_repo( Str :$repo?, Str :$desc, Str :$homepage ) {
-    $repo //= $self->repo;
-
-    return $self->repos->create(
+method create_repo(
+    Str :$repo     //= $self->repo,
+    Str :$desc     //= "Read-only release history for $repo",
+    Str :$homepage //= "http://metacpan.org/release/$repo"
+)
+{
+    return $self->repos->create({
         org             => $self->owner,
         name            => $repo,
         description     => $desc,
         homepage        => $homepage,
         has_issues      => 0,
         has_wiki        => 0,
-    );
+    });
 }
 
-method maybe_create( Str :$repo?, Str :$desc, Str :$homepage ) {
-    $repo //= $self->repo;
-
+method maybe_create(
+    Str :$repo //= $self->repo,
+    Str :$desc,
+    Str :$homepage
+)
+{
     return $repo if $self->exists_on_github();
     return $self->create_repo(
         repo        => $repo,
