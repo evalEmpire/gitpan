@@ -4,6 +4,7 @@ use Gitpan::OO;
 use Gitpan::Types;
 
 use perl5i::2;
+use Path::Tiny;
 use Method::Signatures;
 
 with 'Gitpan::Role::HasBackpanIndex';
@@ -20,7 +21,8 @@ haz repo =>
   default       => method {
       require Gitpan::Repo;
       return Gitpan::Repo->new(
-          distname => $self->name
+          distname => $self->name,
+          ($ENV{GITPAN_TEST} ? (directory => Path::Tiny->tempdir) : ()),
       );
   };
 

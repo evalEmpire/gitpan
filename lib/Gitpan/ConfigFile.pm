@@ -39,7 +39,9 @@ haz config =>
 haz is_test     =>
   is            => 'ro',
   isa           => Bool,
-  default       => 0;
+  default       => method {
+      return $ENV{GITPAN_TEST} ? 1 : 0;
+  };
 
 haz use_overlays =>
   is            => 'ro',
