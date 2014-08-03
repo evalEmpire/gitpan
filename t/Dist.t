@@ -15,6 +15,9 @@ note "Required args"; {
 note "The basics"; {
     my $dist = $CLASS->new( name => "Acme-Pony" );
 
+    ok !$dist->has_git;
+    ok !$dist->has_github;
+
     is $dist->backpan_dist->name, $dist->name;
 
     my $releases = $dist->backpan_releases;
@@ -85,6 +88,8 @@ note "git"; {
     isa_ok $git, "Gitpan::Git";
     ok -d $dist->directory;
     ok -d $dist->directory->child(".git");
+
+    $dist->delete_repo;
 }
 
 done_testing;

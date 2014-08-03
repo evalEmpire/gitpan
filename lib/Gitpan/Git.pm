@@ -30,6 +30,12 @@ method clone(
     return $class->_new_git($repo_dir);
 }
 
+method delete_repo {
+    my $work_tree = $self->work_tree;
+    $work_tree->remove_tree;
+}
+
+
 haz '_store_work_tree';
 
 method _new_git($class: Path::Tiny $repo_dir) {

@@ -79,12 +79,21 @@ method maybe_create(
     Str :$homepage
 )
 {
-    return $repo if $self->exists_on_github();
+    return $repo if $self->exists_on_github(repo => $repo);
     return $self->create_repo(
         repo        => $repo,
         desc        => $desc,
         homepage    => $homepage,
     );
+}
+
+method delete_repo_if_exists( Str :$repo //= $self->repo ) {
+    return if !$self->exists_on_github( repo => $repo );
+    return $self->delete_repo( repo => $repo );
+}
+
+method delete_repo( Str :$repo //= $self->repo ) {
+    return $self->repos->delete($self->owner, $repo);
 }
 
 method remote(

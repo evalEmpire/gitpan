@@ -135,4 +135,13 @@ note "clone, push, pull"; {
     is $bare_log->commit, $clone2_log->commit, "push";
 }
 
+
+note "delete_repo"; {
+    my $git = Gitpan::Git->init;
+    ok -e $git->work_tree;
+
+    $git->delete_repo;
+    ok !-e $git->work_tree;
+}
+
 done_testing;

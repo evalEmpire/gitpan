@@ -34,6 +34,7 @@ haz git     =>
   isa       => InstanceOf["Gitpan::Git"],
   required  => 1,
   lazy      => 1,
+  predicate => 'has_git',
   default   => method {
       local $SIG{__DIE__};  # Moo bug
       my $github = $self->github;
@@ -45,6 +46,7 @@ haz git     =>
 haz github  =>
   isa       => HashRef|InstanceOf['Gitpan::Github'],
   lazy      => 1,
+  predicate => 'has_github',
   coerce    => 0,
   trigger   => method($new, $old?) {
       return $new if $new->isa("Gitpan::Github");
@@ -104,4 +106,10 @@ method releases_to_import() {
     my $gitpan_releases = $self->repo->git->releases;
 
     return @backpan_versions->diff($gitpan_releases);
+}
+
+method delete_repo {
+    $self->git->delete_repo;
+    $self->github->delete_repo_if_exists;
+    return;
 }
