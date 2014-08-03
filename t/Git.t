@@ -14,23 +14,21 @@ my $Repo_Dir = Path::Tiny->tempdir->realpath;
 my $git = Gitpan::Git->init( repo_dir => $Repo_Dir );
 isa_ok $git, "Gitpan::Git";
 
-# Check the repo was created
-{
+note "Check the repo was created"; {
     ok -d $Repo_Dir;
     ok -d $Repo_Dir->child(".git");
     is $git->work_tree, $Repo_Dir;
 }
 
 
-# Can we use an existing repo?
-{
+note "Can we use an existing repo?"; {
     my $copy = Gitpan::Git->init( repo_dir => $Repo_Dir );
     isa_ok $copy, "Gitpan::Git";
     is $copy->work_tree, $Repo_Dir;
 }
 
 
-# Test our cleanup routines
+note "Test our cleanup routines"; {
 SKIP: {
     my $hooks_dir = $Repo_Dir->child(".git", "hooks");
 
@@ -40,10 +38,9 @@ SKIP: {
     $git->clean;
     ok ![$hooks_dir->children]->first(qr{\.sample$});
 }
+}
 
-
-# Remotes
-{
+note "Remotes"; {
     is_deeply $git->remotes, {};
     $git->change_remote( foo => "http://example.com" );
 
@@ -52,8 +49,7 @@ SKIP: {
 }
 
 
-# Remove working copy
-{
+note "Remove working copy"; {
     my $file = $git->work_tree->child("foo");
     $file->touch;
     ok -e $file;
@@ -63,8 +59,7 @@ SKIP: {
 }
 
 
-# revision_exists
-{
+note "revision_exists"; {
     $git->work_tree->child("foo")->touch;
     $git->run( add => "foo" );
     $git->run( commit => "-m" => "testing" );
@@ -74,8 +69,7 @@ SKIP: {
 }
 
 
-# commit & log
-{
+note "commit & log"; {
     $git->work_tree->child("bar")->touch;
     $git->run( add => "bar" );
     $git->run( commit => "-m" => "testing commit author" );
