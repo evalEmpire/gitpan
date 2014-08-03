@@ -11,18 +11,16 @@ use Gitpan::Git;
 # Simulate a non-configured system as when testing on Travis.
 local $ENV{GIT_COMMITTER_NAME} = '';
 
-my $Repo_Dir = Path::Tiny->tempdir->realpath;
-my $git = Gitpan::Git->init( repo_dir => $Repo_Dir );
-isa_ok $git, "Gitpan::Git";
-
 note "Check the repo was created"; {
+    my $Repo_Dir = Path::Tiny->tempdir->realpath;
+    my $git = Gitpan::Git->init( repo_dir => $Repo_Dir );
+    isa_ok $git, "Gitpan::Git";
+
     ok -d $Repo_Dir;
     ok -d $Repo_Dir->child(".git");
     is $git->work_tree, $Repo_Dir;
-}
 
-
-note "Can we use an existing repo?"; {
+    note "Can we use an existing repo?";
     my $copy = Gitpan::Git->init( repo_dir => $Repo_Dir );
     isa_ok $copy, "Gitpan::Git";
     is $copy->work_tree, $Repo_Dir;
@@ -31,7 +29,8 @@ note "Can we use an existing repo?"; {
 
 note "Test our cleanup routines"; {
 SKIP: {
-    my $hooks_dir = $Repo_Dir->child(".git", "hooks");
+    my $git = Gitpan::Git->init;
+    my $hooks_dir = $git->work_tree->child(".git", "hooks");
 
     skip "No hooks dir" unless -d $hooks_dir;
     skip "No sample hooks" unless [$hooks_dir->children]->first(qr{\.sample$});
@@ -42,6 +41,8 @@ SKIP: {
 }
 
 note "Remotes"; {
+    my $git = Gitpan::Git->init;
+
     is_deeply $git->remotes, {};
     $git->change_remote( foo => "http://example.com" );
 
@@ -51,6 +52,8 @@ note "Remotes"; {
 
 
 note "Remove working copy"; {
+    my $git = Gitpan::Git->init;
+
     my $file = $git->work_tree->child("foo");
     $file->touch;
     ok -e $file;
@@ -61,6 +64,8 @@ note "Remove working copy"; {
 
 
 note "revision_exists"; {
+    my $git = Gitpan::Git->init;
+
     $git->work_tree->child("foo")->touch;
     $git->run( add => "foo" );
     $git->run( commit => "-m" => "testing" );
@@ -71,6 +76,8 @@ note "revision_exists"; {
 
 
 note "commit & log"; {
+    my $git = Gitpan::Git->init;
+
     $git->work_tree->child("bar")->touch;
     $git->run( add => "bar" );
     $git->run( commit => "-m" => "testing commit author" );
