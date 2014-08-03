@@ -146,4 +146,31 @@ note "delete_repo"; {
     ok !-e $git->work_tree;
 }
 
+
+note "rm and add all"; {
+    my $origin = Gitpan::Git->init;
+    my $clone = Gitpan::Git->clone(
+        url => $origin->work_tree.'',
+    );
+
+    $origin->work_tree->child("foo")->touch;
+    $origin->work_tree->child("bar")->touch;
+    $origin->add_all;
+    $origin->run(commit => "-m" => "Adding foo and bar");
+
+    $clone->pull;
+    ok -e $clone->work_tree->child("foo");
+    ok -e $clone->work_tree->child("bar");
+
+    $origin->rm_all;
+    $origin->work_tree->child("bar")->touch;
+    $origin->work_tree->child("baz")->touch;    
+    $origin->add_all;
+    $origin->run(commit => "-m" => "Adding bar and baz");
+
+    $clone->pull;
+    ok -e $clone->work_tree->child("bar");
+    ok -e $clone->work_tree->child("baz");
+}
+
 done_testing;

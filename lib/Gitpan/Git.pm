@@ -150,6 +150,20 @@ method pull( Str $remote //= "origin", Str $branch //= "master" ) {
     return $ok;
 }
 
+method rm_all {
+    $self->run( rm => "--ignore-unmatch", "-fr", "." );
+    # Clean up empty directories.
+    $self->remove_working_copy;
+
+    return;
+}
+
+method add_all {
+    $self->run( add => "." );
+
+    return;
+}
+
 method remove_working_copy {
     for my $child ( $self->work_tree->children ) {
         next if $child->is_dir and $child->basename eq '.git';
