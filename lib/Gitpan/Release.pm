@@ -58,7 +58,7 @@ haz author =>
 
 haz work_dir =>
   is            => 'ro',
-  isa           => Path,
+  isa           => AbsPath,
   lazy          => 1,
   default       => method {
       require Path::Tiny;
@@ -67,14 +67,14 @@ haz work_dir =>
 
 haz archive_file =>
   is            => 'ro',
-  isa           => Path,
+  isa           => AbsPath,
   lazy          => 1,
   default       => method {
-      return $self->work_dir->path->child( $self->filename );
+      return $self->work_dir->child( $self->filename );
   };
 
 haz extract_dir =>
-  isa           => Path;
+  isa           => AbsPath;
 
 method get {
     my $res = $self->ua->get(
