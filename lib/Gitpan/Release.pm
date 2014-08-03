@@ -83,6 +83,7 @@ method get {
     );
 
     croak "File not fully retrieved" unless -s $self->archive_file == $self->size;
+    croak "Get was not successful: ".$res->status_line unless $res->is_success;
 
     return $res;
 }
