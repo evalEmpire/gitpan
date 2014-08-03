@@ -53,8 +53,7 @@ haz author =>
   isa           => InstanceOf['CPANPLUS::Module::Author'],
   lazy          => 1,
   default       => method {
-      my $cpanid = $self->cpanid;
-      return $self->cpanplus->author_tree->{$cpanid};
+      return $self->cpanplus->author_tree($self->cpanid);
   };
 
 haz work_dir =>
