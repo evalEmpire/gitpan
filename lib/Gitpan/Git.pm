@@ -130,12 +130,12 @@ method push( Str $remote //= "origin", Str $branch //= "master" ) {
     my $ok = $self->do_with_backoff(
         times => 3,
         code  => sub {
-            eval { $self->run(push => $remote => $branch, { quiet => 1 }) } || return
+            eval { $self->run(push => $remote => $branch, { quiet => 1 }); 1 };
         },
     );
-    return unless $ok;
+    die "Could not push: $@" unless $ok;
 
-    $self->run( push => $remote => "--tags" );
+    $self->run( push => $remote => $branch => "--tags", { quiet => 1 } );
 
     return 1;
 }

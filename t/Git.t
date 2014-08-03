@@ -130,11 +130,15 @@ note "clone, push, pull"; {
     $clone2->work_tree->child("baz")->touch;
     $clone2->run( add => "baz" );
     $clone2->run( commit => "-m" => "adding baz" );
+    $clone2->run( tag => "some_tag" );
 
     $clone2->push;
     my($bare_log)   = $bare->log("-1");
     my($clone2_log) = $clone2->log("-1");
     is $bare_log->commit, $clone2_log->commit, "push";
+
+    my @tags = $bare->run( tag => "-l" );
+    is_deeply \@tags, ["some_tag"], "pushing tags";
 }
 
 
