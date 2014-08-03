@@ -32,7 +32,7 @@ method clone(
 
 method delete_repo {
     my $work_tree = $self->work_tree;
-    $work_tree->remove_tree;
+    $work_tree->remove_tree({ safe => 0 });
 }
 
 
