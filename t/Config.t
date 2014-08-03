@@ -1,7 +1,8 @@
 #!/usr/bin/env perl
 
+use lib 't/lib';
 use perl5i::2;
-use Test::Most;
+use Gitpan::Test;
 
 my $CLASS = 'Gitpan::Config';
 require_ok $CLASS;
