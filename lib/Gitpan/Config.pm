@@ -34,6 +34,21 @@ haz "github_remote_host" =>
   isa           => Str,
   default       => 'github.com';
 
+haz cpan_release_tag_prefix =>
+  is            => 'ro',
+  isa           => Str,
+  default       => "cpan_version/";
+
+haz gitpan_release_tag_prefix =>
+  is            => 'ro',
+  isa           => Str,
+  default       => "gitpan_version/";
+
+haz cpan_path_tag_prefix =>
+  is            => 'ro',
+  isa           => Str,
+  default       => "cpan_path/";
+
 
 =head1 NAME
 

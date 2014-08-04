@@ -35,6 +35,7 @@ haz git     =>
   required  => 1,
   lazy      => 1,
   predicate => 'has_git',
+  clearer   => 'clear_git',
   default   => method {
       local $SIG{__DIE__};  # Moo bug
       my $github = $self->github;
@@ -99,17 +100,31 @@ method release(Str :$version) {
     );
 }
 
-method releases_to_import() {
+method versions_to_import() {
     my $backpan_releases = $self->backpan_releases;
     my @backpan_versions = map { $_->version } $backpan_releases->all;
 
-    my $gitpan_releases = $self->repo->git->releases;
+    my $gitpan_releases = $self->git->releases;
 
     return @backpan_versions->diff($gitpan_releases);
+}
+
+method releases_to_import() {
+    my @releases;
+    for my $version ($self->versions_to_import->flatten) {
+        push @releases, $self->release( version => $version );
+    }
+
+    return \@releases;
 }
 
 method delete_repo {
     $self->git->delete_repo;
     $self->github->delete_repo_if_exists;
+
+    # ->git now contains a bogus object, kill it so the Dist object 
+    # can get a fresh git repo and still be useful.
+    $self->clear_git;
+
     return;
 }

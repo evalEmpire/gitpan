@@ -179,7 +179,8 @@ method revision_exists(Str $revision) {
 method releases {
     return [] unless $self->revision_exists("HEAD");
 
-    return [map { s{^version/}{}; $_ } $self->run(tag => '-l', 'version/*')];
+    my $tag_prefix = $self->config->cpan_release_tag_prefix;
+    return [map { s{^$tag_prefix}{}; $_ } $self->run(tag => '-l', "$tag_prefix*")];
 }
 
 method fixup_repository {
@@ -208,4 +209,11 @@ method last_cpan_version {
 
 method work_tree {
     return $self->SUPER::work_tree->path;
+}
+
+
+method tag_release(Gitpan::Release $release) {
+    $self->run( "tag", $self->config->cpan_release_tag_prefix.$release->version );
+    $self->run( "tag", $self->config->gitpan_release_tag_prefix.$release->version );
+    $self->run( "tag", $self->config->cpan_path_tag_prefix.$release->path);
 }
