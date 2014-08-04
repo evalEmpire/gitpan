@@ -32,7 +32,9 @@ haz backpan_release =>
       maturity
   )],
   default       => method {
-      return $self->backpan_index->releases($self->distname)->single({ version => $self->version });
+      return $self->backpan_index
+                  ->releases($self->distname)
+                  ->single({ version => $self->version });
   };
 
 haz backpan_file     =>
