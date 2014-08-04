@@ -83,10 +83,10 @@ note "commit & log"; {
     $git->run( commit => "-m" => "testing commit author" );
 
     my($last_log) = $git->log("-1");
-    is $last_log->committer_email, 'schwern+gitpan@pobox.com';
-    is $last_log->committer_name,  'Gitpan';
-    is $last_log->author_email,    'schwern+gitpan@pobox.com';
-    is $last_log->author_name,     'Gitpan';
+    is $last_log->committer_email, 'schwern+gitpan-test@pobox.com';
+    is $last_log->committer_name,  'Gitpan Test';
+    is $last_log->author_email,    'schwern+gitpan-test@pobox.com';
+    is $last_log->author_name,     'Gitpan Test';
 }
 
 
