@@ -211,9 +211,39 @@ method work_tree {
     return $self->SUPER::work_tree->path;
 }
 
+method commit_release(Gitpan::Release $release) {
+    my $author = $release->author;
+
+    my $commit_message = <<"MESSAGE";
+Import of @{[ $author->cpanid ]}/@{[ $release->distvname ]} from CPAN.
+
+gitpan-cpan-distribution: @{[ $release->distname ]}
+gitpan-cpan-version:      @{[ $release->version ]}
+gitpan-cpan-path:         @{[ $release->short_path ]}
+gitpan-cpan-author:       @{[ $author->cpanid ]}
+gitpan-cpan-maturity:     @{[ $release->maturity ]}
+
+MESSAGE
+
+    $self->run(
+        "commit", "-m" => $commit_message,
+        {
+            env => {
+                GIT_AUTHOR_DATE         => $release->date,
+                GIT_AUTHOR_NAME         => $author->author,
+                GIT_AUTHOR_EMAIL        => $author->email,
+            },
+        },
+    );
+
+    $self->tag_release($release);
+
+    return;
+}
+
 
 method tag_release(Gitpan::Release $release) {
     $self->run( "tag", $self->config->cpan_release_tag_prefix.$release->version );
     $self->run( "tag", $self->config->gitpan_release_tag_prefix.$release->version );
-    $self->run( "tag", $self->config->cpan_path_tag_prefix.$release->path);
+    $self->run( "tag", $self->config->cpan_path_tag_prefix.$release->short_path);
 }

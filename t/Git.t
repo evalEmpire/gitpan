@@ -177,4 +177,39 @@ note "rm and add all"; {
     ok -e $clone->work_tree->child("baz");
 }
 
+
+note "Commit release"; {
+    my $git = Gitpan::Git->init;
+
+    use Gitpan::Release;
+    my $release = Gitpan::Release->new(
+        distname        => 'Acme-LookOfDisapproval',
+        version         => '0.005',
+    );
+
+    $git->work_tree->child("foo")->touch;
+    $git->work_tree->child("bar")->touch;
+    $git->add_all;
+    $git->commit_release($release);
+
+    my($last_commit) = $git->log("-1");
+    is $last_commit->author_name,       "Karen Etheridge";
+    is $last_commit->author_email,      'ether@cpan.org';
+    is $last_commit->committer_name,    'Gitpan Test';
+    is $last_commit->committer_email,   'schwern+gitpan-test@pobox.com';
+    is $last_commit->author_gmtime,     1382763843;
+
+    my $log_message = $last_commit->message;
+    like $log_message, qr{^Import of ETHER/Acme-LookOfDisapproval-0.005 from CPAN}ms;
+    like $log_message, qr{^gitpan-cpan-distribution:\s+Acme-LookOfDisapproval}ms;
+    like $log_message, qr{^gitpan-cpan-version:\s+0.005}ms;
+    like $log_message, qr{^gitpan-cpan-path:\s+ETHER/Acme-LookOfDisapproval-0.005.tar.gz}ms;
+    like $log_message, qr{^gitpan-cpan-author:\s+ETHER}ms;
+    like $log_message, qr{^gitpan-cpan-maturity:\s+released}ms;
+
+    is $git->run("tag", "-l", "cpan_path/*"),      "cpan_path/ETHER/Acme-LookOfDisapproval-0.005.tar.gz";
+    is $git->run("tag", "-l", "gitpan_version/*"), "gitpan_version/0.005";
+    is $git->run("tag", "-l", "cpan_version/*"),   "cpan_version/0.005";
+}
+
 done_testing;
