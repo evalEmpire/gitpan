@@ -20,6 +20,14 @@ haz version =>
   isa           => Str,
   required      => 1;
 
+haz short_path =>
+  is            => 'ro',
+  isa           => Str,
+  lazy          => 1,
+  default       => method {
+      return sprintf "%s/%s", $self->cpanid, $self->filename;
+  };
+
 haz backpan_release =>
   is            => 'ro',
   isa           => InstanceOf['BackPAN::Index::Release'],

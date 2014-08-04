@@ -24,7 +24,8 @@ note "The basics"; {
     );
     isa_ok $pony, "Gitpan::Release";
 
-    is $pony->path, "authors/id/D/DC/DCANTRELL/Acme-Pony-1.1.1.tar.gz";
+    is $pony->path,       "authors/id/D/DC/DCANTRELL/Acme-Pony-1.1.1.tar.gz";
+    is $pony->short_path, "DCANTRELL/Acme-Pony-1.1.1.tar.gz";
 }
 
 
