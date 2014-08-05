@@ -1,14 +1,14 @@
 package Gitpan::Github;
 
+use perl5i::2;
+use Method::Signatures;
+
 use Gitpan::OO;
 use Gitpan::Types;
 extends 'Net::GitHub::V3';
 with 'Gitpan::Role::HasConfig';
 
-use version; our $VERSION = qv("v2.0.0");
-
-use perl5i::2;
-use Method::Signatures;
+use Encode;
 
 haz "owner" =>
   is            => 'ro',
@@ -40,7 +40,15 @@ method BUILD( HashRef $args ) {
     return $self;
 }
 
+# Github doesn't like non alphanumerics as repository names.
+method repo_name_on_github(Str $repo //= $self->repo) {
+    $repo =~ s{[^a-z0-9-_]}{-}ig;
+    return $repo;
+}
+
 method exists_on_github( Str :$owner //= $self->owner, Str :$repo //= $self->repo ) {
+    $repo = $self->repo_name_on_github($repo);
+
     my $repo_obj;
     try {
         $repo_obj = $self->repos->get($owner, $repo);
@@ -65,9 +73,9 @@ method create_repo(
 {
     return $self->repos->create({
         org             => $self->owner,
-        name            => $repo,
-        description     => $desc,
-        homepage        => $homepage,
+        name            => encode_utf8($repo),
+        description     => encode_utf8($desc),
+        homepage        => encode_utf8($homepage),
         has_issues      => 0,
         has_wiki        => 0,
     });
@@ -93,6 +101,8 @@ method delete_repo_if_exists( Str :$repo //= $self->repo ) {
 }
 
 method delete_repo( Str :$repo //= $self->repo ) {
+    $repo = $self->repo_name_on_github($repo);
+
     return $self->repos->delete($self->owner, $repo);
 }
 
@@ -102,13 +112,15 @@ method remote(
     Str :$repo  //= $self->repo,
     Str :$host  //= $self->remote_host,
 ) {
+    $repo = $self->repo_name_on_github($repo);
     return qq[https://$token:\@$host/$owner/$repo.git];
 }
 
 method change_repo_info(%changes) {
     return 1 unless keys %changes;
 
-    return $self->repos->get($self->owner, $self->repo)->update(
+    my $repo = $self->repo_name_on_github($self->repo);
+    return $self->repos->get($self->owner, $repo)->update(
         \%changes,
     );
 }

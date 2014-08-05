@@ -11,12 +11,20 @@ use Gitpan::Github;
 func rand_distname {
     my @names;
 
-    my @letters = ("a".."z","A".."Z", "ñ");
+    my @letters = ("a".."z","A".."Z");
     for (0..rand(4)+1) {
         push @names, join "", map { $letters[rand @letters] } 1..rand(20);
     }
 
     return @names->join("-");
+}
+
+note "repo_name_on_github()"; {
+    my $gh = Gitpan::Github->new;
+    is $gh->repo_name_on_github("gitpan"), "gitpan";
+    is $gh->repo_name_on_github("Foo-Bar"), "Foo-Bar";
+    is $gh->repo_name_on_github("Some_Thing"), "Some_Thing";
+    is $gh->repo_name_on_github("This::Thât"), "This--Th-t";
 }
 
 note "exists_on_github()"; {
@@ -38,13 +46,16 @@ note "remote"; {
 
 note "create and delete repos"; {
     my $gh = Gitpan::Github->new(
-        repo    => rand_distname(),
+        repo    => rand_distname()."-Ünicode",
     );
 
     ok !$gh->exists_on_github;
     lives_ok { $gh->delete_repo_if_exists; };
 
-    $gh->create_repo;
+    $gh->create_repo(
+        desc            => "Testing Ünicode",
+        homepage        => "http://example.com/Ünicode"
+    );
     ok $gh->exists_on_github;
     $gh->delete_repo_if_exists;
     ok !$gh->exists_on_github;
