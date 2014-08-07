@@ -66,9 +66,9 @@ method exists_on_github( Str :$owner //= $self->owner, Str :$repo //= $self->rep
 }
 
 method create_repo(
-    Str :$repo     //= $self->repo,
-    Str :$desc     //= "Read-only release history for $repo",
-    Str :$homepage //= "http://metacpan.org/release/$repo"
+    :$repo      //= $self->repo,
+    :$desc      //= "Read-only release history for $repo",
+    :$homepage  //= "http://metacpan.org/release/$repo"
 )
 {
     return $self->repos->create({
@@ -82,7 +82,7 @@ method create_repo(
 }
 
 method maybe_create(
-    Str :$repo //= $self->repo,
+    :$repo              //= $self->repo,
     Str :$desc,
     Str :$homepage
 )
