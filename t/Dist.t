@@ -101,7 +101,7 @@ note "releases to import"; {
 
     # Releaes of Acme-LOD as of this writing.
     my @backpan_versions = (0.001, 0.002, 0.003, 0.004, 0.005, 0.006);
-    cmp_deeply scalar @backpan_versions->diff(scalar $dist->versions_to_import), [];
+    cmp_deeply scalar @backpan_versions->diff($dist->versions_to_import), [];
 
     my $git = $dist->git;
     $git->work_tree->child("foo")->touch;
@@ -109,7 +109,7 @@ note "releases to import"; {
     $git->run( "commit" => "-m", "Adding foo" );
     $git->tag_release( $dist->release(version => 0.001) );
 
-    cmp_deeply scalar @backpan_versions->diff(scalar $dist->versions_to_import), [0.001];
+    cmp_deeply scalar @backpan_versions->diff($dist->versions_to_import), [0.001];
 }
 
 done_testing;

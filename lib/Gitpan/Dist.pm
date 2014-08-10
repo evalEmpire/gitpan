@@ -106,7 +106,7 @@ method versions_to_import() {
 
     my $gitpan_releases = $self->git->releases;
 
-    return @backpan_versions->diff($gitpan_releases);
+    return scalar @backpan_versions->diff($gitpan_releases);
 }
 
 method releases_to_import() {
