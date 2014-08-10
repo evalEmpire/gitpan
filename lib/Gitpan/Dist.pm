@@ -128,3 +128,23 @@ method delete_repo {
 
     return;
 }
+
+
+# Calling this "import" would conflict with Perl's idea of "import"
+method import_new() {
+    my $git = $self->git;
+
+    for my $release ($self->releases_to_import->flatten) {
+        $release->get;
+
+        $git->rm_all;
+
+        $release->move($git->work_tree);
+
+        $git->add_all;
+
+        $git->commit_release($release);
+    }
+
+    $git->push;
+}
