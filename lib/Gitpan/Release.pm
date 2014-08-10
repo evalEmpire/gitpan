@@ -84,7 +84,8 @@ haz archive_file =>
   };
 
 haz extract_dir =>
-  isa           => AbsPath;
+  isa           => AbsPath,
+  clearer       => "_clear_extract_dir";
 
 method get {
     my $res = $self->ua->get(
@@ -106,12 +107,14 @@ method extract {
 
     require Archive::Extract;
     my $ae = Archive::Extract->new( archive => $archive );
-    croak "Couldn't extract $archive to $dir because ". $ae->error
-      unless $ae->extract( to => $self->work_dir );
+    $ae->extract( to => $dir ) or
+      croak "Couldn't extract $archive to $dir: ". $ae->error;
 
     $self->extract_dir( $ae->extract_path );
 
     $self->fix_permissions;
+
+    croak "Extraction directory does not exist" unless -e $self->extract_dir;
 
     return $self->extract_dir;
 }
@@ -126,6 +129,21 @@ method fix_permissions {
     File::Find::find(sub {
         -d $_ ? $_->path->chmod("u+rx") : $_->path->chmod("u+r");
     }, $self->extract_dir);
+
+    return;
+}
+
+method move(Path::Tiny $to) {
+    croak "$to is not a directory" if !-d $to;
+
+    $self->extract if !$self->extract_dir;
+    my $from = $self->extract_dir;
+
+    use File::Copy::Recursive ();
+    File::Copy::Recursive::dirmove( $from, $to );
+
+    # Have to re-extract
+    $self->_clear_extract_dir;
 
     return;
 }

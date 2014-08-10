@@ -27,6 +27,7 @@ my $build = MyBuilder->new(
         'CPANPLUS'              => 0.9133,
         "File::chdir"           => 0,
         "File::chmod"           => 0.32,
+        "File::Copy::Recursive" => 0.38,
         "Getopt::Long::Descriptive"    => 0.085,
         "Git::Repository"       => 1.300,
         "Git::Repository::Log"  => 1.312,

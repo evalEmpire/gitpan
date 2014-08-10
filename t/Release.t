@@ -76,4 +76,22 @@ note "extract"; {
     ok -e $path->child("Makefile.PL");
 }
 
+
+note "move"; {
+    my $to = Path::Tiny->tempdir;
+
+    my $pony = new_ok "Gitpan::Release", [
+        distname => 'Acme-Pony',
+        version  => '1.1.1'
+    ];
+
+    $pony->get;
+    $pony->move($to);
+    ok !$pony->extract_dir, "Releases are not extracted after moving";
+
+    $pony->extract;
+    cmp_deeply [map { $_->basename } $to->children],
+               [map { $_->basename } $pony->extract_dir->children];
+}
+
 done_testing;
