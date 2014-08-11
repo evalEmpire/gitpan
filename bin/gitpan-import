@@ -1,5 +1,10 @@
 #!/usr/bin/perl
 
+# XXX THIS IS FOR REFERENCE PURPOSES ONLY!
+# XXX It doesn't work and isn't going to be fixed.  A new import program will
+# XXX be written instead.  This is still in the repository to harvest
+# XXX things learned from Gitpan 1.0.
+
 # Do a complete git-ificaiton of BackPAN.  Or give it just a few modules.
 
 use strict;
