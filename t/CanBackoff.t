@@ -1,7 +1,8 @@
 #!/usr/bin/perl
 
+use lib 't/lib';
 use perl5i::2;
-use Test::More;
+use Gitpan::Test;
 
 {
     package Foo;
