@@ -42,5 +42,13 @@ note "URI coercion"; {
     };
 }
 
+note "Extra URI methods"; {
+    require URI;
+    is "URI"->new("http://example.com/foo/")->append_path("/blah/blat"),
+      "http://example.com/foo/blah/blat";
+
+    is "URI"->new("http://example.com/foo")->append_path("blah/blat"),
+      "http://example.com/foo/blah/blat";
+}
 
 done_testing;

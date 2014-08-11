@@ -52,11 +52,7 @@ haz url =>
   lazy          => 1,
   default       => method {
       my $url = $self->config->backpan_url->clone;
-
-      my $path = $url->path;
-      $path .= '/' unless $path =~ m{/$};
-      $path .= $self->path;
-      $url->path( $path );
+      $url->append_path($self->path);
 
       return $url;
   };

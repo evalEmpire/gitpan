@@ -64,3 +64,17 @@ coerce "URI",
       require URI;
       return URI->new($_);
   };
+
+# Fuck Typing
+sub URI::append_path {
+    my $self = shift;
+    my $to_append = shift;
+
+    my $path = $self->path;
+    $path =~ s{/$}{};
+    $to_append =~ s{^/}{};
+
+    $self->path($path ."/". $to_append);
+
+    return $self;
+}

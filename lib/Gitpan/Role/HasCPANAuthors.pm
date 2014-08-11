@@ -19,11 +19,7 @@ has cpan_authors =>
       return $authors if $authors;
 
       my $mailrc_url = $self->config->backpan_url->clone;
-
-      my $path = $mailrc_url->path;
-      $path .= '/' unless $path =~ m{/$};
-      $path .= "authors/01mailrc.txt.gz";
-      $mailrc_url->path($path);
+      $mailrc_url->append_path("authors/01mailrc.txt.gz");
 
       my $tempdir = Path::Tiny->tempdir;
       my $mailrc = $tempdir->child("01mailrc.txt.gz");
