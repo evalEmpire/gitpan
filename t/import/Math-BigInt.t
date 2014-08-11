@@ -3,7 +3,7 @@
 # This distribution has proven a problem in the past.
 
 use lib 't/lib';
-use perl5i::2;
+use Gitpan::perl5i;
 use Gitpan::Test;
 
 use Gitpan::Dist;

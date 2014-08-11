@@ -1,13 +1,12 @@
 package Gitpan::Role::CanBackoff;
 
-use perl5i::2;
+use Gitpan::perl5i;
 
 use Moo::Role;
 requires "default_success_check";
 
 use Gitpan::Types;
 
-use Method::Signatures;
 use Time::HiRes qw(usleep);
 
 method do_with_backoff(Int :$times=6, CodeRef :$code!, CodeRef :$check) {

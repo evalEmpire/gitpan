@@ -1,9 +1,8 @@
 package Gitpan::ConfigFile;
 
+use Gitpan::perl5i;
 use Gitpan::OO;
 use Gitpan::Types;
-use perl5i::2;
-use Method::Signatures;
 use Gitpan::Config;
 
 use YAML::XS qw(LoadFile);

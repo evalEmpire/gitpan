@@ -1,7 +1,8 @@
 #!/usr/bin/env perl
 
-use perl5i::2;
-use Test::Most;
+use lib 't/lib';
+use Gitpan::perl5i;
+use Gitpan::Test;
 
 note "Setup test classes"; {
     package Some::Class1;

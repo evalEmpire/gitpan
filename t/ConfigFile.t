@@ -1,7 +1,6 @@
 #!/usr/bin/env perl
 
-use v5.18;
-use perl5i::2;
+use Gitpan::perl5i;
 use Test::Most;
 use Path::Tiny;
 use YAML::XS qw(DumpFile);

@@ -1,7 +1,6 @@
 package Gitpan::Role::HasCPANAuthors;
 
-use perl5i::2;
-use Method::Signatures;
+use Gitpan::perl5i;
 
 use Carp;
 use Moo::Role;

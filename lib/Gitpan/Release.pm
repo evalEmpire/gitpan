@@ -1,9 +1,8 @@
 package Gitpan::Release;
 
+use Gitpan::perl5i;
 use Gitpan::OO;
 use Gitpan::Types;
-use perl5i::2;
-use Method::Signatures;
 
 with
   'Gitpan::Role::HasBackpanIndex',

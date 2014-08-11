@@ -1,7 +1,6 @@
 package Gitpan::Test;
 
-use perl5i::2;
-use Method::Signatures;
+use Gitpan::perl5i;
 
 use Import::Into;
 

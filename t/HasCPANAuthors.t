@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
 use lib 't/lib';
-use perl5i::2;
+use Gitpan::perl5i;
 use Gitpan::Test;
 
 note "Setup testing class"; {

@@ -1,6 +1,7 @@
 package Gitpan::Types;
 
-use perl5i::2;
+use Gitpan::perl5i;
+
 use Type::Library -base;
 use Type::Utils -all;
 BEGIN { extends "Types::Standard" }

@@ -2,8 +2,7 @@ package Gitpan::Config;
 
 use Gitpan::OO;
 use Gitpan::Types;
-use perl5i::2;
-use Method::Signatures;
+use Gitpan::perl5i;
 
 haz backpan_url =>
   is            => 'ro',

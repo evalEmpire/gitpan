@@ -1,6 +1,7 @@
 package Gitpan::OO;
 
-use perl5i::2;
+use Gitpan::perl5i;
+
 use Scalar::Util;
 require Moo;
 

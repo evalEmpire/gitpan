@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 use lib 't/lib';
-use perl5i::2;
+use Gitpan::perl5i;
 use Path::Tiny;
 
 use Gitpan::Test;
