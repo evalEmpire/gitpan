@@ -7,6 +7,7 @@ use Method::Signatures;
 
 with
   'Gitpan::Role::HasBackpanIndex',
+  'Gitpan::Role::HasConfig',
   'Gitpan::Role::HasCPANPLUS',
   'Gitpan::Role::HasUA';
 
@@ -45,6 +46,21 @@ haz backpan_release =>
                   ->single({ version => $self->version });
   };
 
+haz url =>
+  is            => 'ro',
+  isa           => URI,
+  lazy          => 1,
+  default       => method {
+      my $url = $self->config->backpan_url->clone;
+
+      my $path = $url->path;
+      $path .= '/' unless $path =~ m{/$};
+      $path .= $self->path;
+      $url->path( $path );
+
+      return $url;
+  };
+
 haz backpan_file     =>
   is            => 'ro',
   isa           => InstanceOf['BackPAN::Index::File'],
@@ -52,7 +68,6 @@ haz backpan_file     =>
   handles       => [qw(
       path
       size
-      url
   )],
   default       => method {
       $self->backpan_release->path;
@@ -93,8 +108,9 @@ method get {
         ":content_file" => $self->archive_file.""
     );
 
+    croak "Get from @{[$self->url]} was not successful: ".$res->status_line
+      unless $res->is_success;
     croak "File not fully retrieved" unless -s $self->archive_file == $self->size;
-    croak "Get was not successful: ".$res->status_line unless $res->is_success;
 
     return $res;
 }

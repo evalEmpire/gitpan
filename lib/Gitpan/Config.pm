@@ -5,6 +5,16 @@ use Gitpan::Types;
 use perl5i::2;
 use Method::Signatures;
 
+haz backpan_url =>
+  is            => 'ro',
+  isa           => URI,
+  default       => 'http://gitpan.integra.net/backpan';
+
+haz backpan_cache_ttl =>
+  is            => 'ro',
+  isa           => Int,
+  default       => 60 * 60;
+
 haz committer_email =>
   is            => 'ro',
   isa           => Str,

@@ -12,6 +12,8 @@ subtest "github defaults" => sub {
 
     my $config = new_ok $CLASS;
 
+    isa_ok $config->backpan_url, "URI";
+
     is $config->github_owner,           'gitpan';
     is $config->github_access_token,    'f58a7dfa0f749ccb521c8da38f9649e2eff2434f';
     is $config->github_remote_host,     'github.com';
