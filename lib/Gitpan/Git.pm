@@ -215,12 +215,12 @@ method commit_release(Gitpan::Release $release) {
     my $author = $release->author;
 
     my $commit_message = <<"MESSAGE";
-Import of @{[ $author->cpanid ]}/@{[ $release->distvname ]} from CPAN.
+Import of @{[ $author->pauseid ]}/@{[ $release->distvname ]} from CPAN.
 
 gitpan-cpan-distribution: @{[ $release->distname ]}
 gitpan-cpan-version:      @{[ $release->version ]}
 gitpan-cpan-path:         @{[ $release->short_path ]}
-gitpan-cpan-author:       @{[ $author->cpanid ]}
+gitpan-cpan-author:       @{[ $author->pauseid ]}
 gitpan-cpan-maturity:     @{[ $release->maturity ]}
 
 MESSAGE
@@ -230,7 +230,7 @@ MESSAGE
         {
             env => {
                 GIT_AUTHOR_DATE         => $release->date,
-                GIT_AUTHOR_NAME         => $author->author,
+                GIT_AUTHOR_NAME         => $author->name,
                 GIT_AUTHOR_EMAIL        => $author->email,
             },
         },

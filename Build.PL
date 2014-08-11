@@ -24,7 +24,6 @@ my $build = MyBuilder->new(
 
         "BackPAN::Index"        => 0.39,
         "Capture::Tiny"         => 0.08,        # exception bug
-        'CPANPLUS'              => 0.9133,
         "File::chdir"           => 0,
         "File::chmod"           => 0.32,
         "File::Copy::Recursive" => 0.38,
@@ -34,6 +33,7 @@ my $build = MyBuilder->new(
         "Method::Signatures"    => '20140224',
         "Moo"                   => '1.004002',
         "Net::GitHub"           => '0.66',      # LWP::UserAgent option warning
+        "Parse::CPAN::Authors"  => "2.27",
         "Path::Tiny"            => 0.054,       # symbolic chmod()
         "perl5i::2"             => "v2.13.0",
         "Type::Library"         => 0.046,

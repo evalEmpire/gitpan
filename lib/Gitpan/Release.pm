@@ -8,7 +8,7 @@ use Method::Signatures;
 with
   'Gitpan::Role::HasBackpanIndex',
   'Gitpan::Role::HasConfig',
-  'Gitpan::Role::HasCPANPLUS',
+  'Gitpan::Role::HasCPANAuthors',
   'Gitpan::Role::HasUA';
 
 haz distname =>
@@ -75,10 +75,10 @@ haz backpan_file     =>
 
 haz author =>
   is            => 'ro',
-  isa           => InstanceOf['CPANPLUS::Module::Author'],
+  isa           => InstanceOf['Parse::CPAN::Authors::Author'],
   lazy          => 1,
   default       => method {
-      return $self->cpanplus->author_tree($self->cpanid);
+      return $self->cpan_authors->author($self->cpanid);
   };
 
 haz work_dir =>

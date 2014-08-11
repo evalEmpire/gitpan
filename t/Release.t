@@ -37,9 +37,8 @@ note "Author info"; {
     isa_ok $pony, "Gitpan::Release";
 
     my $author = $pony->author;
-    isa_ok $author, "CPANPLUS::Module::Author";
-    is $author->cpanid, "DCANTRELL";
-    like $author->author, qr{Cantrell}i;
+    is   $author->pauseid, "DCANTRELL";
+    like $author->name,    qr{Cantrell}i;
 }
 
 

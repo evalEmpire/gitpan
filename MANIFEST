@@ -13,7 +13,6 @@ lib/Gitpan/Release.pm
 lib/Gitpan/Role/CanBackoff.pm
 lib/Gitpan/Role/HasBackpanIndex.pm
 lib/Gitpan/Role/HasConfig.pm
-lib/Gitpan/Role/HasCPANPLUS.pm
 lib/Gitpan/Role/HasUA.pm
 lib/Gitpan/Types.pm
 MANIFEST			This list of files
@@ -30,7 +29,6 @@ t/Git.t
 t/Github.t
 t/HasBackpanIndex.t
 t/HasConfig.t
-t/HasCPANPLUS.t
 t/HasUA.t
 t/lib/Gitpan/Test.pm
 t/OO.t
