@@ -206,6 +206,7 @@ note "Commit release"; {
     like $log_message, qr{^gitpan-cpan-path:\s+ETHER/Acme-LookOfDisapproval-0.005.tar.gz}ms;
     like $log_message, qr{^gitpan-cpan-author:\s+ETHER}ms;
     like $log_message, qr{^gitpan-cpan-maturity:\s+released}ms;
+    like $log_message, qr{^gitpan-version:\s+0.005}ms;
 
     is $git->run("tag", "-l", "cpan_path/*"),      "cpan_path/ETHER/Acme-LookOfDisapproval-0.005.tar.gz";
     is $git->run("tag", "-l", "gitpan_version/*"), "gitpan_version/0.005";

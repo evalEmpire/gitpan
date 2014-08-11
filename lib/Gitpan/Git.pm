@@ -219,6 +219,7 @@ Import of @{[ $author->pauseid ]}/@{[ $release->distvname ]} from CPAN.
 
 gitpan-cpan-distribution: @{[ $release->distname ]}
 gitpan-cpan-version:      @{[ $release->version ]}
+gitpan-version:           @{[ $release->normalized_version ]}
 gitpan-cpan-path:         @{[ $release->short_path ]}
 gitpan-cpan-author:       @{[ $author->pauseid ]}
 gitpan-cpan-maturity:     @{[ $release->maturity ]}
@@ -243,7 +244,16 @@ MESSAGE
 
 
 method tag_release(Gitpan::Release $release) {
-    $self->run( "tag", $self->config->cpan_release_tag_prefix.$release->version );
-    $self->run( "tag", $self->config->gitpan_release_tag_prefix.$release->version );
-    $self->run( "tag", $self->config->cpan_path_tag_prefix.$release->short_path);
+    $self->run(
+        "tag",
+        $self->config->cpan_release_tag_prefix.$release->normalized_version
+    );
+    $self->run(
+        "tag",
+        $self->config->gitpan_release_tag_prefix.$release->normalized_version
+    );
+    $self->run(
+        "tag",
+        $self->config->cpan_path_tag_prefix.$release->short_path
+    );
 }

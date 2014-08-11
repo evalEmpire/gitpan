@@ -21,6 +21,19 @@ haz version =>
   isa           => Str,
   required      => 1;
 
+haz normalized_version =>
+  is            => 'ro',
+  isa           => Str,
+  lazy          => 1,
+  default       => method {
+      my $version = $self->version;
+
+      $version =~ s{^\.}{0.};  # git does not like a leading . as a tag name
+      $version =~ s{\.$}{};    # nor a trailing one
+
+      return $version;
+  };
+
 haz short_path =>
   is            => 'ro',
   isa           => Str,
