@@ -90,8 +90,8 @@ note "move"; {
     ok !$pony->extract_dir, "Releases are not extracted after moving";
 
     $pony->extract;
-    cmp_deeply [map { $_->basename } $to->children],
-               [map { $_->basename } $pony->extract_dir->children];
+    cmp_deeply [sort map { $_->basename } $to->children],
+               [sort map { $_->basename } $pony->extract_dir->children];
 }
 
 done_testing;
