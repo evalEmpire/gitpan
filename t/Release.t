@@ -93,23 +93,4 @@ note "move"; {
                [sort map { $_->basename } $pony->extract_dir->children];
 }
 
-
-note "normalize_version"; {
-    my $release = Gitpan::Release->new(
-        distname => "Foo-Bar",
-        version  => ".01"
-    );
-
-    is $release->version,               ".01";
-    is $release->normalized_version,    "0.01";
-
-    $release = Gitpan::Release->new(
-        distname        => "Foo-Bar",
-        version         => "1.2.",
-    );
-
-    is $release->version,               "1.2.";
-    is $release->normalized_version,    "1.2";
-}
-
 done_testing;
