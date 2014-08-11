@@ -24,7 +24,8 @@ note "repo_name_on_github()"; {
     is $gh->repo_name_on_github("gitpan"), "gitpan";
     is $gh->repo_name_on_github("Foo-Bar"), "Foo-Bar";
     is $gh->repo_name_on_github("Some_Thing"), "Some_Thing";
-    is $gh->repo_name_on_github("This::Thât"), "This--Th-t";
+    is $gh->repo_name_on_github("This::Thât"), "This-Th-t";
+    is $gh->repo_name_on_github("Testing-ünicode"), "Testing-nicode";
 }
 
 note "exists_on_github()"; {
