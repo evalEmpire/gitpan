@@ -90,7 +90,7 @@ note "Import $DistName"; {
         1.9993
     )];
 
-    $dist->import_new;
+    $dist->import_releases;
 }
 
 done_testing;

@@ -18,7 +18,7 @@ note "Import $DistName"; {
 
     cmp_deeply $dist->versions_to_import, ['0.0_2', '0.0_3'];
 
-    $dist->import_new;
+    $dist->import_releases;
 
     my($last_commit) = $dist->git->log("-1");
     like $last_commit->message, qr{^gitpan-cpan-maturity:\s+developer}ms;

@@ -129,21 +129,32 @@ method delete_repo {
 }
 
 
-# Calling this "import" would conflict with Perl's idea of "import"
-method import_new() {
-    my $git = $self->git;
-
-    for my $release ($self->releases_to_import->flatten) {
-        $release->get;
-
-        $git->rm_all;
-
-        $release->move($git->work_tree);
-
-        $git->add_all;
-
-        $git->commit_release($release);
+method import_releases(
+    ArrayRef[Gitpan::Release] $releases = $self->releases_to_import
+) {
+    for my $release (@$releases) {
+        $self->import_release($release, push => 0);
     }
 
-    $git->push;
+    $self->git->push;
+}
+
+
+method import_release(
+    Gitpan::Release $release,
+    Bool :$push = 1
+) {
+    my $git = $self->git;
+
+    $release->get;
+
+    $git->rm_all;
+
+    $release->move($git->work_tree);
+
+    $git->add_all;
+
+    $git->commit_release($release);
+
+    $git->push if $push;
 }
