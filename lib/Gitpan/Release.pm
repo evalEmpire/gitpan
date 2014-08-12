@@ -117,6 +117,7 @@ method extract {
     croak "$archive does not exist, did you get it?" unless -e $archive;
 
     require Archive::Extract;
+    local $Archive::Extract::PREFER_BIN = 1;
     my $ae = Archive::Extract->new( archive => $archive );
     $ae->extract( to => $dir ) or
       croak "Couldn't extract $archive to $dir: ". $ae->error;
