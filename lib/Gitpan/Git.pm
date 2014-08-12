@@ -295,7 +295,25 @@ method tag_release(Gitpan::Release $release) {
     # Tag the CPAN Path
     $self->tag($self->config->cpan_path_tag_prefix.$release->short_path);
 
+    # Update the latest stable/alpha release tag.
+    $self->tag( $self->maturity2tag( $release->maturity ), force => 1 );
+
+    # Update the latest release by this author.
+    $self->tag( $release->author->pauseid,                 force => 1 );
+
     return;
+}
+
+
+# BackPAN::Index (via CPAN::DistnameInfo) has its own names for
+# the maturity of a release which differ from CPAN conventions.
+method maturity2tag( Str $maturity ) {
+    state $maturity2tag = {
+        released        => "stable",
+        developer       => "alpha"
+    };
+
+    return $maturity2tag->{$maturity} || $maturity;
 }
 
 

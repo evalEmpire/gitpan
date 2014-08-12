@@ -221,6 +221,14 @@ note "make_ref_safe"; {
 }
 
 
+note "maturity2tag"; {
+    my $git = Gitpan::Git->init;
+
+    is $git->maturity2tag("released"),  "stable";
+    is $git->maturity2tag("developer"), "alpha";
+    is $git->maturity2tag("blah"),      "blah";
+}
+
 note "Commit release"; {
     my $git = Gitpan::Git->init;
 
@@ -256,6 +264,8 @@ note "Commit release"; {
       "gitpan_version/0.005";
     is $git->list_tags(patterns => ["cpan_version/*"]),
       "cpan_version/0.005";
+    is $git->list_tags(patterns => ["stable"]), "stable";
+    is $git->list_tags(patterns => ["ETHER"]),  "ETHER";
 }
 
 done_testing;
