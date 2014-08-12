@@ -90,7 +90,11 @@ note "Import $DistName"; {
         1.9993
     )];
 
-    $dist->import_releases;
+    $dist->import_releases(
+        before_import   => method($release) {
+            note "Importing ".$release->version;
+        }
+    );
 }
 
 done_testing;

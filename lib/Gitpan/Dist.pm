@@ -130,10 +130,14 @@ method delete_repo {
 
 
 method import_releases(
-    ArrayRef[Gitpan::Release] $releases = $self->releases_to_import
+    ArrayRef[Gitpan::Release] :$releases = $self->releases_to_import,
+    CodeRef :$before_import = sub {},
+    CodeRef :$after_import  = sub {}
 ) {
     for my $release (@$releases) {
+        $self->$before_import($release);
         $self->import_release($release, push => 0);
+        $self->$after_import($release);
     }
 
     $self->git->push;
