@@ -130,14 +130,14 @@ note "clone, push, pull"; {
     $clone2->work_tree->child("baz")->touch;
     $clone2->run( add => "baz" );
     $clone2->run( commit => "-m" => "adding baz" );
-    $clone2->run( tag => "some_tag" );
+    $clone2->tag( "some_tag" );
 
     $clone2->push;
     my($bare_log)   = $bare->log("-1");
     my($clone2_log) = $clone2->log("-1");
     is $bare_log->commit, $clone2_log->commit, "push";
 
-    my @tags = $bare->run( tag => "-l" );
+    my @tags = $bare->list_tags;
     is_deeply \@tags, ["some_tag"], "pushing tags";
 }
 
@@ -215,9 +215,12 @@ note "Commit release"; {
     like $log_message, qr{^gitpan-cpan-author:\s+ETHER}ms;
     like $log_message, qr{^gitpan-cpan-maturity:\s+released}ms;
 
-    is $git->run("tag", "-l", "cpan_path/*"),      "cpan_path/ETHER/Acme-LookOfDisapproval-0.005.tar.gz";
-    is $git->run("tag", "-l", "gitpan_version/*"), "gitpan_version/0.005";
-    is $git->run("tag", "-l", "cpan_version/*"),   "cpan_version/0.005";
+    is $git->list_tags(patterns => ["cpan_path/*"]),
+      "cpan_path/ETHER/Acme-LookOfDisapproval-0.005.tar.gz";
+    is $git->list_tags(patterns => ["gitpan_version/*"]),
+      "gitpan_version/0.005";
+    is $git->list_tags(patterns => ["cpan_version/*"]),
+      "cpan_version/0.005";
 }
 
 done_testing;

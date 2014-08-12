@@ -251,16 +251,19 @@ method tag_safe_version(Str $version) {
 
 method tag_release(Gitpan::Release $release) {
     my $tag_safe_version = $self->tag_safe_version($release->version);
-    $self->run(
-        "tag",
-        $self->config->cpan_release_tag_prefix.$tag_safe_version
-    );
-    $self->run(
-        "tag",
-        $self->config->gitpan_release_tag_prefix.$tag_safe_version
-    );
-    $self->run(
-        "tag",
-        $self->config->cpan_path_tag_prefix.$release->short_path
-    );
+    $self->tag($self->config->cpan_release_tag_prefix.$tag_safe_version);
+    $self->tag($self->config->gitpan_release_tag_prefix.$tag_safe_version);
+    $self->tag($self->config->cpan_path_tag_prefix.$release->short_path);
+
+    return;
+}
+
+
+method tag(Str $name) {
+    return $self->run("tag", $name);
+}
+
+
+method list_tags( ArrayRef :$patterns = [] ) {
+    return $self->run("tag", "-l", @$patterns);
 }
