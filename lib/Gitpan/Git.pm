@@ -240,27 +240,70 @@ MESSAGE
     return;
 }
 
-
-method tag_safe_version(Str $version) {
-    $version =~ s{^\.}{0.};  # git does not like a leading . as a tag name
-    $version =~ s{\.$}{};    # nor a trailing one
+# Some special handling when making versions tag safe.
+method ref_safe_version(Str $version) {
+    # Specifically change .1 into 0.1
+    $version =~ s{^\.}{0.};
 
     return $version;
 }
 
+# See git-check-ref-format(1)
+method make_ref_safe(Str $ref, :$substitution = "-") {
+    # 6. They cannot begin or end with a slash / or contain multiple consecutive
+    #    slashes.
+    my @parts = grep { length } split m{/+}, $ref;
+
+    for my $part (@parts) {
+        # 1. no slash-separated component can begin with a dot .
+        $part =~ s{^\.}{$substitution};
+
+        # 1. or end with the sequence .lock
+        $part =~ s{\.lock$}{$substitution};
+    }
+
+    $ref = join "/", @parts;
+
+    # 3. They cannot have two consecutive dots
+    $ref =~ s{\.{2,}}{\.}g;
+
+    # 8. They cannot contain a sequence @{
+    $ref =~ s{\@\{}{$substitution};
+
+    # 4. They cannot have ASCII control characters (i.e. bytes whose values
+    #    are lower than \040, or \177 DEL), space, tilde ~, caret ^, or
+    #    colon : anywhere.
+    # 5. They cannot have question-mark ?, asterisk *, or open bracket [ anywhere
+    # 9. They cannot be the single character @
+    # 10. They cannot contain a \
+    $ref =~ s{[ [:cntrl:] [:space:] \~ \^ \: \? \* \[ \@ \\ ]+}{$substitution}gx;
+
+    # 7. They cannot end with a dot
+    $ref =~ s{\.$}{$substitution}g;
+
+    return $ref;
+}
+
 
 method tag_release(Gitpan::Release $release) {
-    my $tag_safe_version = $self->tag_safe_version($release->version);
-    $self->tag($self->config->cpan_release_tag_prefix.$tag_safe_version);
-    $self->tag($self->config->gitpan_release_tag_prefix.$tag_safe_version);
+    # Tag the CPAN and Gitpan version
+    my $safe_version = $self->ref_safe_version($release->version);
+
+    $self->tag($self->config->cpan_release_tag_prefix.$safe_version);
+    $self->tag($self->config->gitpan_release_tag_prefix.$safe_version);
+
+    # Tag the CPAN Path
     $self->tag($self->config->cpan_path_tag_prefix.$release->short_path);
 
     return;
 }
 
 
-method tag(Str $name) {
-    return $self->run("tag", $name);
+method tag(Str $name, Bool :$force = 0) {
+    my @opts;
+    @opts->push("-f") if $force;
+
+    return $self->run("tag", @opts, $self->make_ref_safe($name));
 }
 
 

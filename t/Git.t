@@ -178,11 +178,46 @@ note "rm and add all"; {
 }
 
 
-note "tag_safe_version"; {
+note "ref_safe_version"; {
     my $git = Gitpan::Git->init;
 
-    is $git->tag_safe_version(".1"),   "0.1";
-    is $git->tag_safe_version("1.2."), "1.2";
+    is $git->ref_safe_version(".1"),   "0.1";
+}
+
+
+note "make_ref_safe"; {
+    my $git = Gitpan::Git->init;
+
+    my %refs = (
+        # 6. They cannot begin or end with a slash / or contain multiple consecutive
+        #    slashes.
+        '/foo//bar/'            => 'foo/bar',
+
+        # 1. no slash-separated component can begin with a dot .
+        'foo/.bar.lock/baz'     => 'foo/-bar-/baz',
+
+        # 3. They cannot have two consecutive dots
+        'foo..bar...baz'        => 'foo.bar.baz',
+
+        # 8. They cannot contain a sequence @{
+        'foo@{bar'              => 'foo-bar',
+
+        # 4. They cannot have ASCII control characters (i.e. bytes whose values
+        #    are lower than \040, or \177 DEL), space, tilde ~, caret ^, or
+        #    colon : anywhere.
+        # 5. They cannot have question-mark ?, asterisk *, or open bracket [ anywhere
+        # 9. They cannot be the single character @
+        # 10. They cannot contain a \
+        qq{1\a2\x{7f}3\a4 5\n6\t7~8^9:10?11*12[13\@14\\15}
+                                => '1-2-3-4-5-6-7-8-9-10-11-12-13-14-15',
+
+        # 7. They cannot end with a dot
+        'foo/bar.'              => 'foo/bar-'
+    );
+
+    %refs->each(func($have, $want) {
+        is $git->make_ref_safe($have), $want or diag "make_ref_safe($have)";
+    });
 }
 
 
