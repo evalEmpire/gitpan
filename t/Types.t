@@ -29,6 +29,8 @@ note "Dist and module types"; {
     type_isa  "Foo-Bar",          DistName;
     type_isa  "Foo",              DistName;
     type_isnt "Foo::Bar",         DistName;
+    type_isnt "",                 DistName;
+    type_isnt "  ",               DistName;
 
     type_isa  "Foo::Bar",         ModuleName;
     type_isa  "Foo",              ModuleName;

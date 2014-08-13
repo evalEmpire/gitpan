@@ -47,7 +47,7 @@ coerce "AbsPath",
 declare "DistName",
   as Str,
   message { "A CPAN distribution name" },
-  where { !/\s/ and !/::/ };
+  where { length and !/\s/ and !/::/ };
 
 
 declare "ModuleName",
