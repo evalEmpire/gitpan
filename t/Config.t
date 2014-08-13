@@ -20,6 +20,10 @@ subtest "github defaults" => sub {
 
     is $config->committer_name,         'Gitpan';
     is $config->committer_email,        'schwern+gitpan@pobox.com';
+
+    is $config->gitpan_dir,             "$ENV{HOME}/gitpan";
+    is $config->gitpan_log_dir,         "$ENV{HOME}/gitpan/log";
+    is $config->gitpan_repo_dir,        "$ENV{HOME}/gitpan/repo";
 };
 
 

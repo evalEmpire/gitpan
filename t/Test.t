@@ -13,4 +13,13 @@ note "Using test config"; {
     is $config->github_owner, 'gitpan-test';
 }
 
+note "The gitpan directory"; {
+    use Gitpan::ConfigFile;
+    my $config = Gitpan::ConfigFile->new->config;
+    my $gitpan_dir = $config->gitpan_dir;
+
+    ok -d $gitpan_dir,  "gitpan directory is created";
+    cmp_deeply [$gitpan_dir->children], [], "and it's empty";
+}
+
 done_testing;

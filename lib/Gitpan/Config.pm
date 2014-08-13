@@ -43,6 +43,29 @@ haz "github_remote_host" =>
   isa           => Str,
   default       => 'github.com';
 
+haz "gitpan_dir" =>
+  is            => 'ro',
+  isa           => Path,
+  default       => sub {
+      return "$ENV{HOME}/gitpan"->path;
+  };
+
+haz "gitpan_log_dir" =>
+  is            => 'ro',
+  isa           => Path,
+  lazy          => 1,
+  default       => method {
+      return $self->gitpan_dir->child("log");
+  };
+
+haz "gitpan_repo_dir" =>
+  is            => 'ro',
+  isa           => Path,
+  lazy          => 1,
+  default       => method {
+      return $self->gitpan_dir->child("repo");
+  };
+
 haz cpan_release_tag_prefix =>
   is            => 'ro',
   isa           => Str,
