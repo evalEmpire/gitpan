@@ -206,30 +206,6 @@ method releases {
     return [map { s{^$tag_prefix}{}; $_ } $self->run(tag => '-l', "$tag_prefix*")];
 }
 
-method fixup_repository {
-    # We do our work in cpan/master, it might not exist if this
-    # repo was cloned from gitpan.
-    if( !$self->revision_exists("cpan/master") and $self->revision_exists("master") ) {
-        $self->run('branch', '-t', 'cpan/master', 'master');
-    }
-    return 1;
-}
-
-method last_commit {
-    return eval { $self->run("rev-parse", "-q", "--verify", "cpan/master") };
-}
-
-method last_cpan_version {
-    my $last_commit = $self->last_commit;
-    return unless $last_commit;
-
-    my $last = $self->run( log => '--pretty=format:%b', '-n', 1, $last_commit );
-    $last =~ /git-cpan-module:\ (.*?) \s+ git-cpan-version:\ (.*?) \s*$/sx
-      or croak "Couldn't parse git message:\n$last\n";
-
-    return $2;
-}
-
 method work_tree {
     return $self->SUPER::work_tree->path;
 }
