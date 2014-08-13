@@ -5,12 +5,7 @@ use Gitpan::perl5i;
 use Gitpan::OO;
 use Gitpan::Types;
 
-with 'Gitpan::Role::HasBackpanIndex',
-     'Gitpan::Role::CanDistLog';
-
-use Path::Tiny;
-use Gitpan::Git;
-use Gitpan::Github;
+with 'Gitpan::Role::HasBackpanIndex';
 
 use overload
   q[""]     => method { return $self->name },
@@ -21,7 +16,9 @@ haz name =>
   isa           => DistName,
   required      => 1;
 
-method distname { $self->name }
+*distname = \&name;
+
+with 'Gitpan::Role::CanDistLog';
 
 haz repo_dir =>
   isa           => Path,
@@ -41,6 +38,7 @@ haz git     =>
       my $github = $self->github;
       $github->maybe_create;
 
+      require Gitpan::Git;
       return Gitpan::Git->clone(
           repo_dir => $self->repo_dir,
           url      => $github->remote
@@ -72,6 +70,7 @@ method BUILDARGS($class: %args) {
 }
 
 method _new_github(HashRef $args = {}) {
+    require Gitpan::Github;
     return Gitpan::Github->new(
         repo      => $self->name,
         %$args,
