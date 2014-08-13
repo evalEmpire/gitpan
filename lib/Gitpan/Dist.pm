@@ -138,6 +138,10 @@ method import_releases(
     CodeRef :$before_import = sub {},
     CodeRef :$after_import  = sub {}
 ) {
+    my $versions = join ", ", map { $_->version } @$releases;
+    $self->main_log( "Importing @{[$self->distname]} versions $verisons" );
+    $self->dist_log( "Importing $versions" );
+
     for my $release (@$releases) {
         $self->$before_import($release);
         $self->import_release($release, push => 0);
@@ -152,6 +156,9 @@ method import_release(
     Gitpan::Release $release,
     Bool :$push = 1
 ) {
+    $self->main_log( "Importing @{[$release->short_path]}" );
+    $self->dist_log( "Importing @{[$release->short_path]}" );
+
     my $git = $self->git;
 
     $release->get;
