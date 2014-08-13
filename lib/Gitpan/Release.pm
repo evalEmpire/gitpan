@@ -102,7 +102,7 @@ haz extract_dir =>
 method get {
     my $url = $self->url;
 
-    $self->dist_log( "Getting $url." );
+    $self->dist_log( "Getting $url" );
 
     my $res = $self->ua->get(
         $url,
@@ -120,7 +120,7 @@ method extract {
     my $archive = $self->archive_file;
     my $dir     = $self->work_dir;
 
-    $self->dist_log( "Extracting $archive to $dir." );
+    $self->dist_log( "Extracting $archive to $dir" );
 
     croak "$archive does not exist, did you get it?" unless -e $archive;
 
