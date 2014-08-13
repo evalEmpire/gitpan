@@ -10,23 +10,41 @@ with "Gitpan::Role::CanBackoff",
 
 use Gitpan::Types;
 
-method init( $class: Path::Tiny :$repo_dir = Path::Tiny->tempdir ) {
+haz distname =>
+  is            => 'ro',
+  writer        => '_set_distname',
+  isa           => DistName;
+
+with "Gitpan::Role::CanDistLog";
+
+method init(
+    $class:
+    Path::Tiny :$repo_dir = Path::Tiny->tempdir,
+    Str :$distname!
+) {
     $class->run( init => $repo_dir );
 
-    return $class->_new_git($repo_dir);
+    return $class->_new_git(
+        repo_dir        => $repo_dir,
+        distname        => $distname,
+    );
 }
 
 # $url should be a URI|Path but Method::Signatures does not understand
 # Type::Tiny (yet)
 method clone(
     $class:
-    Str :$url,
+    Str :$url!,
     Path::Tiny :$repo_dir = Path::Tiny->tempdir,
+    Str :$distname!,
     ArrayRef :$options = []
 ) {
     $class->run( clone => $url, $repo_dir, @$options, { quiet => 1 } );
 
-    return $class->_new_git($repo_dir);
+    return $class->_new_git(
+        repo_dir        => $repo_dir,
+        distname        => $distname
+    );
 }
 
 method delete_repo {
@@ -37,7 +55,11 @@ method delete_repo {
 
 haz '_store_work_tree';
 
-method _new_git($class: Path::Tiny $repo_dir) {
+method _new_git(
+    $class:
+    Path::Tiny :$repo_dir!,
+    Str :$distname!
+) {
     my $config = $class->config;
 
     my $self = $class->SUPER::new(
@@ -55,6 +77,8 @@ method _new_git($class: Path::Tiny $repo_dir) {
     # This is a hack to keep a temp directory from destroying itself when
     # Git::Repository stringifies the $repo_dir object.
     $self->_store_work_tree($repo_dir);
+
+    $self->_set_distname($distname);
 
     return $self;
 }

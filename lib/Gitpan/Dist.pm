@@ -41,7 +41,8 @@ haz git     =>
       require Gitpan::Git;
       return Gitpan::Git->clone(
           repo_dir => $self->repo_dir,
-          url      => $github->remote
+          url      => $github->remote,
+          distname => $self->name,
       );
   };
 
