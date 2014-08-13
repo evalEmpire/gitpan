@@ -15,6 +15,8 @@ haz distname =>
   isa           => DistName,
   required      => 1;
 
+with 'Gitpan::Role::CanDistLog';
+
 haz version =>
   is            => 'ro',
   isa           => Str,
