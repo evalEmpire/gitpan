@@ -35,4 +35,13 @@ subtest "github_access_token env" => sub {
     is $config->github_access_token,    'deadbeef';
 };
 
+
+subtest "setup directories" => sub {
+    my $config = new_ok $CLASS;
+
+    ok -d $config->gitpan_dir;
+    ok -d $config->gitpan_log_dir;
+    ok -d $config->gitpan_repo_dir;
+};
+
 done_testing;

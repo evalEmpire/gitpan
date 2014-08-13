@@ -15,6 +15,8 @@ haz distname =>
   isa           => DistName,
   required      => 1;
 
+with 'Gitpan::Role::CanDistLog';
+
 haz version =>
   is            => 'ro',
   isa           => Str,
@@ -98,12 +100,16 @@ haz extract_dir =>
   clearer       => "_clear_extract_dir";
 
 method get {
+    my $url = $self->url;
+
+    $self->dist_log( "Getting $url" );
+
     my $res = $self->ua->get(
-        $self->url,
+        $url,
         ":content_file" => $self->archive_file.""
     );
 
-    croak "Get from @{[$self->url]} was not successful: ".$res->status_line
+    croak "Get from $url was not successful: ".$res->status_line
       unless $res->is_success;
     croak "File not fully retrieved" unless -s $self->archive_file == $self->size;
 
@@ -113,6 +119,8 @@ method get {
 method extract {
     my $archive = $self->archive_file;
     my $dir     = $self->work_dir;
+
+    $self->dist_log( "Extracting $archive to $dir" );
 
     croak "$archive does not exist, did you get it?" unless -e $archive;
 
@@ -150,6 +158,8 @@ method move(Path::Tiny $to) {
 
     $self->extract if !$self->extract_dir;
     my $from = $self->extract_dir;
+
+    $self->dist_log( "Moving from $from to $to" );
 
     use File::Copy::Recursive ();
     File::Copy::Recursive::dirmove( $from, $to );

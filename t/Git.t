@@ -13,24 +13,32 @@ local $ENV{GIT_COMMITTER_NAME} = '';
 
 note "Check the repo was created"; {
     my $Repo_Dir = Path::Tiny->tempdir->realpath;
-    my $git = Gitpan::Git->init( repo_dir => $Repo_Dir );
+    my $git = Gitpan::Git->init(
+        distname => "Foo-Bar",
+        repo_dir => $Repo_Dir
+    );
     isa_ok $git, "Gitpan::Git";
 
     ok -d $Repo_Dir;
     ok -d $Repo_Dir->child(".git");
-    is $git->work_tree, $Repo_Dir;
+    is $git->repo_dir, $Repo_Dir;
 
     note "Can we use an existing repo?";
-    my $copy = Gitpan::Git->init( repo_dir => $Repo_Dir );
+    my $copy = Gitpan::Git->init(
+        distname => "Foo-Bar",
+        repo_dir => $Repo_Dir
+    );
     isa_ok $copy, "Gitpan::Git";
-    is $copy->work_tree, $Repo_Dir;
+    is $copy->repo_dir, $Repo_Dir;
 }
 
 
 note "Test our cleanup routines"; {
 SKIP: {
-    my $git = Gitpan::Git->init;
-    my $hooks_dir = $git->work_tree->child(".git", "hooks");
+    my $git = Gitpan::Git->init(
+        distname        => "Foo-Bar"
+    );
+    my $hooks_dir = $git->repo_dir->child(".git", "hooks");
 
     skip "No hooks dir" unless -d $hooks_dir;
     skip "No sample hooks" unless [$hooks_dir->children]->first(qr{\.sample$});
@@ -41,7 +49,9 @@ SKIP: {
 }
 
 note "Remotes"; {
-    my $git = Gitpan::Git->init;
+    my $git = Gitpan::Git->init(
+        distname        => "Foo-Bar"
+    );
 
     is_deeply $git->remotes, {};
     $git->change_remote( foo => "http://example.com" );
@@ -52,21 +62,25 @@ note "Remotes"; {
 
 
 note "Remove working copy"; {
-    my $git = Gitpan::Git->init;
+    my $git = Gitpan::Git->init(
+        distname        => "Foo-Bar"
+    );
 
-    my $file = $git->work_tree->child("foo");
+    my $file = $git->repo_dir->child("foo");
     $file->touch;
     ok -e $file;
     $git->remove_working_copy;
     ok !-e $file;
-    is_deeply [map { $_->basename } $git->work_tree->children], [".git"];
+    is_deeply [map { $_->basename } $git->repo_dir->children], [".git"];
 }
 
 
 note "revision_exists"; {
-    my $git = Gitpan::Git->init;
+    my $git = Gitpan::Git->init(
+        distname        => "Foo-Bar"
+    );
 
-    $git->work_tree->child("foo")->touch;
+    $git->repo_dir->child("foo")->touch;
     $git->run( add => "foo" );
     $git->run( commit => "-m" => "testing" );
 
@@ -76,9 +90,11 @@ note "revision_exists"; {
 
 
 note "commit & log"; {
-    my $git = Gitpan::Git->init;
+    my $git = Gitpan::Git->init(
+        distname        => "Foo-Bar"
+    );
 
-    $git->work_tree->child("bar")->touch;
+    $git->repo_dir->child("bar")->touch;
     $git->run( add => "bar" );
     $git->run( commit => "-m" => "testing commit author" );
 
@@ -91,29 +107,32 @@ note "commit & log"; {
 
 
 note "clone, push, pull"; {
-    my $origin = Gitpan::Git->init();
-    $origin->work_tree->child("foo")->touch;
+    my $origin = Gitpan::Git->init(
+        distname        => "Foo-Bar"
+    );
+    $origin->repo_dir->child("foo")->touch;
     $origin->run( add => "foo" );
     $origin->run( commit => "-m" => "testing clone" );
 
     my $clone = Gitpan::Git->clone(
-        url => $origin->work_tree.'',
+        url             => $origin->repo_dir.'',
+        distname        => "Foo-Bar"
     );
 
-    ok -e $clone->work_tree->child("foo"), "working directory cloned";
+    ok -e $clone->repo_dir->child("foo"), "working directory cloned";
 
     my($origin_log1) = $origin->log("-1");
     my($clone_log1)  = $clone->log("-1");
     is $origin_log1->commit, $clone_log1->commit, "commit ids cloned";
 
     # Test pull
-    $origin->work_tree->child("bar")->touch;
+    $origin->repo_dir->child("bar")->touch;
     $origin->run( add => "bar" );
     $origin->run( commit => "-m" => "adding bar" );
 
     $clone->pull;
 
-    ok -e $clone->work_tree->child("bar"), "pulled new file";
+    ok -e $clone->repo_dir->child("bar"), "pulled new file";
 
     my($origin_log2) = $origin->log("-1");
     my($clone_log2)  = $clone->log("-1");
@@ -121,13 +140,15 @@ note "clone, push, pull"; {
 
     # Test push
     my $bare = Gitpan::Git->clone(
-        url      => $origin->work_tree.'',
+        url      => $origin->repo_dir.'',
+        distname => "Foo-Bar",
         options  => [ "--bare" ]
     );
     my $clone2 = Gitpan::Git->clone(
         url      => $bare->git_dir.'',
+        distname => "Foo-Bar"
     );
-    $clone2->work_tree->child("baz")->touch;
+    $clone2->repo_dir->child("baz")->touch;
     $clone2->run( add => "baz" );
     $clone2->run( commit => "-m" => "adding baz" );
     $clone2->tag( "some_tag" );
@@ -143,50 +164,59 @@ note "clone, push, pull"; {
 
 
 note "delete_repo"; {
-    my $git = Gitpan::Git->init;
-    ok -e $git->work_tree;
+    my $git = Gitpan::Git->init(
+        distname        => "Foo-Bar"
+    );
+    ok -e $git->repo_dir;
 
     $git->delete_repo;
-    ok !-e $git->work_tree;
+    ok !-e $git->repo_dir;
 }
 
 
 note "rm and add all"; {
-    my $origin = Gitpan::Git->init;
+    my $origin = Gitpan::Git->init(
+        distname        => "Foo-Bar"
+    );
     my $clone = Gitpan::Git->clone(
-        url => $origin->work_tree.'',
+        url             => $origin->repo_dir.'',
+        distname        => "Foo-Bar"
     );
 
-    $origin->work_tree->child("foo")->touch;
-    $origin->work_tree->child("bar")->touch;
+    $origin->repo_dir->child("foo")->touch;
+    $origin->repo_dir->child("bar")->touch;
     $origin->add_all;
     $origin->run(commit => "-m" => "Adding foo and bar");
 
     $clone->pull;
-    ok -e $clone->work_tree->child("foo");
-    ok -e $clone->work_tree->child("bar");
+    ok -e $clone->repo_dir->child("foo");
+    ok -e $clone->repo_dir->child("bar");
 
     $origin->rm_all;
-    $origin->work_tree->child("bar")->touch;
-    $origin->work_tree->child("baz")->touch;    
+    $origin->repo_dir->child("bar")->touch;
+    $origin->repo_dir->child("baz")->touch;    
     $origin->add_all;
     $origin->run(commit => "-m" => "Adding bar and baz");
 
     $clone->pull;
-    ok -e $clone->work_tree->child("bar");
-    ok -e $clone->work_tree->child("baz");
+    ok -e $clone->repo_dir->child("bar");
+    ok -e $clone->repo_dir->child("baz");
 }
 
 
 note "ref_safe_version"; {
-    my $git = Gitpan::Git->init;
+    my $git = Gitpan::Git->init(
+        distname        => "Foo-Bar"
+    );
 
     is $git->ref_safe_version(".1"),   "0.1";
 }
 
 
 note "make_ref_safe"; {
-    my $git = Gitpan::Git->init;
+    my $git = Gitpan::Git->init(
+        distname        => "Foo-Bar"
+    );
 
     my %refs = (
         # 6. They cannot begin or end with a slash / or contain multiple consecutive
@@ -222,7 +252,9 @@ note "make_ref_safe"; {
 
 
 note "maturity2tag"; {
-    my $git = Gitpan::Git->init;
+    my $git = Gitpan::Git->init(
+        distname        => "Foo-Bar"
+    );
 
     is $git->maturity2tag("released"),  "stable";
     is $git->maturity2tag("developer"), "alpha";
@@ -230,7 +262,9 @@ note "maturity2tag"; {
 }
 
 note "Commit release"; {
-    my $git = Gitpan::Git->init;
+    my $git = Gitpan::Git->init(
+        distname        => "Foo-Bar"
+    );
 
     use Gitpan::Release;
     my $release = Gitpan::Release->new(
@@ -238,8 +272,8 @@ note "Commit release"; {
         version         => '0.005',
     );
 
-    $git->work_tree->child("foo")->touch;
-    $git->work_tree->child("bar")->touch;
+    $git->repo_dir->child("foo")->touch;
+    $git->repo_dir->child("bar")->touch;
     $git->add_all;
     $git->commit_release($release);
 

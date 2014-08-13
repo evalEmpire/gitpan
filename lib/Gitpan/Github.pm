@@ -9,6 +9,9 @@ with 'Gitpan::Role::HasConfig';
 
 use Encode;
 
+method distname { return $self->repo }
+with "Gitpan::Role::CanDistLog";
+
 haz "owner" =>
   is            => 'ro',
   isa           => Str,

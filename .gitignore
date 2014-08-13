@@ -14,4 +14,4 @@ nytprof*
 MYMETA.*
 *.o
 gitpan-build
-
+t/gitpan

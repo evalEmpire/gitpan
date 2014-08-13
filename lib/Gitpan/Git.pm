@@ -3,61 +3,91 @@ package Gitpan::Git;
 use Gitpan::perl5i;
 
 use Gitpan::OO;
+use Gitpan::Types;
 use Git::Repository qw(Log);
-extends 'Git::Repository';
 with "Gitpan::Role::CanBackoff",
      "Gitpan::Role::HasConfig";
 
-use Gitpan::Types;
+haz distname =>
+  is            => 'ro',
+  isa           => DistName;
 
-method init( $class: Path::Tiny :$repo_dir = Path::Tiny->tempdir ) {
-    $class->run( init => $repo_dir );
+with "Gitpan::Role::CanDistLog";
 
-    return $class->_new_git($repo_dir);
+haz repo_dir =>
+  is            => 'ro',
+  isa           => AbsPath,
+  lazy          => 1,
+  default       => method {
+      require Path::Tiny;
+      return Path::Tiny->tempdir;
+  };
+
+haz git =>
+  isa           => InstanceOf["Git::Repository"],
+  handles       => [qw(
+      run
+      log
+      git_dir
+  )],
+  lazy          => 1,
+  default       => method {
+      my $config = $self->config;
+
+      return Git::Repository->new(
+          work_tree => $self->repo_dir.'',
+          {
+              env => {
+                  GIT_COMMITTER_EMAIL => $config->committer_email,
+                  GIT_COMMITTER_NAME  => $config->committer_name,
+                  GIT_AUTHOR_EMAIL    => $config->committer_email,
+                  GIT_AUTHOR_NAME     => $config->committer_name,
+              }
+          },
+      );
+  };
+
+method init($class: %args) {
+    my $self = $class->new(%args);
+
+    $self->dist_log( "git init in @{[$self->repo_dir]}" );
+
+    Git::Repository->run( init => $self->repo_dir );
+
+    return $self;
 }
 
 # $url should be a URI|Path but Method::Signatures does not understand
 # Type::Tiny (yet)
 method clone(
     $class:
-    Str :$url,
-    Path::Tiny :$repo_dir = Path::Tiny->tempdir,
-    ArrayRef :$options = []
+    Str :$url!,
+    ArrayRef :$options = [],
+    Str :$distname!,
+    Path::Tiny :$repo_dir
 ) {
-    $class->run( clone => $url, $repo_dir, @$options, { quiet => 1 } );
-
-    return $class->_new_git($repo_dir);
-}
-
-method delete_repo {
-    my $work_tree = $self->work_tree;
-    $work_tree->remove_tree({ safe => 0 });
-}
-
-
-haz '_store_work_tree';
-
-method _new_git($class: Path::Tiny $repo_dir) {
-    my $config = $class->config;
-
-    my $self = $class->SUPER::new(
-        work_tree => $repo_dir,
-        {
-            env => {
-                GIT_COMMITTER_EMAIL => $config->committer_email,
-                GIT_COMMITTER_NAME  => $config->committer_name,
-                GIT_AUTHOR_EMAIL    => $config->committer_email,
-                GIT_AUTHOR_NAME     => $config->committer_name,
-            }
-        },
+    my $self = $class->new(
+        distname        => $distname,
+        $repo_dir ? (repo_dir        => $repo_dir) : ()
     );
 
-    # This is a hack to keep a temp directory from destroying itself when
-    # Git::Repository stringifies the $repo_dir object.
-    $self->_store_work_tree($repo_dir);
+    $self->dist_log( "git clone from $url in @{[$self->repo_dir]}" );
+
+    Git::Repository->run(
+        clone => $url,
+        $self->repo_dir,
+        @$options,
+        { quiet => 1 }
+    );
 
     return $self;
 }
+
+
+method delete_repo {
+    $self->repo_dir->remove_tree({ safe => 0 });
+}
+
 
 method clean {
     $self->remove_sample_hooks;
@@ -112,10 +142,12 @@ method change_remote( Str $name, Str $url ) {
 }
 
 method set_remote_url( Str $name, Str $url ) {
+    $self->dist_log( "Changing remote $name to $url" );
     $self->run( remote => "set-url" => $name => $url );
 }
 
 method add_remote( Str $name, Str $url ) {
+    $self->dist_log( "Adding new remote $name to $url" );
     $self->run( remote => add => $name => $url );
 }
 
@@ -124,6 +156,8 @@ method default_success_check($return?) {
 }
 
 method push( Str $remote //= "origin", Str $branch //= "master" ) {
+    $self->dist_log( "Pushing to $remote $branch" );
+
     # sometimes github doesn't have the repo ready immediately after create_repo
     # returns, so if push fails try it again.
     my $ok = $self->do_with_backoff(
@@ -131,6 +165,10 @@ method push( Str $remote //= "origin", Str $branch //= "master" ) {
         code  => sub {
             eval { $self->run(push => $remote => $branch, { quiet => 1 }); 1 };
         },
+        check => method($return) {
+            $self->dist_log( "Push failed" ) if !$return;
+            return $return;
+        }
     );
     die "Could not push: $@" unless $ok;
 
@@ -140,16 +178,24 @@ method push( Str $remote //= "origin", Str $branch //= "master" ) {
 }
 
 method pull( Str $remote //= "origin", Str $branch //= "master" ) {
+    $self->dist_log( "Pulling from $remote $branch" );
+
     my $ok = $self->do_with_backoff(
         times => 3,
         code  => sub {
             eval { $self->run(pull => $remote => $branch, { quiet => 1 }) } || return
         },
+        check => method($return) {
+            $self->dist_log( "Pull failed" ) if !$return;
+            return $return;
+        }
     );
     return $ok;
 }
 
 method rm_all {
+    $self->dist_log( "git rm_all" );
+
     $self->run( rm => "--ignore-unmatch", "-fr", "." );
     # Clean up empty directories.
     $self->remove_working_copy;
@@ -158,13 +204,17 @@ method rm_all {
 }
 
 method add_all {
+    $self->dist_log( "git add_all" );
+
     $self->run( add => "." );
 
     return;
 }
 
 method remove_working_copy {
-    for my $child ( $self->work_tree->children ) {
+    $self->dist_log( "git remove_working_copy" );
+
+    for my $child ( $self->repo_dir->children ) {
         next if $child->is_dir and $child->basename eq '.git';
         $child->is_dir ? $child->remove_tree : $child->remove;
     }
@@ -182,36 +232,10 @@ method releases {
     return [map { s{^$tag_prefix}{}; $_ } $self->run(tag => '-l', "$tag_prefix*")];
 }
 
-method fixup_repository {
-    # We do our work in cpan/master, it might not exist if this
-    # repo was cloned from gitpan.
-    if( !$self->revision_exists("cpan/master") and $self->revision_exists("master") ) {
-        $self->run('branch', '-t', 'cpan/master', 'master');
-    }
-    return 1;
-}
-
-method last_commit {
-    return eval { $self->run("rev-parse", "-q", "--verify", "cpan/master") };
-}
-
-method last_cpan_version {
-    my $last_commit = $self->last_commit;
-    return unless $last_commit;
-
-    my $last = $self->run( log => '--pretty=format:%b', '-n', 1, $last_commit );
-    $last =~ /git-cpan-module:\ (.*?) \s+ git-cpan-version:\ (.*?) \s*$/sx
-      or croak "Couldn't parse git message:\n$last\n";
-
-    return $2;
-}
-
-method work_tree {
-    return $self->SUPER::work_tree->path;
-}
-
 method commit_release(Gitpan::Release $release) {
     my $author = $release->author;
+
+    $self->dist_log( "Committing @{[ $release->short_path ]}" );
 
     my $commit_message = <<"MESSAGE";
 Import of @{[ $author->pauseid ]}/@{[ $release->distvname ]} from CPAN.
@@ -286,6 +310,8 @@ method make_ref_safe(Str $ref, :$substitution = "-") {
 
 
 method tag_release(Gitpan::Release $release) {
+    $self->dist_log( "Tagging @{[ $release->short_path ]}" );
+
     # Tag the CPAN and Gitpan version
     my $safe_version = $self->ref_safe_version($release->version);
 

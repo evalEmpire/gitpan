@@ -19,7 +19,13 @@ note "The gitpan directory"; {
     my $gitpan_dir = $config->gitpan_dir;
 
     ok -d $gitpan_dir,  "gitpan directory is created";
-    cmp_deeply [$gitpan_dir->children], [], "and it's empty";
+
+    # Check there are nothing but empty directories, because
+    # Gitpan::Config will make them.
+    my $iter = $gitpan_dir->iterator({ recurse => 1 });
+    while( my $path = $iter->() ) {
+        ok -d $path;
+    }
 }
 
 done_testing;

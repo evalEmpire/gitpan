@@ -7,10 +7,6 @@ use Gitpan::Types;
 
 with 'Gitpan::Role::HasBackpanIndex';
 
-use Path::Tiny;
-use Gitpan::Git;
-use Gitpan::Github;
-
 use overload
   q[""]     => method { return $self->name },
   fallback  => 1;
@@ -20,11 +16,15 @@ haz name =>
   isa           => DistName,
   required      => 1;
 
+*distname = \&name;
+
+with 'Gitpan::Role::CanDistLog';
+
 haz repo_dir =>
   isa           => Path,
   lazy          => 1,
   default       => method {
-      $self->config->gitpan_repo_dir->child($self->name_path);
+      $self->config->gitpan_repo_dir->child($self->distname_path);
   };
 
 haz git     =>
@@ -38,9 +38,11 @@ haz git     =>
       my $github = $self->github;
       $github->maybe_create;
 
+      require Gitpan::Git;
       return Gitpan::Git->clone(
           repo_dir => $self->repo_dir,
-          url      => $github->remote
+          url      => $github->remote,
+          distname => $self->name,
       );
   };
 
@@ -69,20 +71,11 @@ method BUILDARGS($class: %args) {
 }
 
 method _new_github(HashRef $args = {}) {
+    require Gitpan::Github;
     return Gitpan::Github->new(
         repo      => $self->name,
         %$args,
     );
-}
-
-method name_path() {
-    my $name = $self->name;
-    my @path = (
-        uc $self->name->substr(0, 2) || "--",
-        $self->name
-    );
-    use Path::Tiny;
-    return path(@path);
 }
 
 method exists_on_github() {
@@ -145,6 +138,10 @@ method import_releases(
     CodeRef :$before_import = sub {},
     CodeRef :$after_import  = sub {}
 ) {
+    my $versions = join ", ", map { $_->version } @$releases;
+    $self->main_log( "Importing @{[$self->distname]} versions $verisons" );
+    $self->dist_log( "Importing $versions" );
+
     for my $release (@$releases) {
         $self->$before_import($release);
         $self->import_release($release, push => 0);
@@ -159,13 +156,16 @@ method import_release(
     Gitpan::Release $release,
     Bool :$push = 1
 ) {
+    $self->main_log( "Importing @{[$release->short_path]}" );
+    $self->dist_log( "Importing @{[$release->short_path]}" );
+
     my $git = $self->git;
 
     $release->get;
 
     $git->rm_all;
 
-    $release->move($git->work_tree);
+    $release->move($git->repo_dir);
 
     $git->add_all;
 

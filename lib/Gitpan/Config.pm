@@ -58,6 +58,14 @@ haz "gitpan_log_dir" =>
       return $self->gitpan_dir->child("log");
   };
 
+haz "gitpan_log_file" =>
+  is            => 'ro',
+  isa           => Path,
+  lazy          => 1,
+  default       => method {
+      return $self->gitpan_log_dir->child("gitpan.log");
+  };
+
 haz "gitpan_repo_dir" =>
   is            => 'ro',
   isa           => Path,
@@ -80,6 +88,14 @@ haz cpan_path_tag_prefix =>
   is            => 'ro',
   isa           => Str,
   default       => "cpan_path/";
+
+method BUILD(...) {
+    $self->gitpan_dir->mkpath;
+    $self->gitpan_log_dir->mkpath;
+    $self->gitpan_repo_dir->mkpath;
+
+    return;
+}
 
 
 =head1 NAME
