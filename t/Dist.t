@@ -46,19 +46,8 @@ note "dist data"; {
     isa_ok $dist, $CLASS;
 
     is $dist->name, "Foo-Bar";
-    is $dist->name_path, "FO/Foo-Bar";
 }
 
-note "name_path"; {
-    my $dist = $CLASS->new( name => "F-B-D" );
-    is $dist->name_path, "F-/F-B-D";
-
-    $dist = $CLASS->new( name => "F" );
-    is $dist->name_path, "F/F";
-
-    $dist = $CLASS->new( name => "acme-pony" );
-    is $dist->name_path, "AC/acme-pony";
-}
 
 note "github"; {
     my $dist = $CLASS->new( name => "Foo-Bar" );
@@ -99,7 +88,7 @@ note "git"; {
     ok -d $dist->repo_dir;
     ok -d $dist->repo_dir->child(".git");
 
-    my $name_path = $dist->name_path;
+    my $name_path = $dist->distname_path;
     like $dist->repo_dir, qr{\Q$name_path}, "repo_dir contains the dist name";
 
     $dist->delete_repo;

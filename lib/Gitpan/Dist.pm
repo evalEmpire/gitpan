@@ -5,7 +5,8 @@ use Gitpan::perl5i;
 use Gitpan::OO;
 use Gitpan::Types;
 
-with 'Gitpan::Role::HasBackpanIndex';
+with 'Gitpan::Role::HasBackpanIndex',
+     'Gitpan::Role::CanDistLog';
 
 use Path::Tiny;
 use Gitpan::Git;
@@ -20,11 +21,13 @@ haz name =>
   isa           => DistName,
   required      => 1;
 
+method distname { $self->name }
+
 haz repo_dir =>
   isa           => Path,
   lazy          => 1,
   default       => method {
-      $self->config->gitpan_repo_dir->child($self->name_path);
+      $self->config->gitpan_repo_dir->child($self->distname_path);
   };
 
 haz git     =>
@@ -73,16 +76,6 @@ method _new_github(HashRef $args = {}) {
         repo      => $self->name,
         %$args,
     );
-}
-
-method name_path() {
-    my $name = $self->name;
-    my @path = (
-        uc $self->name->substr(0, 2) || "--",
-        $self->name
-    );
-    use Path::Tiny;
-    return path(@path);
 }
 
 method exists_on_github() {
