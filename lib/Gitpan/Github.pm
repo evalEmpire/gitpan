@@ -12,6 +12,9 @@ use Encode;
 method distname { return $self->repo }
 with "Gitpan::Role::CanDistLog";
 
+haz "repo" =>
+  required      => 1;
+
 haz "owner" =>
   is            => 'ro',
   isa           => Str,
@@ -34,13 +37,15 @@ haz "remote_host" =>
       return $self->config->github_remote_host;
   };
 
-method BUILD( HashRef $args ) {
+# BUILD in Moo roles don't appear to stack nicely, so we
+# go around it.
+after BUILD => method(...) {
     if( $self->owner && $self->repo ) {
         $self->set_default_user_repo($self->owner, $self->repo);
     }
 
-    return $self;
-}
+    return;
+};
 
 # Github doesn't like non alphanumerics as repository names.
 method repo_name_on_github(Str $repo //= $self->repo) {

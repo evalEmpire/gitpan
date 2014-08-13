@@ -19,7 +19,7 @@ func rand_distname {
 }
 
 note "repo_name_on_github()"; {
-    my $gh = Gitpan::Github->new;
+    my $gh = Gitpan::Github->new( repo => "Foo-Bar" );
     is $gh->repo_name_on_github("gitpan"), "gitpan";
     is $gh->repo_name_on_github("Foo-Bar"), "Foo-Bar";
     is $gh->repo_name_on_github("Some_Thing"), "Some_Thing";
@@ -28,7 +28,7 @@ note "repo_name_on_github()"; {
 }
 
 note "exists_on_github()"; {
-    my $gh = Gitpan::Github->new;
+    my $gh = Gitpan::Github->new( repo => "Foo-Bar" );
 
     ok $gh->exists_on_github( owner => "evalEmpire", repo => "gitpan" );
     ok !$gh->exists_on_github( owner => "evalEmpire", repo => "super-python" );
@@ -37,7 +37,7 @@ note "exists_on_github()"; {
 
 
 note "remote"; {
-    my $gh = Gitpan::Github->new;
+    my $gh = Gitpan::Github->new( repo => "Foo-Bar" );
 
     like $gh->remote( repo => "gitpan" ),
          qr{^https://.*?:\@github.com/gitpan-test/gitpan.git};
