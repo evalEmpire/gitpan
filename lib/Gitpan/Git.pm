@@ -50,6 +50,8 @@ haz git =>
 method init($class: %args) {
     my $self = $class->new(%args);
 
+    $self->dist_log( "git init in @{[$self->repo_dir]}" );
+
     Git::Repository->run( init => $self->repo_dir );
 
     return $self;
@@ -62,12 +64,14 @@ method clone(
     Str :$url!,
     ArrayRef :$options = [],
     Str :$distname!,
-    Path::Tiny :$repo_dir = Path::Tiny->tempdir
+    Path::Tiny :$repo_dir
 ) {
     my $self = $class->new(
         distname        => $distname,
         $repo_dir ? (repo_dir        => $repo_dir) : ()
     );
+
+    $self->dist_log( "git clone from $url in @{[$self->repo_dir]}" );
 
     Git::Repository->run(
         clone => $url,
@@ -138,10 +142,12 @@ method change_remote( Str $name, Str $url ) {
 }
 
 method set_remote_url( Str $name, Str $url ) {
+    $self->dist_log( "Changing remote $name to $url" );
     $self->run( remote => "set-url" => $name => $url );
 }
 
 method add_remote( Str $name, Str $url ) {
+    $self->dist_log( "Adding new remote $name to $url" );
     $self->run( remote => add => $name => $url );
 }
 
@@ -150,6 +156,8 @@ method default_success_check($return?) {
 }
 
 method push( Str $remote //= "origin", Str $branch //= "master" ) {
+    $self->dist_log( "Pushing to $remote $branch" );
+
     # sometimes github doesn't have the repo ready immediately after create_repo
     # returns, so if push fails try it again.
     my $ok = $self->do_with_backoff(
@@ -157,6 +165,10 @@ method push( Str $remote //= "origin", Str $branch //= "master" ) {
         code  => sub {
             eval { $self->run(push => $remote => $branch, { quiet => 1 }); 1 };
         },
+        check => method($return) {
+            $self->dist_log( "Push failed" ) if !$return;
+            return $return;
+        }
     );
     die "Could not push: $@" unless $ok;
 
@@ -166,16 +178,24 @@ method push( Str $remote //= "origin", Str $branch //= "master" ) {
 }
 
 method pull( Str $remote //= "origin", Str $branch //= "master" ) {
+    $self->dist_log( "Pulling from $remote $branch" );
+
     my $ok = $self->do_with_backoff(
         times => 3,
         code  => sub {
             eval { $self->run(pull => $remote => $branch, { quiet => 1 }) } || return
         },
+        check => method($return) {
+            $self->dist_log( "Pull failed" ) if !$return;
+            return $return;
+        }
     );
     return $ok;
 }
 
 method rm_all {
+    $self->dist_log( "git rm_all" );
+
     $self->run( rm => "--ignore-unmatch", "-fr", "." );
     # Clean up empty directories.
     $self->remove_working_copy;
@@ -184,12 +204,16 @@ method rm_all {
 }
 
 method add_all {
+    $self->dist_log( "git add_all" );
+
     $self->run( add => "." );
 
     return;
 }
 
 method remove_working_copy {
+    $self->dist_log( "git remove_working_copy" );
+
     for my $child ( $self->repo_dir->children ) {
         next if $child->is_dir and $child->basename eq '.git';
         $child->is_dir ? $child->remove_tree : $child->remove;
@@ -210,6 +234,8 @@ method releases {
 
 method commit_release(Gitpan::Release $release) {
     my $author = $release->author;
+
+    $self->dist_log( "Committing @{[ $release->short_path ]}" );
 
     my $commit_message = <<"MESSAGE";
 Import of @{[ $author->pauseid ]}/@{[ $release->distvname ]} from CPAN.
@@ -284,6 +310,8 @@ method make_ref_safe(Str $ref, :$substitution = "-") {
 
 
 method tag_release(Gitpan::Release $release) {
+    $self->dist_log( "Tagging @{[ $release->short_path ]}" );
+
     # Tag the CPAN and Gitpan version
     my $safe_version = $self->ref_safe_version($release->version);
 
