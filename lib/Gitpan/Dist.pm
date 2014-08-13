@@ -20,13 +20,11 @@ haz name =>
   isa           => DistName,
   required      => 1;
 
-haz directory =>
-  isa       => AbsPath,
-  is        => 'ro',
-  required  => 1,
-  lazy      => 1,
-  default     => method {
-      return $ENV{GITPAN_TEST} ? Path::Tiny->tempdir : $self->name;
+haz repo_dir =>
+  isa           => Path,
+  lazy          => 1,
+  default       => method {
+      $self->config->gitpan_repo_dir->child($self->name_path);
   };
 
 haz git     =>
@@ -40,7 +38,10 @@ haz git     =>
       my $github = $self->github;
       $github->maybe_create;
 
-      return Gitpan::Git->clone(repo_dir => $self->directory, url => $github->remote);
+      return Gitpan::Git->clone(
+          repo_dir => $self->repo_dir,
+          url      => $github->remote
+      );
   };
 
 haz github  =>
@@ -72,6 +73,16 @@ method _new_github(HashRef $args = {}) {
         repo      => $self->name,
         %$args,
     );
+}
+
+method name_path() {
+    my $name = $self->name;
+    my @path = (
+        uc $self->name->substr(0, 2) || "--",
+        $self->name
+    );
+    use Path::Tiny;
+    return path(@path);
 }
 
 method exists_on_github() {
