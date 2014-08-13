@@ -49,18 +49,20 @@ method repo_name_on_github(Str $repo //= $self->repo) {
 }
 
 method exists_on_github( Str :$owner //= $self->owner, Str :$repo //= $self->repo ) {
-    $repo = $self->repo_name_on_github($repo);
+    my $repo_on_github = $self->repo_name_on_github($repo);
+
+    $self->dist_log( "Checking if $repo exists on Github as $repo_on_github" );
 
     my $repo_obj;
     try {
-        $repo_obj = $self->repos->get($owner, $repo);
+        $repo_obj = $self->repos->get($owner, $repo_on_github);
     }
     catch {
         if( /^Not Found\b/ ) {
             return 0
         }
         else {
-            croak "Error checking if a $owner/$repo exists: $_";
+            croak "Error checking if a $owner/$repo_on_github exists: $_";
         }
     };
 
@@ -73,6 +75,8 @@ method create_repo(
     :$homepage  //= "http://metacpan.org/release/$repo"
 )
 {
+    $self->dist_log( "Creating Github repo for $repo" );
+
     return $self->repos->create({
         org             => $self->owner,
         name            => encode_utf8($repo),
@@ -103,9 +107,11 @@ method delete_repo_if_exists( Str :$repo //= $self->repo ) {
 }
 
 method delete_repo( Str :$repo //= $self->repo ) {
-    $repo = $self->repo_name_on_github($repo);
+    my $repo_on_github = $self->repo_name_on_github($repo);
 
-    return $self->repos->delete($self->owner, $repo);
+    $self->dist_log( "Deleting $repo on Github as $repo_on_github" );
+
+    return $self->repos->delete($self->owner, $repo_on_github);
 }
 
 method remote(
@@ -122,6 +128,11 @@ method change_repo_info(%changes) {
     return 1 unless keys %changes;
 
     my $repo = $self->repo_name_on_github($self->repo);
+
+    my $log_changes = join ", ", map { "$_ => $changes{$_}" } keys %changes;
+    $log_changes =~ s{\n}{\\n}g;
+    $self->dist_log( "Changing @{[$self->repo]} (as $repo) info: $log_changes" );
+
     return $self->repos->get($self->owner, $repo)->update(
         \%changes,
     );
