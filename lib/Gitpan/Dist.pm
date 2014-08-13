@@ -139,7 +139,7 @@ method import_releases(
     CodeRef :$after_import  = sub {}
 ) {
     my $versions = join ", ", map { $_->version } @$releases;
-    $self->main_log( "Importing @{[$self->distname]} versions $verisons" );
+    $self->main_log( "Importing @{[$self->distname]} versions $versions" );
     $self->dist_log( "Importing $versions" );
 
     for my $release (@$releases) {
