@@ -146,11 +146,32 @@ checking for mistakes and reporting them as issues.
 
 
 I'm the author of X distribution and my real repository is over here!
+OR
+If a distribution already has a published repository, will you still
+do a Gitpan repo?
 ---------------------------------------------------------------------
 
 gitPAN is intended to co-exist with, not compete with, the development
 repository for a distribution.  It provides a consistent, easy to find
 interface to your releases so you don't have to.
+
+Gitpan serves purposes different from the development repo.  A Gitpan
+repo...
+
+* Has a consistent location.
+* Has a consistent structure.
+* Uses a consistent version control system.
+* Is only for releases.
+* Has the entire release history.
+
+While there are many different ways to use Gitpan, the primary use is
+to examine the release history of any given distribution regardless of
+the preferences of the distribution authors.
+
+Gitpan tries to make it as clear as possible that it is not a
+development repository (descriptive text, descriptive commits, no
+issue tracker, no wiki) and to point the user at the proper
+development resources (ie. the distribution's Metacpan page).
 
 You can make your own development repository more visible by adding
 a repository resource to your release meta-data.  See
