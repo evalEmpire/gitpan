@@ -15,7 +15,7 @@ method dist_log_file {
 }
 
 method dist_log($message) {
-    return $self->log(
+    return $self->_log(
         file    => $self->dist_log_file,
         message => $message
     );
@@ -27,8 +27,9 @@ method distname_path() {
         uc $name->substr(0, 2) || "--",
         $name
     );
-    use Path::Tiny;
-    return path(@path);
+
+    require Path::Tiny;
+    return Path::Tiny->new(@path);
 }
 
 method BUILD(...) {
