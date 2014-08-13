@@ -2,8 +2,8 @@ package Gitpan::OO;
 
 use Gitpan::perl5i;
 
-use Scalar::Util;
 require Moo;
+use Import::Into;
 
 sub import {
     my $class = shift;
@@ -24,6 +24,5 @@ sub import {
     };
     $haz->alias($caller.'::haz');
 
-    unshift @_, "Moo";
-    goto Moo->can("import");
+    Moo->import::into($caller, @_);
 }
