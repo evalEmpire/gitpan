@@ -106,7 +106,7 @@ note "releases to import"; {
     cmp_deeply scalar @backpan_versions->diff($dist->versions_to_import), [];
 
     my $git = $dist->git;
-    $git->work_tree->child("foo")->touch;
+    $git->repo_dir->child("foo")->touch;
     $git->add_all;
     $git->run( "commit" => "-m", "Adding foo" );
     $git->tag_release( $dist->release(version => 0.001) );

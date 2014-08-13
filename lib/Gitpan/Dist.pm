@@ -158,7 +158,7 @@ method import_release(
 
     $git->rm_all;
 
-    $release->move($git->work_tree);
+    $release->move($git->repo_dir);
 
     $git->add_all;
 

@@ -3,31 +3,56 @@ package Gitpan::Git;
 use Gitpan::perl5i;
 
 use Gitpan::OO;
+use Gitpan::Types;
 use Git::Repository qw(Log);
-extends 'Git::Repository';
 with "Gitpan::Role::CanBackoff",
      "Gitpan::Role::HasConfig";
 
-use Gitpan::Types;
-
 haz distname =>
   is            => 'ro',
-  writer        => '_set_distname',
   isa           => DistName;
 
 with "Gitpan::Role::CanDistLog";
 
-method init(
-    $class:
-    Path::Tiny :$repo_dir = Path::Tiny->tempdir,
-    Str :$distname!
-) {
-    $class->run( init => $repo_dir );
+haz repo_dir =>
+  is            => 'ro',
+  isa           => AbsPath,
+  lazy          => 1,
+  default       => method {
+      require Path::Tiny;
+      return Path::Tiny->tempdir;
+  };
 
-    return $class->_new_git(
-        repo_dir        => $repo_dir,
-        distname        => $distname,
-    );
+haz git =>
+  isa           => InstanceOf["Git::Repository"],
+  handles       => [qw(
+      run
+      log
+      git_dir
+  )],
+  lazy          => 1,
+  default       => method {
+      my $config = $self->config;
+
+      return Git::Repository->new(
+          work_tree => $self->repo_dir.'',
+          {
+              env => {
+                  GIT_COMMITTER_EMAIL => $config->committer_email,
+                  GIT_COMMITTER_NAME  => $config->committer_name,
+                  GIT_AUTHOR_EMAIL    => $config->committer_email,
+                  GIT_AUTHOR_NAME     => $config->committer_name,
+              }
+          },
+      );
+  };
+
+method init($class: %args) {
+    my $self = $class->new(%args);
+
+    Git::Repository->run( init => $self->repo_dir );
+
+    return $self;
 }
 
 # $url should be a URI|Path but Method::Signatures does not understand
@@ -35,53 +60,30 @@ method init(
 method clone(
     $class:
     Str :$url!,
-    Path::Tiny :$repo_dir = Path::Tiny->tempdir,
+    ArrayRef :$options = [],
     Str :$distname!,
-    ArrayRef :$options = []
+    Path::Tiny :$repo_dir = Path::Tiny->tempdir
 ) {
-    $class->run( clone => $url, $repo_dir, @$options, { quiet => 1 } );
-
-    return $class->_new_git(
-        repo_dir        => $repo_dir,
-        distname        => $distname
-    );
-}
-
-method delete_repo {
-    my $work_tree = $self->work_tree;
-    $work_tree->remove_tree({ safe => 0 });
-}
-
-
-haz '_store_work_tree';
-
-method _new_git(
-    $class:
-    Path::Tiny :$repo_dir!,
-    Str :$distname!
-) {
-    my $config = $class->config;
-
-    my $self = $class->SUPER::new(
-        work_tree => $repo_dir,
-        {
-            env => {
-                GIT_COMMITTER_EMAIL => $config->committer_email,
-                GIT_COMMITTER_NAME  => $config->committer_name,
-                GIT_AUTHOR_EMAIL    => $config->committer_email,
-                GIT_AUTHOR_NAME     => $config->committer_name,
-            }
-        },
+    my $self = $class->new(
+        distname        => $distname,
+        $repo_dir ? (repo_dir        => $repo_dir) : ()
     );
 
-    # This is a hack to keep a temp directory from destroying itself when
-    # Git::Repository stringifies the $repo_dir object.
-    $self->_store_work_tree($repo_dir);
-
-    $self->_set_distname($distname);
+    Git::Repository->run(
+        clone => $url,
+        $self->repo_dir,
+        @$options,
+        { quiet => 1 }
+    );
 
     return $self;
 }
+
+
+method delete_repo {
+    $self->repo_dir->remove_tree({ safe => 0 });
+}
+
 
 method clean {
     $self->remove_sample_hooks;
@@ -188,7 +190,7 @@ method add_all {
 }
 
 method remove_working_copy {
-    for my $child ( $self->work_tree->children ) {
+    for my $child ( $self->repo_dir->children ) {
         next if $child->is_dir and $child->basename eq '.git';
         $child->is_dir ? $child->remove_tree : $child->remove;
     }
@@ -204,10 +206,6 @@ method releases {
 
     my $tag_prefix = $self->config->cpan_release_tag_prefix;
     return [map { s{^$tag_prefix}{}; $_ } $self->run(tag => '-l', "$tag_prefix*")];
-}
-
-method work_tree {
-    return $self->SUPER::work_tree->path;
 }
 
 method commit_release(Gitpan::Release $release) {
