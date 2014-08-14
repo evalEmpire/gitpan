@@ -118,6 +118,7 @@ note "clone, push, pull"; {
         url             => $origin->repo_dir.'',
         distname        => "Foo-Bar"
     );
+    is $clone->current_branch, $origin->current_branch;
 
     ok -e $clone->repo_dir->child("foo"), "working directory cloned";
 

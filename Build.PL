@@ -30,6 +30,7 @@ my $build = MyBuilder->new(
         "Getopt::Long::Descriptive"    => 0.085,
         "Git::Repository"       => 1.300,
         "Git::Repository::Log"  => 1.312,
+        "Git::Repository::Status" => 0.02,
         "Import::Into"          => '1.002000',
         "Method::Signatures"    => '20140224',
         "Moo"                   => '1.004002',

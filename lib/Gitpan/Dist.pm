@@ -135,20 +135,32 @@ method delete_repo {
 
 method import_releases(
     ArrayRef[Gitpan::Release] :$releases = $self->releases_to_import,
-    CodeRef :$before_import = sub {},
-    CodeRef :$after_import  = sub {}
+    CodeRef :$before_import              = sub {},
+    CodeRef :$after_import               = sub {},
 ) {
     my $versions = join ", ", map { $_->version } @$releases;
     $self->main_log( "Importing @{[$self->distname]} versions $versions" );
     $self->dist_log( "Importing $versions" );
 
+    $self->git->prepare_for_import;
+
     for my $release (@$releases) {
-        $self->$before_import($release);
-        $self->import_release($release, push => 0);
-        $self->$after_import($release);
+        eval {
+            $self->$before_import($release);
+            $self->import_release($release, push => 0);
+            $self->$after_import($release);
+            1;
+        } or do {
+            my $error = $@;
+            $self->main_log("Error importing @{[$release->short_path]}: $error");
+            $self->dist_log($error);
+            return 0;
+        };
     }
 
     $self->git->push;
+
+    return 1;
 }
 
 

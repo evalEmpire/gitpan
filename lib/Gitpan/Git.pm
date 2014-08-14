@@ -4,7 +4,7 @@ use Gitpan::perl5i;
 
 use Gitpan::OO;
 use Gitpan::Types;
-use Git::Repository qw(Log);
+use Git::Repository qw(Log Status);
 with "Gitpan::Role::CanBackoff",
      "Gitpan::Role::HasConfig";
 
@@ -28,6 +28,7 @@ haz git =>
   handles       => [qw(
       run
       log
+      status
       git_dir
   )],
   lazy          => 1,
@@ -81,6 +82,15 @@ method clone(
     );
 
     return $self;
+}
+
+
+# Run quiet, run deep
+method run_quiet(...) {
+    my $opts = ref $_[-1] eq 'HASH' ? pop @_ : {};
+    $opts->{quiet} = 1;
+
+    return $self->run(@_, $opts);
 }
 
 
@@ -163,7 +173,7 @@ method push( Str $remote //= "origin", Str $branch //= "master" ) {
     my $ok = $self->do_with_backoff(
         times => 3,
         code  => sub {
-            eval { $self->run(push => $remote => $branch, { quiet => 1 }); 1 };
+            eval { $self->run_quiet(push => $remote => $branch); 1 };
         },
         check => method($return) {
             $self->dist_log( "Push failed" ) if !$return;
@@ -172,7 +182,7 @@ method push( Str $remote //= "origin", Str $branch //= "master" ) {
     );
     die "Could not push: $@" unless $ok;
 
-    $self->run( push => $remote => $branch => "--tags", { quiet => 1 } );
+    $self->run_quiet( push => $remote => $branch => "--tags" );
 
     return 1;
 }
@@ -183,7 +193,7 @@ method pull( Str $remote //= "origin", Str $branch //= "master" ) {
     my $ok = $self->do_with_backoff(
         times => 3,
         code  => sub {
-            eval { $self->run(pull => $remote => $branch, { quiet => 1 }) } || return
+            eval { $self->run_quiet(pull => $remote => $branch) } || return
         },
         check => method($return) {
             $self->dist_log( "Pull failed" ) if !$return;
@@ -197,6 +207,7 @@ method rm_all {
     $self->dist_log( "git rm_all" );
 
     $self->run( rm => "--ignore-unmatch", "-fr", "." );
+
     # Clean up empty directories.
     $self->remove_working_copy;
 
@@ -220,10 +231,42 @@ method remove_working_copy {
     }
 }
 
+method prepare_for_import {
+    $self->dist_log( "git prepare_for_import" );
+
+    # Without any commits, we need different techniques.
+    return $self->prepare_for_import_empty_repo if !$self->revision_exists("HEAD");
+
+    # Remove all untracked files
+    $self->run("clean", "-dxf");
+
+    # Make sure we're in the right branch and clean up
+    # the staging area and working tree
+    $self->run_quiet("checkout", "-f", "master");
+
+    return;
+}
+
+method prepare_for_import_empty_repo {
+    # Unstage and delete everything.
+    $self->run("rm", "--ignore-unmatch", "-rf", ".");
+
+    # Remove all untracked files
+    $self->run("clean", "-dxf");
+
+    return;
+}
+
 method revision_exists(Str $revision) {
     my $rev = eval { $self->run("rev-parse", $revision) } || return 0;
     return 1;
 }
+
+
+method current_branch {
+    return eval { $self->run("rev-parse", "--abbrev-ref", "HEAD") } || undef;
+}
+
 
 method releases {
     return [] unless $self->revision_exists("HEAD");
