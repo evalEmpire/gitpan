@@ -4,7 +4,7 @@ use Gitpan::perl5i;
 
 use Gitpan::OO;
 use Gitpan::Types;
-use Git::Repository qw(Log);
+use Git::Repository qw(Log Status);
 with "Gitpan::Role::CanBackoff",
      "Gitpan::Role::HasConfig";
 
@@ -28,6 +28,7 @@ haz git =>
   handles       => [qw(
       run
       log
+      status
       git_dir
   )],
   lazy          => 1,
@@ -206,6 +207,7 @@ method rm_all {
     $self->dist_log( "git rm_all" );
 
     $self->run( rm => "--ignore-unmatch", "-fr", "." );
+
     # Clean up empty directories.
     $self->remove_working_copy;
 
@@ -229,10 +231,42 @@ method remove_working_copy {
     }
 }
 
+method prepare_for_import {
+    $self->dist_log( "git prepare_for_import" );
+
+    # Without any commits, we need different techniques.
+    return $self->prepare_for_import_empty_repo if !$self->revision_exists("HEAD");
+
+    # Remove all untracked files
+    $self->run("clean", "-dxf");
+
+    # Make sure we're in the right branch and clean up
+    # the staging area and working tree
+    $self->run_quiet("checkout", "-f", "master");
+
+    return;
+}
+
+method prepare_for_import_empty_repo {
+    # Unstage and delete everything.
+    $self->run("rm", "--ignore-unmatch", "-rf", ".");
+
+    # Remove all untracked files
+    $self->run("clean", "-dxf");
+
+    return;
+}
+
 method revision_exists(Str $revision) {
     my $rev = eval { $self->run("rev-parse", $revision) } || return 0;
     return 1;
 }
+
+
+method current_branch {
+    return eval { $self->run("rev-parse", "--abbrev-ref", "HEAD") } || undef;
+}
+
 
 method releases {
     return [] unless $self->revision_exists("HEAD");
