@@ -48,5 +48,7 @@ my $build = MyBuilder->new(
         "Test::Most"            => 0,
         "Test::TypeConstraints" => 0.05,
     },
+
+    recursive_test_files => 1
 );
 $build->create_build_script;
