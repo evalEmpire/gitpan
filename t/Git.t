@@ -175,6 +175,27 @@ note "delete_repo"; {
 }
 
 
+subtest "add_all with .gitignore" => sub {
+    my $git = Gitpan::Git->init(
+        distname        => "Foo-Bar"
+    );
+
+    my $gitignore = $git->repo_dir->child(".gitignore");
+    my $foo = $git->repo_dir->child("foo");
+
+    $gitignore->append("foo\n");
+    $foo->touch;
+
+    cmp_deeply [map { $_->path1 } grep { $_->ignored } $git->status("--ignored")], ["foo"];
+    $git->add_all;
+    cmp_deeply [grep { $_->ignored } $git->status("--ignored")], [];
+
+    $git->run("commit", "-m", "first commit");
+
+    cmp_deeply [grep { $_->ignored } $git->status("--ignored")], [];
+};
+
+
 note "rm and add all"; {
     my $origin = Gitpan::Git->init(
         distname        => "Foo-Bar"

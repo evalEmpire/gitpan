@@ -8,6 +8,16 @@ use Git::Repository qw(Log Status);
 with "Gitpan::Role::CanBackoff",
      "Gitpan::Role::HasConfig";
 
+{
+    # They got ignored and tracked reversed.
+    # See https://github.com/nichtich/Git-Repository-Plugin-Status/pull/2
+    package Git::Repository::Status;
+    no warnings 'redefine';
+    sub ignored { return $_[0]->[0] eq '!' }
+    sub tracked { return $_[0]->[0] ne '?' }
+}
+
+
 haz distname =>
   is            => 'ro',
   isa           => DistName;
@@ -217,7 +227,7 @@ method rm_all {
 method add_all {
     $self->dist_log( "git add_all" );
 
-    $self->run( add => "." );
+    $self->run( add => "-f", "." );
 
     return;
 }
