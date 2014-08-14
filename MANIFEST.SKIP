@@ -59,4 +59,4 @@
 
 submodules/
 ^\.travis\.yml$
-
+^t/gitpan/
