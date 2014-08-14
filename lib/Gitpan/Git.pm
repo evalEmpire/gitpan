@@ -84,6 +84,15 @@ method clone(
 }
 
 
+# Run quiet, run deep
+method run_quiet(...) {
+    my $opts = ref $_[-1] eq 'HASH' ? pop @_ : {};
+    $opts->{quiet} = 1;
+
+    return $self->run(@_, $opts);
+}
+
+
 method delete_repo {
     $self->repo_dir->remove_tree({ safe => 0 });
 }
@@ -163,7 +172,7 @@ method push( Str $remote //= "origin", Str $branch //= "master" ) {
     my $ok = $self->do_with_backoff(
         times => 3,
         code  => sub {
-            eval { $self->run(push => $remote => $branch, { quiet => 1 }); 1 };
+            eval { $self->run_quiet(push => $remote => $branch); 1 };
         },
         check => method($return) {
             $self->dist_log( "Push failed" ) if !$return;
@@ -172,7 +181,7 @@ method push( Str $remote //= "origin", Str $branch //= "master" ) {
     );
     die "Could not push: $@" unless $ok;
 
-    $self->run( push => $remote => $branch => "--tags", { quiet => 1 } );
+    $self->run_quiet( push => $remote => $branch => "--tags" );
 
     return 1;
 }
@@ -183,7 +192,7 @@ method pull( Str $remote //= "origin", Str $branch //= "master" ) {
     my $ok = $self->do_with_backoff(
         times => 3,
         code  => sub {
-            eval { $self->run(pull => $remote => $branch, { quiet => 1 }) } || return
+            eval { $self->run_quiet(pull => $remote => $branch) } || return
         },
         check => method($return) {
             $self->dist_log( "Pull failed" ) if !$return;
