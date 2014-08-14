@@ -89,6 +89,16 @@ haz cpan_path_tag_prefix =>
   isa           => Str,
   default       => "cpan_path/";
 
+haz dist_transforms =>
+  is            => 'ro',
+  isa           => HashRef[HashRef[Str]],
+  default       => method {
+      return {
+          dists             => {},
+          releases          => {},
+      }
+  };
+
 method BUILD(...) {
     $self->gitpan_dir->mkpath;
     $self->gitpan_log_dir->mkpath;

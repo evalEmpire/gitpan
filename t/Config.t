@@ -24,6 +24,11 @@ subtest "github defaults" => sub {
     is $config->gitpan_dir,             "$ENV{HOME}/gitpan";
     is $config->gitpan_log_dir,         "$ENV{HOME}/gitpan/log";
     is $config->gitpan_repo_dir,        "$ENV{HOME}/gitpan/repo";
+
+    cmp_deeply $config->dist_transforms, {
+        dists           => {},
+        releases        => {},
+    };
 };
 
 
