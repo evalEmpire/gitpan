@@ -314,14 +314,11 @@ note "Commit release"; {
     like $log_message, qr{^gitpan-cpan-author:\s+ETHER}ms;
     like $log_message, qr{^gitpan-cpan-maturity:\s+released}ms;
 
-    is $git->list_tags(patterns => ["cpan_path/*"]),
-      "cpan_path/ETHER/Acme-LookOfDisapproval-0.005.tar.gz";
-    is $git->list_tags(patterns => ["gitpan_version/*"]),
-      "gitpan_version/0.005";
-    is $git->list_tags(patterns => ["cpan_version/*"]),
-      "cpan_version/0.005";
-    is $git->list_tags(patterns => ["stable"]), "stable";
-    is $git->list_tags(patterns => ["ETHER"]),  "ETHER";
+    cmp_deeply [$git->cpan_paths],      ["ETHER/Acme-LookOfDisapproval-0.005.tar.gz"];
+    cmp_deeply [$git->gitpan_versions], ["0.005"];
+    cmp_deeply [$git->cpan_versions],   ["0.005"];
+    cmp_deeply [$git->list_tags(patterns => ["stable"])], ["stable"];
+    cmp_deeply [$git->list_tags(patterns => ["ETHER"])],  ["ETHER"];
 }
 
 done_testing;
