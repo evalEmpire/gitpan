@@ -407,3 +407,23 @@ method tag(Str $name, Bool :$force = 0) {
 method list_tags( ArrayRef :$patterns = [] ) {
     return $self->run("tag", "-l", @$patterns);
 }
+
+
+method cpan_versions() {
+    return $self->list_tags_no_prefix( $self->config->cpan_release_tag_prefix );
+}
+
+
+method cpan_paths() {
+    return $self->list_tags_no_prefix( $self->config->cpan_path_tag_prefix );
+}
+
+
+method gitpan_versions() {
+    return $self->list_tags_no_prefix( $self->config->gitpan_release_tag_prefix );
+}
+
+
+method list_tags_no_prefix( Str $prefix ) {
+    return map { s{^\Q$prefix}{}; $_ } $self->list_tags( patterns => ["$prefix*"]);
+}
