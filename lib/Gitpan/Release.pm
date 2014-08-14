@@ -22,6 +22,17 @@ haz version =>
   isa           => Str,
   required      => 1;
 
+haz gitpan_version =>
+  is            => 'ro',
+  isa           => Str,
+  lazy          => 1,
+  default       => method {
+      my $version = $self->version;
+      $version =~ s{^v}{};
+
+      return $version;
+  };
+
 haz short_path =>
   is            => 'ro',
   isa           => Str,

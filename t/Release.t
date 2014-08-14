@@ -42,6 +42,25 @@ note "Author info"; {
 }
 
 
+subtest "gitpan_version" => sub {
+    my $release = Gitpan::Release->new(
+        distname        => 'Acme-eng2kor',
+        version         => '0.0.1'
+    );
+
+    is $release->version,               '0.0.1';
+    is $release->gitpan_version,        '0.0.1';
+
+    $release = Gitpan::Release->new(
+        distname        => 'Acme-eng2kor',
+        version         => 'v0.0.2'
+    );
+
+    is $release->version,               'v0.0.2';
+    is $release->gitpan_version,        '0.0.2';
+};
+
+
 note "get"; {
     my $pony = new_ok "Gitpan::Release", [
         distname => 'Acme-Pony',
