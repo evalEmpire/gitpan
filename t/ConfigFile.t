@@ -18,6 +18,16 @@ func test_config($config, $want) {
 }
 
 
+subtest default => sub {
+    is $CLASS->default->mo->id, $CLASS->default->mo->id;
+
+    my $new_default = $CLASS->new;
+    $CLASS->set_default($new_default);
+
+    is $CLASS->default->mo->id, $new_default->mo->id;
+};
+
+
 subtest defaults => sub {
     my $config = new_ok $CLASS;
 

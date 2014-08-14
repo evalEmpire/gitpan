@@ -51,6 +51,19 @@ haz use_overlays =>
   };
 
 
+{
+    my $default;
+    method default($class:) {
+        return $default //= Gitpan::ConfigFile->new;
+    }
+
+    method set_default($class: Gitpan::ConfigFile $new_default) {
+        $default = $new_default;
+        return;
+    }
+}
+
+
 =head1 NAME
 
 Gitpan::ConfigFile - Configuration file for Gitpan

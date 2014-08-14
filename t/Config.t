@@ -32,6 +32,16 @@ subtest "github defaults" => sub {
 };
 
 
+subtest default => sub {
+    is $CLASS->default->mo->id, $CLASS->default->mo->id;
+
+    my $new_default = $CLASS->new;
+    $CLASS->set_default($new_default);
+
+    is $CLASS->default->mo->id, $new_default->mo->id;
+};
+
+
 subtest "github_access_token env" => sub {
     local $ENV{GITPAN_GITHUB_ACCESS_TOKEN} = 'deadbeef';
 

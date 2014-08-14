@@ -99,6 +99,21 @@ haz dist_transforms =>
       }
   };
 
+
+{
+    my $default;
+    method default($class:) {
+        require Gitpan::ConfigFile;
+        return $default //= Gitpan::ConfigFile->default->config;
+    }
+
+    method set_default($class: Gitpan::Config $new_default) {
+        $default = $new_default;
+        return;
+    }
+}
+
+
 method BUILD(...) {
     $self->gitpan_dir->mkpath;
     $self->gitpan_log_dir->mkpath;

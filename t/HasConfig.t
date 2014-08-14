@@ -28,4 +28,15 @@ note "As class method"; {
     isa_ok( Some::Class1->config, "Gitpan::Config" );
 }
 
+subtest "config changes with Gitpan::Config->default" => sub {
+    my $obj = Some::Class1->new;
+
+    my $config = $obj->config;
+
+    my $new_config = Gitpan::Config->new;
+    Gitpan::Config->set_default($new_config);
+
+    is $obj->config->mo->id, $new_config->mo->id;
+};
+
 done_testing;

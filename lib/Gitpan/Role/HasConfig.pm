@@ -5,11 +5,10 @@ use Gitpan::perl5i;
 use Moo::Role;
 use Gitpan::Types;
 
-use Gitpan::ConfigFile;
+use Gitpan::Config;
 
 method config() {
-    state $config;
-    return $config //= Gitpan::ConfigFile->new->config;
+    return Gitpan::Config->default;
 }
 
 
