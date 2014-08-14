@@ -365,11 +365,12 @@ method make_ref_safe(Str $ref, :$substitution = "-") {
 method tag_release(Gitpan::Release $release) {
     $self->dist_log( "Tagging @{[ $release->short_path ]}" );
 
-    # Tag the CPAN and Gitpan version
-    my $safe_version = $self->ref_safe_version($release->version);
+    # Special case for making versions safe
+    my $safe_cpan_version   = $self->ref_safe_version($release->version);
+    my $safe_gitpan_version = $self->ref_safe_version($release->gitpan_version);
 
-    $self->tag($self->config->cpan_release_tag_prefix.$safe_version);
-    $self->tag($self->config->gitpan_release_tag_prefix.$safe_version);
+    $self->tag($self->config->cpan_release_tag_prefix.$safe_cpan_version);
+    $self->tag($self->config->gitpan_release_tag_prefix.$safe_gitpan_version);
 
     # Tag the CPAN Path
     $self->tag($self->config->cpan_path_tag_prefix.$release->short_path);
