@@ -14,6 +14,21 @@ haz backpan_cache_ttl =>
   isa           => Int,
   default       => 60 * 60;
 
+haz backpan_always_update =>
+  is            => 'ro',
+  isa           => Bool,
+  default       => 0;
+
+haz backpan_normalize_dist_names =>
+  is            => 'ro',
+  isa           => HashRef,
+  default       => method { {} };
+
+haz backpan_normalize_releases =>
+  is            => 'ro',
+  isa           => HashRef[HashRef[Str]],
+  default       => method { {} };
+
 haz committer_email =>
   is            => 'ro',
   isa           => Str,
@@ -88,16 +103,6 @@ haz cpan_path_tag_prefix =>
   is            => 'ro',
   isa           => Str,
   default       => "cpan_path/";
-
-haz dist_transforms =>
-  is            => 'ro',
-  isa           => HashRef[HashRef[Str]],
-  default       => method {
-      return {
-          dists             => {},
-          releases          => {},
-      }
-  };
 
 
 {

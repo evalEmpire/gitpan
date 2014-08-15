@@ -25,10 +25,10 @@ subtest "github defaults" => sub {
     is $config->gitpan_log_dir,         "$ENV{HOME}/gitpan/log";
     is $config->gitpan_repo_dir,        "$ENV{HOME}/gitpan/repo";
 
-    cmp_deeply $config->dist_transforms, {
-        dists           => {},
-        releases        => {},
-    };
+    ok !$config->backpan_always_update;
+
+    cmp_deeply $config->backpan_normalize_dist_names, {};
+    cmp_deeply $config->backpan_normalize_releases,   {};
 };
 
 
