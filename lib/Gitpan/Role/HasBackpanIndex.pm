@@ -17,7 +17,8 @@ has backpan_index =>
 method default_backpan_index {
     require BackPAN::Index;
     state $index = BackPAN::Index->new(
-        cache_ttl       => $self->config->backpan_cache_ttl,
+        cache_ttl                       => $self->config->backpan_cache_ttl,
+        releases_only_from_authors      => 1,
     );
     return $index;
 }
