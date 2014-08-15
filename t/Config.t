@@ -24,6 +24,21 @@ subtest "github defaults" => sub {
     is $config->gitpan_dir,             "$ENV{HOME}/gitpan";
     is $config->gitpan_log_dir,         "$ENV{HOME}/gitpan/log";
     is $config->gitpan_repo_dir,        "$ENV{HOME}/gitpan/repo";
+
+    ok !$config->backpan_always_update;
+
+    cmp_deeply $config->backpan_normalize_dist_names, {};
+    cmp_deeply $config->backpan_normalize_releases,   {};
+};
+
+
+subtest default => sub {
+    is $CLASS->default->mo->id, $CLASS->default->mo->id;
+
+    my $new_default = $CLASS->new;
+    $CLASS->set_default($new_default);
+
+    is $CLASS->default->mo->id, $new_default->mo->id;
 };
 
 

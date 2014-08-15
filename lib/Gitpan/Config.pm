@@ -14,6 +14,21 @@ haz backpan_cache_ttl =>
   isa           => Int,
   default       => 60 * 60;
 
+haz backpan_always_update =>
+  is            => 'ro',
+  isa           => Bool,
+  default       => 0;
+
+haz backpan_normalize_dist_names =>
+  is            => 'ro',
+  isa           => HashRef,
+  default       => method { {} };
+
+haz backpan_normalize_releases =>
+  is            => 'ro',
+  isa           => HashRef[HashRef[Str]],
+  default       => method { {} };
+
 haz committer_email =>
   is            => 'ro',
   isa           => Str,
@@ -88,6 +103,21 @@ haz cpan_path_tag_prefix =>
   is            => 'ro',
   isa           => Str,
   default       => "cpan_path/";
+
+
+{
+    my $default;
+    method default($class:) {
+        require Gitpan::ConfigFile;
+        return $default //= Gitpan::ConfigFile->default->config;
+    }
+
+    method set_default($class: Gitpan::Config $new_default) {
+        $default = $new_default;
+        return;
+    }
+}
+
 
 method BUILD(...) {
     $self->gitpan_dir->mkpath;
