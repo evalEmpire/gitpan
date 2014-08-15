@@ -1,5 +1,14 @@
+backpan_normalize_dist_names:
+    uri: URIC
+    Webservice-Google-Suggest: WebService-Google-Suggest
+backpan_normalize_releases:
+    authors/id/M/MA/MARCEL/-0.01.tar.gz:
+        dist:    Bi
+        version: 0.01
+backpan_always_update: 1
 overlays:
     test:
+        backpan_always_update: 0
         backpan_cache_ttl: 604800
         backpan_url: file:t/backpan/
         github_owner: gitpan-test
