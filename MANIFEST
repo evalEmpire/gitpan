@@ -1,3 +1,5 @@
+.gitpan
+bin/delete_all_repos
 bin/gitpan
 bin/gitpan-import
 bin/make_dist_local
@@ -24,9 +26,11 @@ MANIFEST.SKIP
 META.json
 META.yml
 README
-t/.gitpan
+src/BackPAN-Index-0.42_01.tar.gz
 t/backpan/authors/01mailrc.txt.gz
 t/backpan/authors/02authors.txt.gz
+t/backpan/authors/id/A/AA/AANOAA/Acme-eng2kor-0.0.1.tar.gz
+t/backpan/authors/id/A/AA/AANOAA/Acme-eng2kor-v0.0.2.tar.gz
 t/backpan/authors/id/D/DC/DCANTRELL/Acme-Pony-1.1.1.tar.gz
 t/backpan/authors/id/D/DC/DCANTRELL/Acme-Pony-1.1.2.tar.gz
 t/backpan/authors/id/E/ET/ETHER/Acme-LookOfDisapproval-0.001.tar.gz
@@ -48,6 +52,10 @@ t/backpan/authors/id/F/FL/FLORA/Math-BigInt-1.99.tar.gz
 t/backpan/authors/id/J/JP/JPEACOCK/Math-BigInt-0.01.tar.gz
 t/backpan/authors/id/K/KE/KENFOX/perl-c++-api.0.0_2.tar.gz
 t/backpan/authors/id/K/KE/KENFOX/perl-c++-api.0.0_3.tar.gz
+t/backpan/authors/id/L/LD/LDACHARY/uri-2.00.tar.gz
+t/backpan/authors/id/L/LD/LDACHARY/uri-2.01.tar.gz
+t/backpan/authors/id/L/LD/LDACHARY/URIC-2.02.tar.gz
+t/backpan/authors/id/M/MA/MARCEL/-0.01.tar.gz
 t/backpan/authors/id/P/PJ/PJACKLAM/Math-BigInt-1.99.1.tar.gz
 t/backpan/authors/id/P/PJ/PJACKLAM/Math-BigInt-1.9902.tar.gz
 t/backpan/authors/id/P/PJ/PJACKLAM/Math-BigInt-1.991.tar.gz
@@ -125,8 +133,10 @@ t/HasConfig.t
 t/HasCPANAuthors.t
 t/HasUA.t
 t/import/Math-BigInt.t
+t/import/normalization.t
 t/import/perl-c\+\+-api.t
 t/import/simple_single_dist.t
+t/import/version_normalization.t
 t/lib/Gitpan/Test.pm
 t/OO.t
 t/perl5i.t
