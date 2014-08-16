@@ -10,7 +10,7 @@ use Test::Most ();
 method import($class: ...) {
     my $caller = caller;
 
-    $ENV{GITPAN_CONFIG_DIR} //= "t";
+    $ENV{GITPAN_CONFIG_DIR} //= "."->path->absolute;
     $ENV{GITPAN_TEST}       //= 1;
 
     Test::Most->import::into($caller);
