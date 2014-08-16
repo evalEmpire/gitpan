@@ -6,7 +6,7 @@ use Gitpan::Test;
 
 use Gitpan::Github;
 
-my $gh = Gitpan::Github->new;
+my $gh = Gitpan::Github->new( repo => "whatever" );
 my @repos = map { $_->{name} } $gh->repos->list_org("gitpan-test");
 say "Delete ".@repos->join(", ")."?";
 my $ans = <STDIN>;
