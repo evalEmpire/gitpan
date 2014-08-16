@@ -34,7 +34,6 @@ haz git     =>
   predicate => 'has_git',
   clearer   => 'clear_git',
   default   => method {
-      local $SIG{__DIE__};  # Moo bug
       my $github = $self->github;
       $github->maybe_create;
 
