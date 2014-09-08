@@ -95,6 +95,7 @@ method run_quiet(...) {
 
 
 method delete_repo {
+    $self->dist_log("Deleting git repository @{[$self->repo_dir]}");
     $self->repo_dir->remove_tree({ safe => 0 });
 }
 

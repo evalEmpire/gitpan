@@ -122,6 +122,8 @@ method releases_to_import() {
 
 method delete_repo {
     $self->git->delete_repo;
+    $self->dist_log("Deleting repository for @{[$self->name]}");
+
     $self->github->delete_repo_if_exists;
 
     # ->git now contains a bogus object, kill it so the Dist object 
