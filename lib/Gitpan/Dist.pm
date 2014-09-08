@@ -143,9 +143,10 @@ method delete_repo {
 
 
 method import_releases(
-    ArrayRef[Gitpan::Release] :$releases = $self->releases_to_import,
-    CodeRef :$before_import              = sub {},
-    CodeRef :$after_import               = sub {},
+    ArrayRef[Gitpan::Release] :$releases        = $self->releases_to_import,
+    CodeRef     :$before_import                 = sub {},
+    CodeRef     :$after_import                  = sub {},
+    Bool        :$push                          = 1
 ) {
     my $versions = join ", ", map { $_->version } @$releases;
     $self->main_log( "Importing @{[$self->distname]} versions $versions" );
@@ -167,7 +168,7 @@ method import_releases(
         };
     }
 
-    $self->git->push;
+    $self->git->push if $push;
 
     return 1;
 }
