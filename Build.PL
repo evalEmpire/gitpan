@@ -17,6 +17,7 @@ my $build = MyBuilder->new(
 
     configure_requires  => {
         "Module::Build"         => 0.42, # For test_requires
+        "Path::Tiny"            => 0.054,
     },
 
     requires            => {

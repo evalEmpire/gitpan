@@ -1,4 +1,3 @@
 language: perl
-before_script: cpanm src/*
 perl:
     - "5.18"

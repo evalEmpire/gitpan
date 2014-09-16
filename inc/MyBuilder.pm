@@ -5,37 +5,26 @@ use warnings;
 
 use base 'Module::Build';
 
-use autodie;
-use File::Copy;
-use File::Path;
-use File::Spec;
+use v5.12;
+use Path::Tiny;
 
-sub ACTION_inc {
+sub ACTION_build {
     my $self = shift;
 
-    my $inc = File::Spec->catdir( $self->base_dir, "inc" );
-
-    for my $dist ( glob("submodules/*") ) {
-        chdir $dist;
-
-        print "Installing $dist into $inc\n";
-        system "cpanm", "--no-man-pages", "-l", $inc, ".";
-
-        chdir $self->base_dir;
+    # Install distributions from src/ as needed.
+    for my $archive (path( $self->base_dir, "src" )->children) {
+        my($dist, $version) = $archive->basename =~ /^(.*)-([\d_.]+)\./;
+        my $module = $dist;
+        $module =~ s{-}{::}g;
+        if( !eval "require $module" or
+            version->parse($version) > version->parse($module->VERSION)
+        ) {
+            say "Installing $archive.";
+            system "cpanm", $archive;
+        }
     }
 
-    # Move the installs from the lib/perl5 location straight into inc.
-    my $cpanm_install = File::Spec->catdir( $self->base_dir, "inc", "lib", "perl5" );
-    for my $dir (glob "$cpanm_install/*") {
-        system "mv", $dir, $inc;
-    }
-
-    rmtree File::Spec->catdir( $self->base_dir, "inc", "lib" );
-    rmtree File::Spec->catdir( $self->base_dir, "inc", "man" );
-
-    chdir $self->base_dir;
-
-    return;
+    return $self->SUPER::ACTION_build;
 }
 
 1;
