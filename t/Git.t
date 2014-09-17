@@ -56,8 +56,7 @@ note "Remotes"; {
     is_deeply $git->remotes, {};
     $git->change_remote( foo => "http://example.com" );
 
-    is $git->remotes->{foo}{push}, "http://example.com";
-    is $git->remote( "foo" ), "http://example.com";
+    is $git->remote( "foo" ),         "http://example.com";
 }
 
 
@@ -143,7 +142,7 @@ note "clone, push, pull"; {
     my $bare = Gitpan::Git->clone(
         url      => $origin->repo_dir.'',
         distname => "Foo-Bar",
-        options  => [ "--bare" ]
+        options  => { bare => 1 }
     );
     my $clone2 = Gitpan::Git->clone(
         url      => $bare->git_dir.'',

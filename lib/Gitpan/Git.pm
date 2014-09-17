@@ -5,6 +5,7 @@ use Gitpan::perl5i;
 use Gitpan::OO;
 use Gitpan::Types;
 use Git::Repository qw(Log Status);
+use Git::Raw;
 with "Gitpan::Role::CanBackoff",
      "Gitpan::Role::HasConfig";
 
@@ -23,7 +24,7 @@ haz repo_dir =>
       return Path::Tiny->tempdir;
   };
 
-haz git =>
+haz git_repo =>
   isa           => InstanceOf["Git::Repository"],
   handles       => [qw(
       run
@@ -48,12 +49,22 @@ haz git =>
       );
   };
 
+haz git_raw =>
+  isa           => InstanceOf["Git::Raw::Repository"],
+  lazy          => 1,
+  default       => method {
+      my $config = $self->config;
+
+      return Git::Raw::Repository->open( $self->repo_dir.'' );
+  };
+
 method init($class: %args) {
     my $self = $class->new(%args);
 
     $self->dist_log( "git init in @{[$self->repo_dir]}" );
 
-    Git::Repository->run( init => $self->repo_dir );
+    my $git = Git::Raw::Repository->init( $self->repo_dir.'', 0 );
+    $self->git_raw($git);
 
     return $self;
 }
@@ -63,7 +74,7 @@ method init($class: %args) {
 method clone(
     $class:
     Str :$url!,
-    ArrayRef :$options = [],
+    HashRef :$options = {},
     Str :$distname!,
     Path::Tiny :$repo_dir
 ) {
@@ -74,12 +85,8 @@ method clone(
 
     $self->dist_log( "git clone from $url in @{[$self->repo_dir]}" );
 
-    Git::Repository->run(
-        clone => $url,
-        $self->repo_dir,
-        @$options,
-        { quiet => 1 }
-    );
+    my $git = Git::Raw::Repository->clone( $url, $self->repo_dir.'', $options );
+    $self->git_raw($git);
 
     return $self;
 }
@@ -127,39 +134,40 @@ method remove_sample_hooks {
 }
 
 method remotes() {
-    my @remotes = $self->run("remote", "-v");
-    my %remotes;
-    for my $remote (@remotes) {
-        my($name, $url, $action) = $remote =~ m{^ (\S+) \s+ (.*?) \s+ \( (.*?) \) $}x;
-        $remotes{$name}{$action} = $url;
-    }
-
+    my %remotes = map { ($_->name => $_) } $self->git_raw->remotes;
     return \%remotes;
 }
 
 method remote( Str $name, Str $action = "push" ) {
-    return $self->remotes->{$name}{$action};
+    my $remote = $self->remotes->{$name};
+    return $action eq "push" ? $remote->pushurl || $remote->url : $remote->url;
 }
 
 method change_remote( Str $name, Str $url ) {
     my $remotes = $self->remotes;
 
     if( $remotes->{$name} ) {
-        $self->set_remote_url( $name, $url );
+        return $self->set_remote_url( $name, $url );
     }
     else {
-        $self->add_remote( $name, $url );
+        return $self->add_remote( $name, $url );
     }
 }
 
 method set_remote_url( Str $name, Str $url ) {
     $self->dist_log( "Changing remote $name to $url" );
-    $self->run( remote => "set-url" => $name => $url );
+
+    my $remote = $self->remotes->{$name};
+    $remote->url($url);
+    $remote->pushurl($url);
+
+    return $remote;
 }
 
 method add_remote( Str $name, Str $url ) {
     $self->dist_log( "Adding new remote $name to $url" );
-    $self->run( remote => add => $name => $url );
+
+    return Git::Raw::Remote->create( $self->git_raw, $name, $url );
 }
 
 method default_success_check($return?) {
@@ -207,10 +215,13 @@ method pull( Str $remote //= "origin", Str $branch //= "master" ) {
 method rm_all {
     $self->dist_log( "git rm_all" );
 
-    $self->run( rm => "--ignore-unmatch", "-fr", "." );
-
-    # Clean up empty directories.
     $self->remove_working_copy;
+
+    my $index = $self->git_raw->index;
+    $index->update_all({
+        paths   => ['*']
+    });
+    $index->write;
 
     return;
 }
@@ -218,7 +229,12 @@ method rm_all {
 method add_all {
     $self->dist_log( "git add_all" );
 
-    $self->run( add => "-f", "." );
+    my $index = $self->git_raw->index;
+    $index->add_all({
+        paths => ['*'],
+        flags => { force => 1 }
+    });
+    $index->write;
 
     return;
 }
@@ -228,7 +244,7 @@ method remove_working_copy {
 
     for my $child ( $self->repo_dir->children ) {
         next if $child->is_dir and $child->basename eq '.git';
-        $child->is_dir ? $child->remove_tree : $child->remove;
+        $child->is_dir ? $child->remove_tree({safe => 0}) : $child->remove;
     }
 }
 
