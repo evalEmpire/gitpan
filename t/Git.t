@@ -215,6 +215,9 @@ note "rm and add all"; {
     ok -e $clone->repo_dir->child("bar");
 
     $origin->rm_all;
+    cmp_deeply [map { $_->relative($origin->repo_dir).'' } $origin->repo_dir->children],
+               [".git"];
+
     $origin->repo_dir->child("bar")->touch;
     $origin->repo_dir->child("baz")->touch;    
     $origin->add_all;
