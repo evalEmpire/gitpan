@@ -34,18 +34,8 @@ haz git_repo =>
   )],
   lazy          => 1,
   default       => method {
-      my $config = $self->config;
-
       return Git::Repository->new(
-          work_tree => $self->repo_dir.'',
-          {
-              env => {
-                  GIT_COMMITTER_EMAIL => $config->committer_email,
-                  GIT_COMMITTER_NAME  => $config->committer_name,
-                  GIT_AUTHOR_EMAIL    => $config->committer_email,
-                  GIT_AUTHOR_NAME     => $config->committer_name,
-              }
-          },
+          work_tree => $self->repo_dir.''
       );
   };
 
@@ -53,8 +43,6 @@ haz git_raw =>
   isa           => InstanceOf["Git::Raw::Repository"],
   lazy          => 1,
   default       => method {
-      my $config = $self->config;
-
       return Git::Raw::Repository->open( $self->repo_dir.'' );
   };
 
@@ -65,6 +53,7 @@ method init($class: %args) {
 
     my $git = Git::Raw::Repository->init( $self->repo_dir.'', 0 );
     $self->git_raw($git);
+    $self->init_git_config;
 
     return $self;
 }
@@ -87,8 +76,20 @@ method clone(
 
     my $git = Git::Raw::Repository->clone( $url, $self->repo_dir.'', $options );
     $self->git_raw($git);
+    $self->init_git_config;
 
     return $self;
+}
+
+
+method init_git_config() {
+    my $config = $self->config;
+    my $git_config = $self->git_raw->config;
+
+    $git_config->str( "user.name",  $config->committer_name );
+    $git_config->str( "user.email", $config->committer_email );
+
+    return;
 }
 
 

@@ -8,9 +8,6 @@ my $CLASS = 'Gitpan::Dist';
 
 require_ok $CLASS;
 
-# Simulate a non-configured system as when testing on Travis.
-local $ENV{GIT_COMMITTER_NAME} = '';
-
 note "Required args"; {
     throws_ok { $CLASS->new } qr/^Missing required arguments: name/;
 }

@@ -8,9 +8,6 @@ use Gitpan::Test;
 
 use Gitpan::Git;
 
-# Simulate a non-configured system as when testing on Travis.
-local $ENV{GIT_COMMITTER_NAME} = '';
-
 note "Check the repo was created"; {
     my $Repo_Dir = Path::Tiny->tempdir->realpath;
     my $git = Gitpan::Git->init(
