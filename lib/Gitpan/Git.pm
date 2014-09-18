@@ -405,10 +405,15 @@ method maturity2tag( Str $maturity ) {
 
 
 method tag(Str $name, Bool :$force = 0) {
-    my @opts;
-    @opts->push("-f") if $force;
+    my $git  = $self->git_raw;
 
-    return $self->run("tag", @opts, $self->make_ref_safe($name));
+    my $head = $git->head;
+
+    my $safe_name = $self->make_ref_safe($name);
+
+    return Git::Raw::Reference->create(
+        "refs/tags/$safe_name", $git, $head->target, $force
+    );
 }
 
 
