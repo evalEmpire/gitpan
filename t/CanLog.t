@@ -26,6 +26,25 @@ something
 and something
 with ünicode
 END
+    $obj->config->gitpan_log_file->remove;
+};
+
+
+subtest "main_log overloaded object" => sub {
+    {
+        package Bar;
+        use Gitpan::OO;
+        use overload
+          q[""]         => sub { "some message" },
+          fallback      => 1;
+    }
+
+    my $obj = Foo->new;
+    $obj->main_log(Bar->new);
+
+    is $obj->config->gitpan_log_file->slurp_utf8, <<'END';
+some message
+END
 };
 
 
