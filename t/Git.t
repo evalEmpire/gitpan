@@ -154,7 +154,9 @@ note "clone, push, pull"; {
     $clone2->repo_dir->child("baz")->touch;
     $clone2->run( add => "baz" );
     $clone2->run( commit => "-m" => "adding baz" );
+    diag("tag");
     $clone2->tag( "some_tag" );
+    diag("after tag");
 
     diag("push");
     $clone2->push;
