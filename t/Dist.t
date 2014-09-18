@@ -8,6 +8,9 @@ my $CLASS = 'Gitpan::Dist';
 
 require_ok $CLASS;
 
+# Simulate a non-configured system as when testing on Travis.
+local $ENV{GIT_COMMITTER_NAME} = '';
+
 note "Required args"; {
     throws_ok { $CLASS->new } qr/^Missing required arguments: name/;
 }
@@ -107,8 +110,11 @@ note "releases to import"; {
 
     my $git = $dist->git;
     $git->repo_dir->child("foo")->touch;
+    diag("add_all");
     $git->add_all;
+    diag("commit");
     $git->run( "commit" => "-m", "Adding foo" );
+    diag("tag_release");
     $git->tag_release( $dist->release(version => 0.001) );
 
     cmp_deeply scalar @backpan_versions->diff($dist->versions_to_import), [0.001];
