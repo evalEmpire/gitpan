@@ -124,12 +124,9 @@ note "clone, push, pull"; {
 
     # Test pull
     $origin->repo_dir->child("bar")->touch;
-    diag("add");
     $origin->run( add => "bar" );
-    diag("commit");
     $origin->run( commit => "-m" => "adding bar" );
 
-    diag("pull");
     $clone->pull;
 
     ok -e $clone->repo_dir->child("bar"), "pulled new file";
@@ -151,11 +148,8 @@ note "clone, push, pull"; {
     $clone2->repo_dir->child("baz")->touch;
     $clone2->run( add => "baz" );
     $clone2->run( commit => "-m" => "adding baz" );
-    diag("tag");
     $clone2->tag( "some_tag" );
-    diag("after tag");
 
-    diag("push");
     $clone2->push;
     my($bare_log)   = $bare->log("-1");
     my($clone2_log) = $clone2->log("-1");

@@ -1,5 +1,3 @@
 language: perl
 perl:
     - "5.18"
-script: perl Build.PL && ./Build && perl -Ilib t/Git.t
-
