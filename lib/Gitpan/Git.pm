@@ -299,12 +299,12 @@ method commit_release(Gitpan::Release $release) {
     $self->dist_log( "Committing @{[ $release->short_path ]}" );
 
     my $commit_message = <<"MESSAGE";
-Import of @{[ $author->pauseid ]}/@{[ $release->distvname ]} from CPAN.
+Import of @{[ $author->cpanid ]}/@{[ $release->distvname ]} from CPAN.
 
 gitpan-cpan-distribution: @{[ $release->distname ]}
 gitpan-cpan-version:      @{[ $release->version ]}
 gitpan-cpan-path:         @{[ $release->short_path ]}
-gitpan-cpan-author:       @{[ $author->pauseid ]}
+gitpan-cpan-author:       @{[ $author->cpanid ]}
 gitpan-cpan-maturity:     @{[ $release->maturity ]}
 
 MESSAGE
@@ -387,7 +387,7 @@ method tag_release(Gitpan::Release $release) {
     $self->tag( $self->maturity2tag( $release->maturity ), force => 1 );
 
     # Update the latest release by this author.
-    $self->tag( $release->author->pauseid,                 force => 1 );
+    $self->tag( $release->author->cpanid,                 force => 1 );
 
     return;
 }

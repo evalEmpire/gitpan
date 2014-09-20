@@ -83,7 +83,7 @@ haz backpan_file     =>
 
 haz author =>
   is            => 'ro',
-  isa           => InstanceOf['Parse::CPAN::Authors::Author'],
+  isa           => InstanceOf['Gitpan::CPAN::Author'],
   lazy          => 1,
   default       => method {
       return $self->cpan_authors->author($self->cpanid);
