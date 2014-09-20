@@ -8,9 +8,6 @@ use Gitpan::Test;
 
 use Gitpan::Git;
 
-# Simulate a non-configured system as when testing on Travis.
-local $ENV{GIT_COMMITTER_NAME} = '';
-
 note "Check the repo was created"; {
     my $Repo_Dir = Path::Tiny->tempdir->realpath;
     my $git = Gitpan::Git->init(
@@ -56,8 +53,7 @@ note "Remotes"; {
     is_deeply $git->remotes, {};
     $git->change_remote( foo => "http://example.com" );
 
-    is $git->remotes->{foo}{push}, "http://example.com";
-    is $git->remote( "foo" ), "http://example.com";
+    is $git->remote( "foo" ),         "http://example.com";
 }
 
 
@@ -143,7 +139,7 @@ note "clone, push, pull"; {
     my $bare = Gitpan::Git->clone(
         url      => $origin->repo_dir.'',
         distname => "Foo-Bar",
-        options  => [ "--bare" ]
+        options  => { bare => 1 }
     );
     my $clone2 = Gitpan::Git->clone(
         url      => $bare->git_dir.'',
@@ -215,6 +211,9 @@ note "rm and add all"; {
     ok -e $clone->repo_dir->child("bar");
 
     $origin->rm_all;
+    cmp_deeply [map { $_->relative($origin->repo_dir).'' } $origin->repo_dir->children],
+               [".git"];
+
     $origin->repo_dir->child("bar")->touch;
     $origin->repo_dir->child("baz")->touch;    
     $origin->add_all;

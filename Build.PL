@@ -29,6 +29,7 @@ my $build = MyBuilder->new(
         "File::chmod"           => 0.32,
         "File::Copy::Recursive" => 0.38,
         "Getopt::Long::Descriptive"    => 0.085,
+        "Git::Raw"              => '0.42',
         "Git::Repository"       => 1.300,
         "Git::Repository::Log"  => 1.312,
         "Git::Repository::Status" => 0.03,      # ->ignored fix

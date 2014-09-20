@@ -8,7 +8,7 @@ use namespace::clean;
 
 requires "config";
 
-method _log(Path::Tiny :$file, Str :$message) {
+method _log(Path::Tiny :$file, Str|Object :$message) {
     $message .= "\n" unless $message =~ m{\n$};
     return $file->append_utf8($message);
 }
