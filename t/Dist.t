@@ -27,10 +27,6 @@ note "The basics"; {
     is $first_release->version, '1.1.1';
 }
 
-note "Recover from a module name"; {
-    my $dist = $CLASS->new( modulename => "This::That::Whatever" );
-    is $dist->name, "This-That-Whatever";
-}
 
 note "release"; {
     my $dist = $CLASS->new( name => "Acme-Pony" );

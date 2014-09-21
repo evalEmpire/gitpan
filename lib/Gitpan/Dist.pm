@@ -59,16 +59,6 @@ haz github  =>
       return $self->_new_github;
   };
 
-method BUILDARGS($class: %args) {
-    if( my $module_name = delete $args{modulename} ) {
-        my $dist_name = $module_name;
-        $dist_name =~ s{::}{-}g;
-        $args{name} = $dist_name;
-    }
-
-    return \%args;
-}
-
 method _new_github(HashRef $args = {}) {
     require Gitpan::Github;
     return Gitpan::Github->new(
