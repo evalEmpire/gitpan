@@ -16,7 +16,17 @@ has backpan_index =>
 # Everybody share one index object.
 method default_backpan_index {
     require BackPAN::Index;
-    state $index = $self->_build_index;
+
+    state $index;
+    state $pid;
+
+    # We can't pass active SQLite connections to the child.
+    # Make a fresh BackPAN::Index object with a fresh connection.
+    $index = do {
+        $pid = $$;
+        $self->_build_index;
+    } if !$index || $pid != $$;
+
     return $index;
 }
 
