@@ -49,11 +49,23 @@ haz git     =>
       $github->maybe_create;
 
       require Gitpan::Git;
-      return Gitpan::Git->clone(
-          repo_dir => $self->repo_dir,
-          url      => $github->remote,
-          distname => $self->name,
-      );
+      if( $self->repo_dir ) {
+          my $git = Gitpan::Git->new(
+              repo_dir => $self->repo_dir,
+              distname => $self->name
+          );
+          $git->fixup_repo(
+              url       => $github->remote
+          );
+          return $git;
+      }
+      else {
+          return Gitpan::Git->clone(
+              repo_dir => $self->repo_dir,
+              url      => $github->remote,
+              distname => $self->name,
+          );
+      }
   };
 
 haz github  =>

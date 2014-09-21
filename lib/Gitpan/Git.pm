@@ -260,10 +260,19 @@ method prepare_for_import {
 
     # Make sure we're in the right branch and clean up
     # the staging area and working tree
+    $self->run_quiet("reset", "--hard", "HEAD");
     $self->run_quiet("checkout", "-f", "master");
 
     return;
 }
+
+
+method fixup_repo( Str :$url! ) {
+    $self->prepare_for_import;
+    $self->change_remote( origin => $url );
+    $self->pull;
+}
+
 
 method prepare_for_import_empty_repo {
     # Unstage and delete everything.
