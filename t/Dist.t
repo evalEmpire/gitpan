@@ -9,7 +9,7 @@ my $CLASS = 'Gitpan::Dist';
 require_ok $CLASS;
 
 note "Required args"; {
-    throws_ok { $CLASS->new } qr/^Missing required arguments: name/;
+    throws_ok { $CLASS->new } qr/^name or backpan_dist required/;
 }
 
 note "The basics"; {
@@ -25,6 +25,14 @@ note "The basics"; {
     my $first_release = $releases->first;
     isa_ok $first_release, "BackPAN::Index::Release";
     is $first_release->version, '1.1.1';
+}
+
+
+note "new() from BackPAN::Index::Dist"; {
+    my $bp_dist = $CLASS->new( name => "Acme-Pony" )->backpan_dist;
+
+    my $dist = $CLASS->new( backpan_dist => $bp_dist );
+    is $dist->name, 'Acme-Pony';
 }
 
 

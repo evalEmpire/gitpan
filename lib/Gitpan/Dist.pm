@@ -14,11 +14,22 @@ use overload
 haz name =>
   is            => 'ro',
   isa           => DistName,
-  required      => 1;
+  default       => method {
+      $self->backpan_dist->name;
+  };
 
 *distname = \&name;
 
 with 'Gitpan::Role::CanDistLog';
+
+haz backpan_dist =>
+  is            => 'ro',
+  isa           => InstanceOf['BackPAN::Index::Dist'],
+  lazy          => 1,
+  default       => method {
+      return $self->backpan_index->dist($self->name);
+  };
+
 
 haz repo_dir =>
   isa           => Path,
@@ -59,6 +70,13 @@ haz github  =>
       return $self->_new_github;
   };
 
+method BUILDARGS($class: %args) {
+    croak "name or backpan_dist required"
+      unless $args{name} // $args{backpan_dist};
+
+    return \%args;
+}
+
 method _new_github(HashRef $args = {}) {
     require Gitpan::Github;
     return Gitpan::Github->new(
@@ -71,10 +89,6 @@ method exists_on_github() {
     # Optimization, asking github is expensive
     return 1 if $self->git->remote("origin") =~ /github.com/;
     return $self->github->exists_on_github();
-}
-
-method backpan_dist {
-    return $self->backpan_index->dist($self->name);
 }
 
 method backpan_releases {
