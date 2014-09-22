@@ -37,6 +37,7 @@ my $build = MyBuilder->new(
         "Method::Signatures"    => '20140224',
         "Moo"                   => '1.006000',  # DIE handler fix
         "Net::GitHub"           => '0.66',      # LWP::UserAgent option warning
+        "Parallel::ForkManager" => '1.06',
         "Path::Tiny"            => 0.054,       # symbolic chmod()
         "perl5i::2"             => "v2.13.0",
         "Type::Library"         => 0.046,
