@@ -4,6 +4,8 @@ use Gitpan::perl5i;
 use Gitpan::OO;
 use Gitpan::Types;
 
+use version; our $VERSION = qv("v2.0.0");
+
 use Gitpan::Dist;
 use Parallel::ForkManager;
 

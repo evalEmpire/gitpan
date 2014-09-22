@@ -8,12 +8,10 @@ use lib 'inc';
 use MyBuilder;
 
 my $build = MyBuilder->new(
-    dist_name           => 'gitpan',
-    dist_version        => '0.01',
+    dist_name           => 'Gitpan',
+    module_name         => "Gitpan",
     dist_author         => 'Michael G. Schwern <schwern@pobox.com>',
     dist_abstract       => "Put each CPAN distribution into its own Github repo",
-
-    module_name         => 'Gitpan',
 
     configure_requires  => {
         "Module::Build"         => 0.42, # For test_requires
