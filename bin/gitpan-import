@@ -1,67 +1,34 @@
 #!/usr/bin/perl
 
-# XXX THIS IS FOR REFERENCE PURPOSES ONLY!
-# XXX It doesn't work and isn't going to be fixed.  A new import program will
-# XXX be written instead.  This is still in the repository to harvest
-# XXX things learned from Gitpan 1.0.
+use Gitpan::perl5i;
 
-# Do a complete git-ificaiton of BackPAN.  Or give it just a few modules.
-
-use strict;
-use warnings;
-use v5.10;
-
-use FindBin qw($Bin);
-use lib "$Bin/../lib";
-
-$|++;
-
-use Git::CPAN::Patch::Import;
-use File::chdir;
-use File::Spec;
 use Getopt::Long;
-use Capture::Tiny qw/capture/;
-use Gitpan::Repo;
-
-# Github currently limits repo names to 100 characters
-use constant MAX_LENGTH_GITHUB_REPO_NAME => 100;
-
-my %Dists_To_Skip = map { $_ => 1 } qw(
-    perl
-    parrot
-    parrot-cfg
-);
+use Gitpan;
 
 # Defaults
 my %opts = (
-    update      => 1,
+    workers => 3
 );
 
 GetOptions(
     \%opts,
-    "backpan:s",
-    "backpan_index:s",
-    "login=s",
-    "token=s",
     "author=s",
-    "github!",
     "random=i",
-    "pattern=s",
+    "name_like=s",
     "sort!",
-    "repodir=s",
-    "tempdir=s",
-    "update",
     "since=s",
+    "limit=i",
+    "workers=i",
 );
+
+my $gitpan = Gitpan->new;
 
 my @dists;
 if( @ARGV ) {
-    @dists = @ARGV;
+    $gitpan->import_from_distnames(\@ARGV);
 }
 else {
-    my $backpan = Git::CPAN::Patch::Import->backpan_index;
-
-    my $dists = $backpan->dists;
+    my $dists = $gitpan->backpan_index->dists;
 
     if( $opts{since} ) {
         $dists = $dists->search( latest_date => \">= $opts{since}" );
@@ -81,141 +48,15 @@ else {
                                 { join => "releases", distinct => 1 });
     }
 
-    @dists = $dists->all;
-
-    if( $opts{pattern} ) {
-        @dists = grep /$opts{pattern}/, @dists;
-    }
-}
-
-@dists = filter_dists(@dists);
-
-@dists = sort { lc $a cmp lc $b } @dists if $opts{sort};
-
-$opts{tempdir} = File::Spec->rel2abs($opts{tempdir}) if $opts{tempdir};
-
-my %backpan_init_opts;
-$backpan_init_opts{"backpan"} = [split /,/, $opts{backpan}] if $opts{backpan};
-$backpan_init_opts{"tempdir"} = $opts{tempdir} if $opts{tempdir};
-$backpan_init_opts{"update"}  = $opts{update};
-$backpan_init_opts{"backpan_index"}  = $opts{backpan_index} if $opts{backpan_index};
-
-say "Looking at @{[ scalar @dists ]} dists";
-
-local $CWD = $opts{repodir} if defined $opts{repodir};
-for my $dist (@dists) {
-    next if $Dists_To_Skip{$dist};
-
-    # MARCEL has -0.01.tar.gz
-    # Should probably be filtered out by Parse::BACKPAN or
-    # made into a dist called empty string.
-    next if $dist =~ /^-[\d.]+$/;
-
-    my $repo = Gitpan::Repo->new(
-        distname => $dist,
-    );
-
-    if( $opts{github} ) {
-        if( !$opts{update} and $repo->exists_on_github ) {
-            say "$dist already exists on github, skipping";
-            next;
-        }
+    if( $opts{name_like} ) {
+        $dists = $dists->search({ name => { -like => $opts{name_like} } });
     }
 
-    say "Pulling in $dist...";
-
-    # time to try capturing all our output
-    my $dist_log = $dist.'.log';
-    open my $dist_logf, '>>', $dist_log or warn "Bah, failed to open $dist_log for writing: $!";
-
-    my $repo_dir;
-    my $dist_output;
-    eval { $dist_output = capture { $repo_dir = push_dist( $dist ); }; 1; } ||
-      say "push_dist failed: $@\n(output: $dist_output)";
-    say $dist_logf $dist_output;
-    close $dist_logf or warn "failed to close $dist_log: $!";
-
-    do { say "Skipping $dist - ",($@ ? "got error: $@" : "looks like no updates"); next; }  unless $repo_dir;
-
-    die("Weird! $repo_dir doesn't look ok") unless repo_dir_looks_ok($repo_dir);
-
-    # Delete everything but the .git/ directory to save space
-    # We name the directory specifically to avoid accidentally
-    # deleting everything should we be in the wrong cwd
-
-    $repo->git->remove_working_copy;
-
-    say "done!";
-}
-
-sub push_dist {
-    my ( $dist ) = @_;
-
-    my $repo = Gitpan::Repo->new(
-        distname  => $dist,
-        github    => {
-            token => $opts{token},
-            login => $opts{login},
-        }
-    );
-
-
-    my $repo_dir = Git::CPAN::Patch::Import::import_from_backpan(
-        $repo,
-        \%backpan_init_opts
-    );
-
-    unless( $repo_dir ) {
-        say "No repository created for $dist.  Skipping";
-        return;  
+    if( $opts{limit} ) {
+        $dists = $dists->search( undef, { rows => $opts{limit} });
     }
 
-    $repo->git->clean;
-
-    if( $opts{github} ) {
-        my $repo_name = $repo->distname;
-
-        $repo_name = $repo->github->maybe_create(
-            desc     => "Release history of $dist",
-            homepage => "http://search.cpan.org/dist/$dist/",
-        );
-
-        $repo->github->change_repo_info(
-            has_issues  => 0,
-            has_wiki    => 0,
-        );
-
-        # Sometimes we re-clone from gitpan and so the origin is wrong
-        my $remote_url = $repo->git->remote("origin");
-        if( !defined $remote_url or $remote_url !~ m{git\@github-gitpan} ) {
-            $repo->git->change_remote("origin", $repo->github->remote);
-        }
-
-        $repo->git->push;
-    }
-
-    return $repo_dir;
-}
-
-
-sub filter_dists {
-           # filter out garbage the BackPAN index picks up
-    return grep !/^[\d._\-]+(\.U)?$/,
-           # filter out dists too long to go into github, rather
-           # than put them in with the wrong name.  I have a ticket
-           # in with github to increase the max
-           grep { length $_ <= MAX_LENGTH_GITHUB_REPO_NAME }
-                @_;
-}
-
-sub repo_dir_looks_ok {
-    my ( $repo_dir ) = @_;
-
-    return 0 unless defined $repo_dir                          # it's defined
-                 && $repo_dir =~ /[^\/]+/                       # and more than just /
-                 && -d File::Spec->catfile($repo_dir, '.git')  # and has a git repo 
-    ;
-    return 1;
+    $gitpan->import_from_backpan_dists($dists, num_workers => $opts{workers});
 }
 
 
@@ -256,16 +97,16 @@ Pick N random distributions.
 
     gitpan --random=100
 
-=head3 --pattern
+=head3 --name_list
 
-Pick all distributions matching the given pattern.
+Pick all distributions matching the given SQL LIKE pattern.
 
     # Import all the D's.
-    gitpan --pattern='^[Dd]'
+    gitpan --name_like='D%'
 
 =head3 --sort
 
-Sort the distributions before processing
+Sort the distributions by name before processing
 
 =head3 --since
 
@@ -275,72 +116,27 @@ Time is given in Unix epoch time.
 
     gitpan --since=1200000000
 
+=head3 --limit
 
-=head2 Github
+Limit how many distributions are imported
 
-=head3 --github
-
-If this option is passed, it will create a repository on github and
-push the repo.
-
-=head3 --login
-
-Your github login name, only necessary if --github is set.
-
-=head3 --token
-
-Your github API token, only necessary if --github is set.
+    gitpan --limit=5
 
 
-=head2 BackPAN
+=head2 Gitpan Details
 
-=head3 --backpan
+=head3 --workers
 
-A comma seperated list of URLs to BackPAN.  Handy to have a URL to a
-local mirror for fast retrieval and one to a remote mirror for
-completeness.
+Specify the number of worker processes to use.
 
-For example
-
-    --backpan=file:///var/local/backpan,http://backpan.perl.org
-
-Defaults to http://backpan.perl.org/
-
-=head3 --backpan_index
-
-A URL to find the BackPAN::Index file.  Overrides the default.
-
-=head2 Building
-
-=head3 --tempdir
-
-The temporary directory gitpan uses.
-
-Defaults to whatever L<File::Temp> does.
-
-=head3 --repodir
-
-Where gitpan will look for and place local copies of the repositories.
-
-=head3 --update
-
-Whether or not to update existing repositories.
-
-Defaults to true.
-
+Default is 3.
 
 =head1 EXAMPLE
 
 Here is how gitpan does its importing.
 
-    gitpan --github --login=gitpan --token=wouldntyoulikeotknow         \
-           --backpan=file:///var/local/backpan                          \
-           --tempdir=$PWD/gitpan-build/temp --repodir=$PWD/gitpan-build/repos \
-           --pattern='^[Ff]' --sort
+    gitpan --name_like='F%' --sort
 
-That says to use file:///var/local/backpan as the BackPAN mirror (a
-local repo), build in gitpan-build/ (a case-sensitive disk image),
-create repositories on gitpan's account on github, and import all the
-distributions starting with "F" or "f" in order.
+Import all the distributions starting with "F" in name order.
 
 =cut
