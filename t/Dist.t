@@ -118,4 +118,19 @@ note "releases to import"; {
     cmp_deeply scalar @backpan_versions->diff($dist->versions_to_import), [0.001];
 }
 
+note "restarting from an existing repository"; {
+    note "Import a release to establish the repository"; {
+        my $dist = Gitpan::Dist->new(
+            name    => 'Acme-LookOfDisapproval'
+        );
+        $dist->delete_repo;
+        $dist->import_release( $dist->release( version => 0.001 ) );
+    }
+
+    my $dist = Gitpan::Dist->new(
+        name    => 'Acme-LookOfDisapproval'
+    );
+    cmp_deeply $dist->git->releases, [0.001];
+}
+
 done_testing;

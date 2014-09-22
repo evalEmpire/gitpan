@@ -45,6 +45,56 @@ SKIP: {
 }
 }
 
+
+note "new_or_clone"; {
+    my $origin = Gitpan::Git->init(
+        distname        => "Foo-Bar"
+    );
+    $origin->repo_dir->child("foo")->touch;
+    $origin->run( add => "foo" );
+    $origin->run( commit => "-m" => "testing clone" );
+
+    note "Repo dir does not exist."; {
+        my $tempdir = Path::Tiny->tempdir;
+
+        # This will clone.
+        my $git = Gitpan::Git->new_or_clone(
+            distname    => "Foo-Bar",
+            url         => $origin->repo_dir.'',
+            repo_dir    => $tempdir->child("foo")
+        );
+        ok -e $git->repo_dir->child("foo");
+    }
+
+    note "Repo dir exists, but there's no repository."; {
+        my $tempdir = Path::Tiny->tempdir;
+
+        # This will clone.
+        my $git = Gitpan::Git->new_or_clone(
+            distname        => "Foo-Bar",
+            url             => $origin->repo_dir.'',
+            repo_dir        => $tempdir
+        );
+        ok -e $git->repo_dir->child("foo");
+    }
+
+    note "Repo dir and repository exists, but the remote is wrong"; {
+        my $tempdir = Path::Tiny->tempdir;
+        Gitpan::Git->init(
+            distname    => "Foo-Bar",
+            repo_dir    => $tempdir
+        );
+
+        my $git = Gitpan::Git->new_or_clone(
+            distname    => "Foo-Bar",
+            url             => $origin->repo_dir.'',
+            repo_dir        => $tempdir
+        );
+        ok -e $git->repo_dir->child("foo");
+    }
+}
+
+
 note "Remotes"; {
     my $git = Gitpan::Git->init(
         distname        => "Foo-Bar"
