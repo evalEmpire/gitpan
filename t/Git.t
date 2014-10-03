@@ -393,4 +393,43 @@ note "Commit release, no author name"; {
 }
 
 
+# Releases with no version would make a tag called "cpan_version"
+# instead of cpan_version/$version and this would make the next
+# release unable to tag.
+note "tag_release, no version"; {
+    my $git = Gitpan::Git->init(
+        distname        => "Acme-Blarghy-McBlarghBlargh"
+    );
+
+    use Gitpan::Release;
+    my $release0 = Gitpan::Release->new(
+        distname        => 'Acme-Blarghy-McBlarghBlargh',
+        version         => '',
+    );
+
+    $git->repo_dir->child("foo")->touch;
+    $git->repo_dir->child("bar")->touch;
+    $git->add_all;
+    $git->commit_release($release0);
+
+    my $release2 = Gitpan::Release->new(
+        distname        => 'Acme-Blarghy-McBlarghBlargh',
+        version         => '0.002',
+    );
+    $git->repo_dir->child("foo")->spew("stuff\n");
+    $git->add_all;
+    $git->commit_release($release2);
+
+    cmp_deeply [sort $git->cpan_paths],
+               [sort 
+                     "DHOSS/Acme-Blarghy-McBlarghBlargh.tar.gz",
+                     "DHOSS/Acme-Blarghy-McBlarghBlargh-0.002.tar.gz"
+               ];
+    cmp_deeply [$git->gitpan_versions], ['0.002'];
+    cmp_deeply [$git->cpan_versions],   ['0.002'];
+    cmp_deeply [$git->list_tags(patterns => ["stable"])], ["stable"];
+    cmp_deeply [$git->list_tags(patterns => ["DHOSS"])],  ["DHOSS"];
+}
+
+
 done_testing;
