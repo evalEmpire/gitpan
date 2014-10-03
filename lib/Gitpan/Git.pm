@@ -346,7 +346,7 @@ MESSAGE
         {
             env => {
                 GIT_AUTHOR_DATE         => $release->date,
-                GIT_AUTHOR_NAME         => $author->name,
+                GIT_AUTHOR_NAME         => $author->name || $author->cpanid,
                 GIT_AUTHOR_EMAIL        => $author->email,
             },
         },

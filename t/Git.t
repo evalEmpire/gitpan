@@ -370,4 +370,27 @@ note "Commit release"; {
     cmp_deeply [$git->list_tags(patterns => ["ETHER"])],  ["ETHER"];
 }
 
+
+note "Commit release, no author name"; {
+    my $git = Gitpan::Git->init(
+        distname        => "Acme-Maybe"
+    );
+
+    use Gitpan::Release;
+    my $release = Gitpan::Release->new(
+        distname        => 'Acme-Maybe',
+        version         => '0.01',
+    );
+
+    $git->repo_dir->child("foo")->touch;
+    $git->repo_dir->child("bar")->touch;
+    $git->add_all;
+    $git->commit_release($release);
+
+    my($last_commit) = $git->log("-1");
+    is $last_commit->author_name,       "MAXA";
+    is $last_commit->author_email,      'maxa@cpan.org';
+}
+
+
 done_testing;
