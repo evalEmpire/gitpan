@@ -144,7 +144,7 @@ You can also contribute by looking through imported CPAN distributions,
 checking for mistakes and reporting them as issues.
 
 
-I'm the author of X distribution, my real repository is over here, would you delete the Gitpan repo?
+I'm the author of X distribution and already have a repository, would you delete the Gitpan repo?
 ----------
 
 Sorry, no.
