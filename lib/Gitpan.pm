@@ -9,7 +9,9 @@ use version; our $VERSION = qv("v2.0.0");
 use Gitpan::Dist;
 use Parallel::ForkManager;
 
-with 'Gitpan::Role::HasBackpanIndex';
+with 'Gitpan::Role::HasBackpanIndex',
+     'Gitpan::Role::HasConfig',
+     'Gitpan::Role::CanLog';
 
 
 method import_from_distnames(
@@ -19,7 +21,14 @@ method import_from_distnames(
 ) {
     my $fork_man = Parallel::ForkManager->new($num_workers);
 
+    my $config = $self->config;
+
     for my $name (@$names) {
+        if( $config->skip_dist($name) ) {
+            $self->main_log( "Skipping $name due to config" );
+            next;
+        }
+
 #        my $pid = $fork_man->start and next;
         $self->import_from_distname(
             $name,
@@ -40,11 +49,20 @@ method import_from_backpan_dists(
 ) {
     my $fork_man = Parallel::ForkManager->new($num_workers);
 
+    my $config = $self->config;
+
     while( my $bp_dist = $bp_dists->next ) {
+        my $distname = $bp_dist->name;
+
+        if( $config->skip_dist($distname) ) {
+            $self->main_log( "Skipping $distname due to config" );
+            next;
+        }
+
         my $dist = Gitpan::Dist->new(
             # Pass in the name to avoid sending an open sqlite connection
             # to the child.
-            name => $bp_dist->name
+            name => $distname
         );
 
         my $pid = $fork_man->start and next;

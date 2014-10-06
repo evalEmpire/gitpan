@@ -29,6 +29,19 @@ haz backpan_normalize_releases =>
   isa           => HashRef[HashRef[Str]],
   default       => method { {} };
 
+haz skip =>
+  is            => 'ro',
+  isa           => HashRef[ArrayRef],
+  default       => method { {} };
+
+haz _skip_dists =>
+  is            => 'ro',
+  isa           => HashRef,
+  lazy          => 1,
+  default       => method {
+      return scalar $self->skip->{dists}->as_hash;
+  };
+
 haz committer_email =>
   is            => 'ro',
   isa           => Str,
@@ -125,6 +138,11 @@ method BUILD(...) {
     $self->gitpan_repo_dir->mkpath;
 
     return;
+}
+
+
+method skip_dist(Str $name) {
+    return $self->_skip_dists->{$name};
 }
 
 
