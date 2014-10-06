@@ -1,14 +1,18 @@
 #!/usr/bin/env perl
 
-use lib 't/lib';
 use Gitpan::perl5i;
-use Gitpan::Test;
 
 use Gitpan::Github;
 
 my $gh = Gitpan::Github->new( repo => "whatever" );
+
 my @repos = map { $_->{name} } $gh->repos->list_org("gitpan-test");
-say "Delete ".@repos->join(", ")."?";
+while($gh->repos->has_next_page) {
+    push @repos, map { $_->{name} } $gh->repos->next_page;
+}
+
+say @repos->join(", ");
+say "Delete these repos?";
 my $ans = <STDIN>;
 exit unless $ans =~ /^y/i;
 
