@@ -2,6 +2,7 @@ package Gitpan::Dist;
 
 use Gitpan::perl5i;
 
+use Gitpan::Release;
 use Gitpan::OO;
 use Gitpan::Types;
 
@@ -99,7 +100,6 @@ method backpan_releases {
 }
 
 method release_from_version(Str $version) {
-    require Gitpan::Release;
     return Gitpan::Release->new(
         distname        => $self->name,
         version         => $version
@@ -107,7 +107,6 @@ method release_from_version(Str $version) {
 }
 
 method release_from_backpan( BackPAN::Index::Release $backpan_release ) {
-    require Gitpan::Release;
     return Gitpan::Release->new(
         backpan_release => $backpan_release
     );
