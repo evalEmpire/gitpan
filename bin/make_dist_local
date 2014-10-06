@@ -20,7 +20,7 @@ for my $backpan_release ($dist->backpan_releases) {
     my $path = $backpan_release->path;
     say $path;
 
-    my $release = $dist->release(version => $backpan_release->version);
+    my $release = $dist->release_from_backpan($backpan_release);
     $release->get;
 
     my $dest = $backpan_dir->child($path);

@@ -36,13 +36,28 @@ note "new() from BackPAN::Index::Dist"; {
 }
 
 
-note "release"; {
+note "release_from_version"; {
     my $dist = $CLASS->new( name => "Acme-Pony" );
 
-    my $release = $dist->release( version => '1.1.1' );
+    my $release = $dist->release_from_version('1.1.1');
     isa_ok $release, "Gitpan::Release";
     is $release->distname, "Acme-Pony";
     is $release->version,  "1.1.1";
+}
+
+
+note "release_from_backpan"; {
+    my $dist = $CLASS->new( name => "Acme-Buffy" );
+
+    # There are two releases for 1.3
+    my @bp_releases = $dist->backpan_releases->search({ version => '1.3' })->all;
+    for my $bp_release (@bp_releases) {
+        my $release = Gitpan::Release->new(
+            backpan_release => $bp_release
+        );
+        is $release->version,  '1.3';
+        is $release->distname, 'Acme-Buffy';
+    }
 }
 
 note "dist data"; {
@@ -113,7 +128,7 @@ note "releases to import"; {
     $git->repo_dir->child("foo")->touch;
     $git->add_all;
     $git->run( "commit" => "-m", "Adding foo" );
-    $git->tag_release( $dist->release(version => 0.001) );
+    $git->tag_release( $dist->release_from_version(0.001) );
 
     cmp_deeply scalar @backpan_versions->diff($dist->versions_to_import), [0.001];
 }
@@ -124,7 +139,7 @@ note "restarting from an existing repository"; {
             name    => 'Acme-LookOfDisapproval'
         );
         $dist->delete_repo;
-        $dist->import_release( $dist->release( version => 0.001 ) );
+        $dist->import_release( $dist->release_from_version(0.001) );
     }
 
     my $dist = Gitpan::Dist->new(

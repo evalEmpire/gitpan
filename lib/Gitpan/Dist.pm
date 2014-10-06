@@ -98,13 +98,21 @@ method backpan_releases {
         { order_by => { -asc => "date" } } );
 }
 
-method release(Str :$version) {
+method release_from_version(Str $version) {
     require Gitpan::Release;
     return Gitpan::Release->new(
         distname        => $self->name,
         version         => $version
     );
 }
+
+method release_from_backpan( BackPAN::Index::Release $backpan_release ) {
+    require Gitpan::Release;
+    return Gitpan::Release->new(
+        backpan_release => $backpan_release
+    );
+}
+
 
 method versions_to_import() {
     my $backpan_releases = $self->backpan_releases;
@@ -118,7 +126,7 @@ method versions_to_import() {
 method releases_to_import() {
     my @releases;
     for my $version ($self->versions_to_import->flatten) {
-        push @releases, $self->release( version => $version );
+        push @releases, $self->release_from_version( $version );
     }
 
     return \@releases;
