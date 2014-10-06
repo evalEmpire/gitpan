@@ -104,8 +104,8 @@ distribution and to make this data available for others to use.  When
 you think "will Gitpan do X" instead think "how can I use Gitpan to
 build X?"
 
-That said, suggestions on how to improve the data available from
-Gitpan heartily accepted.
+Suggestions on how to improve the data available from Gitpan heartily
+accepted.
 
 
 How can I merge Gitpan's history with my module?
@@ -120,10 +120,11 @@ http://use.perl.org/~schwern/journal/39974
 How do I update my module on Gitpan?
 ------------------------------------
 
-Gitpan will automatically pull new releases from CPAN.
+Gitpan will automatically pull new releases from CPAN, you don't have
+to do anything.
 
-Updates are currently happening sporatically pending setting up the
-hosting for the importer and improving logging and error recovery.
+Updates are currently suspended pending a rewrite to make Gitpan more
+maintainable.
 
 
 Where can I get a list of all the repositories?
@@ -171,9 +172,9 @@ development repository (descriptive text, descriptive commits, no
 issue tracker, no wiki) and to point the user at the proper
 development resources (ie. the distribution's Metacpan page).
 
-You can make your own development repository more visible by adding
-a repository resource to your release meta-data.  See
-http://module-build.sourceforge.net/META-spec-v1.4.html#resources
+You can make your own development repository more visible by adding a
+repository resource to your release meta-data.  See
+https://metacpan.org/pod/CPAN::Meta::Spec#resources
 
 
 I'm the author of X distribution, can I get commit access to Gitpan?
@@ -204,7 +205,7 @@ I noticed a problem with a repository
 -------------------------------------
 
 Please report it at <http://github.com/evalEmpire/gitpan/issues> or to
-schwern+github@gmail.com.
+schwern+gitpan@pobox.com.
 
 
 Who do we have to thank for Gitpan?
@@ -224,12 +225,13 @@ github.com for a generous donation of space and support and angry unicorns
 Yanick Champoux for git-cpan-patch which does most of the work.
 ftp.funet.fi for an rsync-able BackPAN mirror.
 Michael Schwern glued it all together.
+And all the people who [contributed code](https://github.com/evalEmpire/gitpan/graphs/contributors) and [reported issues](https://github.com/evalEmpire/gitpan/issues?q=is%3Aissue+is%3Aclosed).
 
 
 How can I contact Gitpan?
 -------------------------
 
-Email:   schwern+gitpan@gmail.com
+Email:   schwern+gitpan@pobox.com
 Web:     http://github.com/gitpan/
 Dev:     http://github.com/evalEmpire/gitpan
 Issues:  http://github.com/evalEmpire/gitpan/issues
