@@ -114,19 +114,23 @@ method release_from_backpan( BackPAN::Index::Release $backpan_release ) {
 }
 
 
+method paths_to_import() {
+    return [map { $_->short_path } @{$self->releases_to_import}];
+}
+
+
 method versions_to_import() {
-    my $backpan_releases = $self->backpan_releases;
-    my @backpan_versions = map { $_->version } $backpan_releases->all;
-
-    my $gitpan_releases = $self->git->releases;
-
-    return scalar @backpan_versions->diff($gitpan_releases);
+    return [map { $_->version } @{$self->releases_to_import}];
 }
 
 method releases_to_import() {
+    my $imported = $self->git->releases->as_hash;
+
     my @releases;
-    for my $version ($self->versions_to_import->flatten) {
-        push @releases, $self->release_from_version( $version );
+    for my $bp_release ($self->backpan_releases->all) {
+        next if $imported->{$bp_release->short_path};
+
+        push @releases, $self->release_from_backpan( $bp_release );
     }
 
     return \@releases;

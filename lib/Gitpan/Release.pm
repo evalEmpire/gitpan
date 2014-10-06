@@ -37,13 +37,12 @@ haz gitpan_version =>
       return $version;
   };
 
-haz short_path =>
-  is            => 'ro',
-  isa           => Str,
-  lazy          => 1,
-  default       => method {
-      return sprintf "%s/%s", $self->cpanid, $self->filename;
-  };
+
+# Fuck Type short_path() into BackPAN::Index::Release.
+*BackPAN::Index::Release::short_path = method {
+    return sprintf("%s/%s", $self->cpanid, $self->filename);
+};
+
 
 haz backpan_release =>
   is            => 'ro',
@@ -55,6 +54,7 @@ haz backpan_release =>
       distvname
       filename
       maturity
+      short_path
   )],
   default       => method {
       return $self->backpan_index

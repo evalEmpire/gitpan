@@ -122,7 +122,16 @@ note "releases to import"; {
 
     # Releaes of Acme-LOD as of this writing.
     my @backpan_versions = (0.001, 0.002, 0.003, 0.004, 0.005, 0.006);
+    my @backpan_paths    = (
+        "ETHER/Acme-LookOfDisapproval-0.001.tar.gz",
+        "ETHER/Acme-LookOfDisapproval-0.002.tar.gz",
+        "ETHER/Acme-LookOfDisapproval-0.003.tar.gz",
+        "ETHER/Acme-LookOfDisapproval-0.004.tar.gz",
+        "ETHER/Acme-LookOfDisapproval-0.005.tar.gz",
+        "ETHER/Acme-LookOfDisapproval-0.006.tar.gz",
+    );
     cmp_deeply scalar @backpan_versions->diff($dist->versions_to_import), [];
+    cmp_deeply scalar @backpan_paths   ->diff($dist->paths_to_import),    [];
 
     my $git = $dist->git;
     $git->repo_dir->child("foo")->touch;
@@ -131,6 +140,8 @@ note "releases to import"; {
     $git->tag_release( $dist->release_from_version(0.001) );
 
     cmp_deeply scalar @backpan_versions->diff($dist->versions_to_import), [0.001];
+    cmp_deeply scalar @backpan_paths->diff($dist->paths_to_import),
+      ['ETHER/Acme-LookOfDisapproval-0.001.tar.gz'];
 }
 
 note "restarting from an existing repository"; {
@@ -145,7 +156,7 @@ note "restarting from an existing repository"; {
     my $dist = Gitpan::Dist->new(
         name    => 'Acme-LookOfDisapproval'
     );
-    cmp_deeply $dist->git->releases, [0.001];
+    cmp_deeply $dist->git->releases, ["ETHER/Acme-LookOfDisapproval-0.001.tar.gz"];
 }
 
 done_testing;

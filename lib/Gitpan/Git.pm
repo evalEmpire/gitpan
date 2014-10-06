@@ -321,7 +321,7 @@ method current_branch {
 method releases {
     return [] unless $self->revision_exists("HEAD");
 
-    my $tag_prefix = $self->config->cpan_release_tag_prefix;
+    my $tag_prefix = $self->config->cpan_path_tag_prefix;
     return [map { s{^$tag_prefix}{}; $_ } $self->run(tag => '-l', "$tag_prefix*")];
 }
 
