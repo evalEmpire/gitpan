@@ -14,13 +14,17 @@ with 'Gitpan::Role::HasBackpanIndex';
 
 method import_from_distnames(
     ArrayRef $names,
-    Int :$num_workers           = 2
+    Int  :$num_workers           = 2,
+    Bool :$delete_repo           = 0,
 ) {
     my $fork_man = Parallel::ForkManager->new($num_workers);
 
     for my $name (@$names) {
 #        my $pid = $fork_man->start and next;
-        $self->import_from_distname($name);
+        $self->import_from_distname(
+            $name,
+            delete_repo => $delete_repo
+        );
 #        $fork_man->finish;
     }
 
@@ -31,7 +35,8 @@ method import_from_distnames(
 
 method import_from_backpan_dists(
     DBIx::Class::ResultSet $bp_dists,
-    Int      :$num_workers      = 2
+    Int  :$num_workers  = 2,
+    Bool :$delete_repo  = 0
 ) {
     my $fork_man = Parallel::ForkManager->new($num_workers);
 
@@ -43,7 +48,7 @@ method import_from_backpan_dists(
         );
 
         my $pid = $fork_man->start and next;
-        $self->import_dist($dist);
+        $self->import_dist($dist, delete_repo => $delete_repo);
         $fork_man->finish;
     }
 
@@ -66,11 +71,21 @@ method import_dists(
 }
 
 
-method import_from_distname( Str $name ) {
-    $self->import_dist( Gitpan::Dist->new( name => $name ) );
+method import_from_distname(
+    Str  $name,
+    Bool :$delete_repo = 0
+) {
+    $self->import_dist(
+        Gitpan::Dist->new( name => $name ),
+        delete_repo => $delete_repo
+    );
 }
 
 
-method import_dist( Gitpan::Dist $dist ) {
+method import_dist(
+    Gitpan::Dist $dist,
+    Bool :$delete_repo = 0,
+) {
+    $dist->delete_repo if $delete_repo;
     $dist->import_releases;
 }
