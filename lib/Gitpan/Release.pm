@@ -118,7 +118,7 @@ haz extract_dir =>
 
 method BUILDARGS($class: %args) {
     croak "distname & version or backpan_release required"
-      unless ($args{distname} && $args{version}) || $args{backpan_release};
+      unless ($args{distname} && defined $args{version}) || $args{backpan_release};
 
     return \%args;
 }
