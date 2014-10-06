@@ -158,11 +158,24 @@ method delete_repo {
 
 
 method import_releases(
-    ArrayRef[Gitpan::Release] :$releases        = $self->releases_to_import,
+    ArrayRef[Gitpan::Release] :$releases,
     CodeRef     :$before_import                 = sub {},
     CodeRef     :$after_import                  = sub {},
     Bool        :$push                          = 1
 ) {
+    local $SIG{__WARN__} = sub {
+        $self->main_log("@{[$self->distname]}: $_") for @_;
+        $self->dist_log(join "", @_);
+    };
+
+    # Do this here, not as a default, so we can catch warnings.
+    $releases ||= $self->releases_to_import;
+
+    if( !@$releases ) {
+        $self->main_log( "Nothing to import for @{[$self->distname]}" );
+        return;
+    }
+
     my $versions = join ", ", map { $_->version } @$releases;
     $self->main_log( "Importing @{[$self->distname]} versions $versions" );
     $self->dist_log( "Importing $versions" );
@@ -193,6 +206,11 @@ method import_release(
     Gitpan::Release $release,
     Bool :$push = 1
 ) {
+    local $SIG{__WARN__} = sub {
+        $self->main_log("@{[$release->short_path]}: $_") for @_;
+        $self->dist_log(join "", @_);
+    };
+
     $self->main_log( "Importing @{[$release->short_path]}" );
     $self->dist_log( "Importing @{[$release->short_path]}" );
 
