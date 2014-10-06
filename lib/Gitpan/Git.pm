@@ -407,12 +407,17 @@ method tag_release(Gitpan::Release $release) {
 
     # Special case for making versions safe
     # Some releases have no version.  They don't get a version tag.
-    if( defined $release->version and length $release->version ) {
+    if( defined $release->version and length $release->version )
+    {
         my $safe_cpan_version   = $self->ref_safe_version($release->version);
         my $safe_gitpan_version = $self->ref_safe_version($release->gitpan_version);
 
-        $self->tag($self->config->cpan_release_tag_prefix.$safe_cpan_version);
-        $self->tag($self->config->gitpan_release_tag_prefix.$safe_gitpan_version);
+        $self->tag_if_not_tagged(
+            $self->config->cpan_release_tag_prefix.$safe_cpan_version
+        );
+        $self->tag_if_not_tagged(
+            $self->config->gitpan_release_tag_prefix.$safe_gitpan_version
+        );
     }
 
     # Tag the CPAN Path
@@ -423,6 +428,18 @@ method tag_release(Gitpan::Release $release) {
 
     # Update the latest release by this author.
     $self->tag( $release->author->cpanid,                  force => 1 );
+
+    return;
+}
+
+
+method tag_if_not_tagged(Str $tag) {
+    if( $self->revision_exists($tag) ) {
+        $self->dist_log("$tag already exists");
+        return;
+    }
+
+    $self->tag($tag);
 
     return;
 }
