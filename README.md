@@ -144,11 +144,10 @@ You can also contribute by looking through imported CPAN distributions,
 checking for mistakes and reporting them as issues.
 
 
-I'm the author of X distribution and my real repository is over here!
-OR
-If a distribution already has a published repository, will you still
-do a Gitpan repo?
----------------------------------------------------------------------
+I'm the author of X distribution, my real repository is over here, would you delete the Gitpan repo?
+----------
+
+Sorry, no.
 
 Gitpan is intended to co-exist with, not compete with, the development
 repository for a distribution.  It provides a consistent, easy to find
