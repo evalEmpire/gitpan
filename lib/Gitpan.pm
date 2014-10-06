@@ -29,12 +29,12 @@ method import_from_distnames(
             next;
         }
 
-#        my $pid = $fork_man->start and next;
+        my $pid = $fork_man->start and next;
         $self->import_from_distname(
             $name,
             overwrite_repo => $overwrite_repo
         );
-#        $fork_man->finish;
+        $fork_man->finish;
     }
 
     $fork_man->wait_all_children;
