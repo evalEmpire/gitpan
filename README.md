@@ -231,8 +231,8 @@ And all the people who [contributed code](https://github.com/evalEmpire/gitpan/g
 How can I contact Gitpan?
 -------------------------
 
-Email:   schwern+gitpan@pobox.com
-Web:     http://github.com/gitpan/
-Dev:     http://github.com/evalEmpire/gitpan
-Issues:  http://github.com/evalEmpire/gitpan/issues
-Twitter: #gitpan
+* Email:   schwern+gitpan@pobox.com
+* Web:     http://github.com/gitpan/
+* Dev:     http://github.com/evalEmpire/gitpan
+* Issues:  http://github.com/evalEmpire/gitpan/issues
+* Twitter: #gitpan
