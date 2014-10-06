@@ -12,7 +12,7 @@ subtest "error handling" => sub {
     );
     $dist->delete_repo;
 
-    my $break_at = $dist->release(version => 0.003);
+    my $break_at = $dist->release_from_version(0.003);
 
     ok !$dist->import_releases(
         after_import => method($release) {

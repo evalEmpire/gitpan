@@ -2,6 +2,7 @@ package Gitpan::Dist;
 
 use Gitpan::perl5i;
 
+use Gitpan::Release;
 use Gitpan::OO;
 use Gitpan::Types;
 
@@ -98,27 +99,37 @@ method backpan_releases {
         { order_by => { -asc => "date" } } );
 }
 
-method release(Str :$version) {
-    require Gitpan::Release;
+method release_from_version(Str $version) {
     return Gitpan::Release->new(
         distname        => $self->name,
         version         => $version
     );
 }
 
+method release_from_backpan( BackPAN::Index::Release $backpan_release ) {
+    return Gitpan::Release->new(
+        backpan_release => $backpan_release
+    );
+}
+
+
+method paths_to_import() {
+    return [map { $_->short_path } @{$self->releases_to_import}];
+}
+
+
 method versions_to_import() {
-    my $backpan_releases = $self->backpan_releases;
-    my @backpan_versions = map { $_->version } $backpan_releases->all;
-
-    my $gitpan_releases = $self->git->releases;
-
-    return scalar @backpan_versions->diff($gitpan_releases);
+    return [map { $_->version } @{$self->releases_to_import}];
 }
 
 method releases_to_import() {
+    my $imported = $self->git->releases->as_hash;
+
     my @releases;
-    for my $version ($self->versions_to_import->flatten) {
-        push @releases, $self->release( version => $version );
+    for my $bp_release ($self->backpan_releases->all) {
+        next if $imported->{$bp_release->short_path};
+
+        push @releases, $self->release_from_backpan( $bp_release );
     }
 
     return \@releases;
@@ -167,7 +178,7 @@ method import_releases(
         } or do {
             my $error = $@;
             $self->main_log("Error importing @{[$release->short_path]}: $error");
-            $self->dist_log($error);
+            $self->dist_log("$error");
             return 0;
         };
     }

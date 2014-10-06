@@ -28,11 +28,10 @@ method _build_authors {
 
     while( <$fh> ) {
         chomp;
-        my($cpanid, $email, $name, $url) = split /\t/, $_;
+        my($cpanid, $email, $name, $url) = split /\t/, Encode::decode_utf8($_);
 
         $email   = '' if $email eq 'CENSORED';
         $url   //= '';
-        $name    = Encode::decode_utf8($name);
 
         $authors->{$cpanid} = Gitpan::CPAN::Author->new(
             cpanid      => $cpanid,

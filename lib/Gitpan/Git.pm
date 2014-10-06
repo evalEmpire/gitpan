@@ -321,12 +321,14 @@ method current_branch {
 method releases {
     return [] unless $self->revision_exists("HEAD");
 
-    my $tag_prefix = $self->config->cpan_release_tag_prefix;
+    my $tag_prefix = $self->config->cpan_path_tag_prefix;
     return [map { s{^$tag_prefix}{}; $_ } $self->run(tag => '-l', "$tag_prefix*")];
 }
 
 method commit_release(Gitpan::Release $release) {
     my $author = $release->author;
+
+    my $repo = $self->git_raw;
 
     $self->dist_log( "Committing @{[ $release->short_path ]}" );
 
@@ -341,15 +343,23 @@ gitpan-cpan-maturity:     @{[ $release->maturity ]}
 
 MESSAGE
 
-    $self->run(
-        "commit", "-m" => $commit_message,
-        {
-            env => {
-                GIT_AUTHOR_DATE         => $release->date,
-                GIT_AUTHOR_NAME         => $author->name || $author->cpanid,
-                GIT_AUTHOR_EMAIL        => $author->email,
-            },
-        },
+    my $author_sig = Git::Raw::Signature->new(
+        Encode::encode_utf8($author->name || $author->cpanid),
+        Encode::encode_utf8($author->email),
+        $release->date,
+        0
+    );
+
+    my $committer_sig = Git::Raw::Signature->default( $self->git_raw );
+
+    my @parents = $repo->is_empty ? () : ($repo->head->target);
+
+    $repo->commit(
+        Encode::encode_utf8($commit_message),
+        $author_sig,
+        $committer_sig,
+        \@parents,
+        $repo->lookup( $repo->index->write_tree ),
     );
 
     $self->tag_release($release);
@@ -407,12 +417,17 @@ method tag_release(Gitpan::Release $release) {
 
     # Special case for making versions safe
     # Some releases have no version.  They don't get a version tag.
-    if( defined $release->version and length $release->version ) {
+    if( defined $release->version and length $release->version )
+    {
         my $safe_cpan_version   = $self->ref_safe_version($release->version);
         my $safe_gitpan_version = $self->ref_safe_version($release->gitpan_version);
 
-        $self->tag($self->config->cpan_release_tag_prefix.$safe_cpan_version);
-        $self->tag($self->config->gitpan_release_tag_prefix.$safe_gitpan_version);
+        $self->tag_if_not_tagged(
+            $self->config->cpan_release_tag_prefix.$safe_cpan_version
+        );
+        $self->tag_if_not_tagged(
+            $self->config->gitpan_release_tag_prefix.$safe_gitpan_version
+        );
     }
 
     # Tag the CPAN Path
@@ -423,6 +438,18 @@ method tag_release(Gitpan::Release $release) {
 
     # Update the latest release by this author.
     $self->tag( $release->author->cpanid,                  force => 1 );
+
+    return;
+}
+
+
+method tag_if_not_tagged(Str $tag) {
+    if( $self->revision_exists($tag) ) {
+        $self->dist_log("$tag already exists");
+        return;
+    }
+
+    $self->tag($tag);
 
     return;
 }

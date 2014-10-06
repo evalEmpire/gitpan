@@ -13,14 +13,18 @@ with
 haz distname =>
   is            => 'ro',
   isa           => DistName,
-  required      => 1;
+  default       => method {
+      return $self->backpan_release->dist->name;
+  };
 
 with 'Gitpan::Role::CanDistLog';
 
 haz version =>
   is            => 'ro',
   isa           => Str,
-  required      => 1;
+  default       => method {
+      return $self->backpan_release->version;
+  };
 
 haz gitpan_version =>
   is            => 'ro',
@@ -33,13 +37,13 @@ haz gitpan_version =>
       return $version;
   };
 
-haz short_path =>
-  is            => 'ro',
-  isa           => Str,
-  lazy          => 1,
-  default       => method {
-      return sprintf "%s/%s", $self->cpanid, $self->filename;
-  };
+
+require BackPAN::Index::Release;
+# Fuck Type short_path() into BackPAN::Index::Release.
+*BackPAN::Index::Release::short_path = method {
+    return sprintf("%s/%s", $self->cpanid, $self->filename);
+};
+
 
 haz backpan_release =>
   is            => 'ro',
@@ -51,6 +55,7 @@ haz backpan_release =>
       distvname
       filename
       maturity
+      short_path
   )],
   default       => method {
       return $self->backpan_index
@@ -109,6 +114,15 @@ haz archive_file =>
 haz extract_dir =>
   isa           => AbsPath,
   clearer       => "_clear_extract_dir";
+
+
+method BUILDARGS($class: %args) {
+    croak "distname & version or backpan_release required"
+      unless ($args{distname} && defined $args{version}) || $args{backpan_release};
+
+    return \%args;
+}
+
 
 method get {
     my $url = $self->url;
