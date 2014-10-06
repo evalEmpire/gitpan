@@ -328,6 +328,8 @@ method releases {
 method commit_release(Gitpan::Release $release) {
     my $author = $release->author;
 
+    my $repo = $self->git_raw;
+
     $self->dist_log( "Committing @{[ $release->short_path ]}" );
 
     my $commit_message = <<"MESSAGE";
@@ -341,15 +343,23 @@ gitpan-cpan-maturity:     @{[ $release->maturity ]}
 
 MESSAGE
 
-    $self->run(
-        "commit", "-m" => $commit_message,
-        {
-            env => {
-                GIT_AUTHOR_DATE         => $release->date,
-                GIT_AUTHOR_NAME         => $author->name || $author->cpanid,
-                GIT_AUTHOR_EMAIL        => $author->email,
-            },
-        },
+    my $author_sig = Git::Raw::Signature->new(
+        Encode::encode_utf8($author->name || $author->cpanid),
+        Encode::encode_utf8($author->email),
+        $release->date,
+        0
+    );
+
+    my $committer_sig = Git::Raw::Signature->default( $self->git_raw );
+
+    my @parents = $repo->is_empty ? () : ($repo->head->target);
+
+    $repo->commit(
+        Encode::encode_utf8($commit_message),
+        $author_sig,
+        $committer_sig,
+        \@parents,
+        $repo->lookup( $repo->index->write_tree ),
     );
 
     $self->tag_release($release);
