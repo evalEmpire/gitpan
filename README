@@ -10,7 +10,7 @@ What is CPAN?
 
 CPAN is the Comprehensive Perl Archive Network at cpan.org.  It is an
 archive of tens of thousands of Perl modules written by thousands of
-authors.  A good interface to it is http://search.cpan.org
+authors.  A good interface to it is http://metacpan.org
 
 
 What is BackPAN?
@@ -50,8 +50,7 @@ traditionally been difficult.
 Where is Gitpan?
 ----------------
 
-The repositories are on github.com at http://github.com/gitpan
-(watch out, it may overload your browser).
+The repositories are on github.com at http://github.com/gitpan.
 
 Code, discussion, and issues can be had at http://github.com/evalEmpire/gitpan.
 
@@ -130,10 +129,9 @@ hosting for the importer and improving logging and error recovery.
 Where can I get a list of all the repositories?
 -----------------------------------------------
 
-You can get it from github's API <http://develop.github.com> with the
-URL <http://github.com/api/v2/json/repos/show/gitpan>.  At the time of
-this writing the call is timing out.  Your alternative is to get a
-list of distributions from BackPAN::Index.
+You can get it from [Github's API](http://developer.github.com) by
+[listing all of Gitpan's
+repositories](https://developer.github.com/v3/repos/#list-organization-repositories).  The list is rather large and will require multiple calls.  See [Pagination](https://developer.github.com/v3/#pagination).
 
 
 How can I help?
