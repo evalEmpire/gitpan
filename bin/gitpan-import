@@ -7,8 +7,8 @@ use Gitpan;
 
 # Defaults
 my %opts = (
-    workers     => 3,
-    delete_repo => 0,
+    workers        => 3,
+    overwrite_repo => 0,
 );
 
 GetOptions(
@@ -20,14 +20,14 @@ GetOptions(
     "since=s",
     "limit=i",
     "workers=i",
-    "delete_repo!",
+    "overwrite_repo!",
 );
 
 my $gitpan = Gitpan->new;
 
 my @dists;
 if( @ARGV ) {
-    $gitpan->import_from_distnames(\@ARGV, delete_repo => $opts{delete_repo});
+    $gitpan->import_from_distnames(\@ARGV, overwrite_repo => $opts{overwrite_repo});
 }
 else {
     my $dists = $gitpan->backpan_index->dists;
@@ -61,7 +61,7 @@ else {
     $gitpan->import_from_backpan_dists(
         $dists,
         num_workers => $opts{workers},
-        delete_repo => $opts{delete_repo},
+        overwrite_repo => $opts{overwrite_repo},
     );
 }
 
@@ -137,7 +137,7 @@ Specify the number of worker processes to use.
 
 Default is 3.
 
-=head3 --delete_repo
+=head3 --overwrite_repo
 
 Delete the local and Github repo before importing.  Use this if you
 want to reimport the whole distribution.
