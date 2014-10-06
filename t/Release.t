@@ -29,6 +29,21 @@ note "The basics"; {
 }
 
 
+note "From a backpan release"; {
+    my $pony = Gitpan::Release->new(
+        distname        => 'Acme-Pony',
+        version         => '1.1.1',
+    );
+
+    my $pony2 = Gitpan::Release->new(
+        backpan_release => $pony->backpan_release
+    );
+    isa_ok $pony2, "Gitpan::Release";
+    is $pony2->distname, "Acme-Pony";
+    is $pony2->version,  "1.1.1";
+}
+
+
 note "Author info"; {
     my $pony = Gitpan::Release->new(
         distname => 'Acme-Pony',

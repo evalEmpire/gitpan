@@ -13,14 +13,18 @@ with
 haz distname =>
   is            => 'ro',
   isa           => DistName,
-  required      => 1;
+  default       => method {
+      return $self->backpan_release->dist->name;
+  };
 
 with 'Gitpan::Role::CanDistLog';
 
 haz version =>
   is            => 'ro',
   isa           => Str,
-  required      => 1;
+  default       => method {
+      return $self->backpan_release->version;
+  };
 
 haz gitpan_version =>
   is            => 'ro',
@@ -109,6 +113,15 @@ haz archive_file =>
 haz extract_dir =>
   isa           => AbsPath,
   clearer       => "_clear_extract_dir";
+
+
+method BUILDARGS($class: %args) {
+    croak "distname & version or backpan_release required"
+      unless ($args{distname} && $args{version}) || $args{backpan_release};
+
+    return \%args;
+}
+
 
 method get {
     my $url = $self->url;
