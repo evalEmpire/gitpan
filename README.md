@@ -214,18 +214,18 @@ Who do we have to thank for Gitpan?
 Gitpan exists on top of a pile of pre-existing technology and services.
 Very little new code was written and the yaks were already well shorn.
 
-Elaine Ashton for instituting BackPAN.
-Jarkko, Graham Barr and the rest of the CPAN cabal.
-Andreas König for tirelessly maintaining PAUSE.
-brian d foy for spearheading BackPAN archeology.
-Léon Brocard for Parse::BACKPAN::Packages to access the backpan index
-  and maintaining the BackPAN index.
-Linus and the git devs for git (this was tried before on SVN and guh...)
-github.com for a generous donation of space and support and angry unicorns
-Yanick Champoux for git-cpan-patch which does most of the work.
-ftp.funet.fi for an rsync-able BackPAN mirror.
-Michael Schwern glued it all together.
-And all the people who [contributed code](https://github.com/evalEmpire/gitpan/graphs/contributors) and [reported issues](https://github.com/evalEmpire/gitpan/issues?q=is%3Aissue+is%3Aclosed).
+* Elaine Ashton for instituting BackPAN.
+* Jarkko, Graham Barr and the rest of the CPAN cabal.
+* Andreas König for tirelessly maintaining PAUSE.
+* brian d foy for spearheading BackPAN archeology.
+* Léon Brocard for Parse::BACKPAN::Packages to access the backpan index and maintaining the BackPAN index.
+* Linus and the git devs for git (this was tried before on SVN and guh...)
+* github.com for a generous donation of space and support and angry unicorns
+* Integra Telecom for donating a server.
+* Yanick Champoux for git-cpan-patch which does most of the work.
+* ftp.funet.fi for an rsync-able BackPAN mirror.
+* Michael Schwern glued it all together.
+* And all the people who [contributed code](https://github.com/evalEmpire/gitpan/graphs/contributors) and [reported issues](https://github.com/evalEmpire/gitpan/issues?q=is%3Aissue+is%3Aclosed).
 
 
 How can I contact Gitpan?
