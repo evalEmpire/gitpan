@@ -1,3 +1,0 @@
-[submodule "BackPAN-Index"]
-	path = BackPAN-Index
-	url = git://github.com/acme/parse-backpan-packages.git

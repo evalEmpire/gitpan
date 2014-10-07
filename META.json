@@ -1,0 +1,98 @@
+{
+   "abstract" : "Put each CPAN distribution into its own Github repo",
+   "author" : [
+      "Michael G. Schwern <schwern@pobox.com>"
+   ],
+   "dynamic_config" : 1,
+   "generated_by" : "Module::Build version 0.4205",
+   "license" : [
+      "unknown"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "gitpan",
+   "prereqs" : {
+      "configure" : {
+         "requires" : {
+            "Module::Build" : "0.42"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "BackPAN::Index" : "0.39",
+            "CPANPLUS" : "0.9133",
+            "Capture::Tiny" : "0.08",
+            "File::chdir" : "0",
+            "File::chmod" : "0.32",
+            "Getopt::Long::Descriptive" : "0.085",
+            "Git::Repository" : "1.3",
+            "Git::Repository::Log" : "1.312",
+            "Method::Signatures" : "0",
+            "Moo" : "1.004002",
+            "Net::GitHub::V3" : "0.60",
+            "Path::Tiny" : "0.054",
+            "Type::Library" : "0.046",
+            "Type::Utils" : "0.046",
+            "Types::Standard" : "0.046",
+            "YAML::XS" : "0",
+            "perl" : "v5.18.1",
+            "perl5i::2" : "v2.13.0"
+         }
+      },
+      "test" : {
+         "requires" : {
+            "Test::Most" : "0",
+            "Test::TypeConstraints" : "0.05"
+         }
+      }
+   },
+   "provides" : {
+      "Git::CPAN::Patch::Import" : {
+         "file" : "lib/Git/CPAN/Patch/Import.pm"
+      },
+      "Gitpan::Config" : {
+         "file" : "lib/Gitpan/Config.pm"
+      },
+      "Gitpan::ConfigFile" : {
+         "file" : "lib/Gitpan/ConfigFile.pm"
+      },
+      "Gitpan::Dist" : {
+         "file" : "lib/Gitpan/Dist.pm"
+      },
+      "Gitpan::Git" : {
+         "file" : "lib/Gitpan/Git.pm"
+      },
+      "Gitpan::Github" : {
+         "file" : "lib/Gitpan/Github.pm",
+         "version" : "v2.0.0"
+      },
+      "Gitpan::Release" : {
+         "file" : "lib/Gitpan/Release.pm"
+      },
+      "Gitpan::Repo" : {
+         "file" : "lib/Gitpan/Repo.pm"
+      },
+      "Gitpan::Role::CanBackoff" : {
+         "file" : "lib/Gitpan/Role/CanBackoff.pm"
+      },
+      "Gitpan::Role::HasBackpanIndex" : {
+         "file" : "lib/Gitpan/Role/HasBackpanIndex.pm"
+      },
+      "Gitpan::Role::HasCPANPLUS" : {
+         "file" : "lib/Gitpan/Role/HasCPANPLUS.pm"
+      },
+      "Gitpan::Role::HasConfig" : {
+         "file" : "lib/Gitpan/Role/HasConfig.pm"
+      },
+      "Gitpan::Role::HasUA" : {
+         "file" : "lib/Gitpan/Role/HasUA.pm"
+      },
+      "Gitpan::Types" : {
+         "file" : "lib/Gitpan/Types.pm"
+      }
+   },
+   "release_status" : "stable",
+   "version" : "0.01"
+}

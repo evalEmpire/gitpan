@@ -11,5 +11,7 @@ cover_db/
 nytprof*
 *.patch
 .DS_Store
-MYMETA.yml
+MYMETA.*
 *.o
+gitpan-build
+t/gitpan

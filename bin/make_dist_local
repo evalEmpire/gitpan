@@ -1,0 +1,29 @@
+#!/usr/bin/env perl
+
+# Given a distribution name, it will mirror all its releases into
+# our local BackPAN used for testing.
+#
+# example:  perl bin/make_dist_local Math-BigInt
+
+use lib 'lib';
+use Gitpan::perl5i;
+use Gitpan::Dist;
+use Gitpan::Release;
+
+my $dist = Gitpan::Dist->new(
+    name        => shift
+);
+
+my $backpan_dir = "t/backpan/"->path;
+
+for my $backpan_release ($dist->backpan_releases) {
+    my $path = $backpan_release->path;
+    say $path;
+
+    my $release = $dist->release_from_backpan($backpan_release);
+    $release->get;
+
+    my $dest = $backpan_dir->child($path);
+    $dest->touchpath;
+    $release->archive_file->move($dest);
+}
