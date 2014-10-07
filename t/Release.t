@@ -114,17 +114,19 @@ note "move"; {
     my $to = Path::Tiny->tempdir;
 
     my $pony = new_ok "Gitpan::Release", [
-        distname => 'Acme-Pony',
-        version  => '1.1.1'
+        distname => 'Acme-Warn-LOLCAT',
+        version  => '0.01'
     ];
 
     $pony->get;
     $pony->move($to);
     ok !$pony->extract_dir, "Releases are not extracted after moving";
 
+    ok ! -e $to->child(".git");
+
     $pony->extract;
     cmp_deeply [sort map { $_->basename } $to->children],
-               [sort map { $_->basename } $pony->extract_dir->children];
+               [sort grep !/^.git$/, map { $_->basename } $pony->extract_dir->children];
 }
 
 done_testing;

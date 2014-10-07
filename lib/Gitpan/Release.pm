@@ -178,11 +178,16 @@ method fix_permissions {
     return;
 }
 
-method move(Path::Tiny $to) {
+method move(
+    Path::Tiny $to,
+    Bool :$clean_for_import = 1
+) {
     croak "$to is not a directory" if !-d $to;
 
     $self->extract if !$self->extract_dir;
     my $from = $self->extract_dir;
+
+    $self->clean_extraction_for_import if $clean_for_import;
 
     $self->dist_log( "Moving from $from to $to" );
 
@@ -191,6 +196,17 @@ method move(Path::Tiny $to) {
 
     # Have to re-extract
     $self->_clear_extract_dir;
+
+    return;
+}
+
+
+method clean_extraction_for_import() {
+    my $dir = $self->extract_dir;
+
+    # A .git directory in the tarball will interfere with
+    # our own git repository.
+    $dir->child(".git")->remove_tree({ safe => 0 });
 
     return;
 }
