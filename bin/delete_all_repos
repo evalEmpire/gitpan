@@ -5,8 +5,9 @@ use Gitpan::perl5i;
 use Gitpan::Github;
 
 my $gh = Gitpan::Github->new( repo => "whatever" );
+my $config = $gh->config;
 
-my @repos = map { $_->{name} } $gh->repos->list_org("gitpan-test");
+my @repos = map { $_->{name} } $gh->repos->list_org($config->github_owner);
 while($gh->repos->has_next_page) {
     push @repos, map { $_->{name} } $gh->repos->next_page;
 }
@@ -18,5 +19,5 @@ exit unless $ans =~ /^y/i;
 
 for my $repo (@repos) {
     say "Deleting $repo";
-    $gh->repos->delete("gitpan-test", $repo);
+    $gh->repos->delete($config->github_owner, $repo);
 }
