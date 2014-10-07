@@ -13,7 +13,7 @@ while($gh->repos->has_next_page) {
 }
 
 say @repos->join(", ");
-say "Delete these repos?";
+say "Delete these @{[ scalar @repos ]} repos?";
 my $ans = <STDIN>;
 exit unless $ans =~ /^y/i;
 
