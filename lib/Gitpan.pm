@@ -23,6 +23,8 @@ method import_from_distnames(
 
     my $config = $self->config;
 
+    $self->main_log("Starting import from distribution names at @{[gmtime->iso8601]}");
+
     for my $name (@$names) {
         if( $config->skip_dist($name) ) {
             $self->main_log( "Skipping $name due to config" );
@@ -39,6 +41,8 @@ method import_from_distnames(
 
     $fork_man->wait_all_children;
 
+    $self->main_log("Import complete");
+
     return;
 }
 
@@ -50,6 +54,8 @@ method import_from_backpan_dists(
     my $fork_man = Parallel::ForkManager->new($num_workers);
 
     my $config = $self->config;
+
+    $self->main_log("Starting import from BackPAN dists at @{[gmtime->iso8601]}");
 
     while( my $bp_dist = $bp_dists->next ) {
         my $distname = $bp_dist->name;
@@ -69,6 +75,8 @@ method import_from_backpan_dists(
         $self->import_dist($dist, overwrite_repo => $overwrite_repo);
         $fork_man->finish;
     }
+
+    $self->main_log("Import complete");
 
     $fork_man->wait_all_children;
 }
