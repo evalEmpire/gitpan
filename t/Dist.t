@@ -150,7 +150,7 @@ note "restarting from an existing repository"; {
             name    => 'Acme-LookOfDisapproval'
         );
         $dist->delete_repo;
-        $dist->import_release( $dist->release_from_version(0.001) );
+        $dist->import_release( $dist->release_from_version(0.001), push => 1 );
     }
 
     my $dist = Gitpan::Dist->new(

@@ -161,7 +161,8 @@ method import_releases(
     ArrayRef[Gitpan::Release] :$releases,
     CodeRef     :$before_import                 = sub {},
     CodeRef     :$after_import                  = sub {},
-    Bool        :$push                          = 1
+    Bool        :$push                          = 1,
+    Bool        :$clean                         = 1
 ) {
     local $SIG{__WARN__} = sub {
         $self->main_log("@{[$self->distname]}: $_") for @_;
@@ -185,7 +186,7 @@ method import_releases(
     for my $release (@$releases) {
         eval {
             $self->$before_import($release);
-            $self->import_release($release, push => 0);
+            $self->import_release($release);
             $self->$after_import($release);
             1;
         } or do {
@@ -196,7 +197,8 @@ method import_releases(
         };
     }
 
-    $self->git->push if $push;
+    $self->git->push  if $push;
+    $self->git->clean if $clean;
 
     return 1;
 }
@@ -204,7 +206,8 @@ method import_releases(
 
 method import_release(
     Gitpan::Release $release,
-    Bool :$push = 1
+    Bool :$push  = 0,
+    Bool :$clean = 0
 ) {
     local $SIG{__WARN__} = sub {
         $self->main_log("@{[$release->short_path]}: $_") for @_;
@@ -226,5 +229,8 @@ method import_release(
 
     $git->commit_release($release);
 
-    $git->push if $push;
+    $git->push  if $push;
+    $git->clean if $clean;
+
+    return;
 }

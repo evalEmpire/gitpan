@@ -141,7 +141,7 @@ method hooks_dir {
 }
 
 method garbage_collect {
-    $self->run("gc");
+    $self->run_quiet("gc");
 }
 
 # These sample hook files take up a surprising amount of space
