@@ -7,17 +7,24 @@ use Gitpan::Github;
 my $gh = Gitpan::Github->new( repo => "whatever" );
 my $config = $gh->config;
 
-my @repos = map { $_->{name} } $gh->repos->list_org($config->github_owner);
-while($gh->repos->has_next_page) {
-    push @repos, map { $_->{name} } $gh->repos->next_page;
-}
-
-say @repos->join(", ");
-say "Delete these @{[ scalar @repos ]} repos?";
+say "Are you sure you want to delete all repos owned by @{[ $config->github_owner ]}?";
 my $ans = <STDIN>;
 exit unless $ans =~ /^y/i;
 
-for my $repo (@repos) {
-    say "Deleting $repo";
-    $gh->repos->delete($config->github_owner, $repo);
+for( my $page = 1;
+     my $data = $gh->query("GET", "/orgs/".$config->github_owner."/repos?page=$page&per_page=100&access_token=".$config->github_access_token);
+     $page++
+) {
+    delete_repos($data);
+}
+
+func delete_repos(ArrayRef $repos) {
+    for my $repo (@$repos) {
+        say "Deleting $repo->{name}";
+        die "$repo->{name} is owned by $repo->{owner}{login}"
+          unless $repo->{owner}{login} eq $config->github_owner;
+        $gh->repos->delete($config->github_owner, $repo->{name});
+    }
+
+    return;
 }
