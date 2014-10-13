@@ -1,6 +1,63 @@
 backpan_normalize_dist_names:
-    uri: URIC
-    Webservice-Google-Suggest: WebService-Google-Suggest
+    uri:                                URIC
+    Webservice-Google-Suggest:          WebService-Google-Suggest
+    ACME-ESP:                           Acme-ESP
+    ACME-KeyboardMarathon:              Acme-KeyboardMarathon
+    ACME-Method-CaseInsensitive:        Acme-Method-CaseInsensitive
+    ACME-PIA-Export:                    Acme-PIA-Export
+    ACME-Sort-Bogosort:                 Acme-Sort-Bogosort
+    ACME-Umlautify:                     Acme-Umlautify
+    Acme-albed:                         Acme-Albed
+    ai-nnflex:                          AI-NNFlex
+    album:                              Album
+    Algorithm-Mastermind:               Algorithm-MasterMind
+    aol-toc:                            AOL-TOC
+    App-MadEye:                         App-madeye
+    App-Nopaste-Service-Dpaste:         App-Nopaste-Service-dpaste
+    App-padadoy:                        App-Padadoy
+    App-PassManager:                    App-passmanager
+    arsperl:                            ARSperl
+    attribute-contract:                 Attribute-Contract
+    avm-aha:                            AHA
+    Avm-Aha:                            AHA
+    AVM-AHA:                            AHA
+    BeanCounter:                        beancounter
+    bioperl:                            BioPerl
+    bioperl-db:                         BioPerl-DB
+    BioPerl-db:                         BioPerl-DB
+    BioPerl-run:                        BioPerl-Run
+    bioperl-run:                        BioPerl-Run
+    bioperl-network:                    BioPerl-Network
+    BioPerl-network:                    BioPerl-Network
+    Bluepay-Bluepay20post:              Bluepay-Bluepay20Post
+    Bool:                               bool
+    bootylicious:                       Bootylicious
+    bundle-parrot:                      Bundle-Parrot
+    Bundle-Tk:                          Bundle-TK
+    Cache-Memcached-LibMemcached:       Cache-Memcached-libmemcached
+    carton:                             Carton
+    catalyst-plugin-sitemap:            Catalyst-Plugin-BigSitemap
+    catalyst-traitfor-controller-breadcrumb-followed:   Catalyst-TraitFor-Controller-Breadcrumb-Followed
+    catalyst-view-thumbnail-simple:     Catalyst-View-Thumbnail-Simple
+    catmandu:                           Catmandu
+    catmandu-fix-date:                  Catmandu-Fix-Date
+    cddb_get:                           CDDB_get
+    CGI-Session-ID-UUID:                CGI-Session-ID-uuid
+    Cgi-Simple:                         CGI-Simple
+    chart:                              App-Chart
+    Chart-GnuPlot:                      Chart-Gnuplot
+    CHEF-REST-Client:                   Chef-REST-Client
+    CIPP-doc:                           CIPP-Doc
+    clearpress:                         ClearPress
+    clucene:                            CLucene
+    colourchooser:                      ColourChooser
+    combine:                            Combine
+    Config-Model-TkUi:                  Config-Model-TkUI
+    config-model:                       Config-Model
+    Constants:                          File-ManualFlock-Constants
+    contenticious:                      Contenticious
+    Math-gsl:                           Math-GSL
+
 backpan_normalize_releases:
     authors/id/M/MA/MARCEL/-0.01.tar.gz:
         dist:    Bi
@@ -10,6 +67,20 @@ skip:
         - perl
         - parrot
         - parrot-cfg
+        - Beancounter
+        - begin
+        - Common-Sense
+        - ALL
+        - App-repl
+        - cant
+        - Config-Ini
+        - Constant
+        - cpan
+    releases:
+        - DMUEY/all-v0.0.1.tar.gz
+        - KHAREC/Bool/Bool-0.01.tar.gz
+        - KHAREC/Bool/Bool-0.02.tar.gz
+        - KHAREC/Bool/Bool-0.021.tar.gz
 
 backpan_always_update: 0
 backpan_cache_ttl: 604800
