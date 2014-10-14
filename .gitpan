@@ -311,6 +311,10 @@ backpan_normalize_releases:
         dist:    time-HOOO
     authors/id/J/JO/JOBA/TinkerForge-0.01.tar.gz:
         dist:    TinkerForge-JOBA
+    authors/id/S/SB/SBECK/TUI-1.00.tar.gz:
+        dist:    Term-TUI
+    authors/id/S/SB/SBECK/TUI-1.20.tar.gz:
+        dist:    Term-TUI
 
 skip:
     dists:
