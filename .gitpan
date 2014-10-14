@@ -226,6 +226,13 @@ skip:
         - VALDEZ/Mobile-WURFL-0.01.tar.gz
         - VALDEZ/Mobile-WURFL-0.02.tar.gz
         - AMIRITE/Mojolicious-Plugin-YAMLConfig-0.01.tar.gz
+        - TROCKIJ/mon-0.37l.tar.gz
+        - TROCKIJ/mon-0.38.13.tar.gz
+        - TROCKIJ/mon-0.38.14.tar.gz
+        - TROCKIJ/mon-0.38.15.tar.gz
+        - TROCKIJ/mon-0.38.16.tar.gz
+        - TROCKIJ/mon-0.38.17.tar.gz
+        - TROCKIJ/mon-0.38.21.tar.gz
 
 backpan_always_update: 0
 backpan_cache_ttl: 604800
