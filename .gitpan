@@ -91,6 +91,22 @@ backpan_normalize_dist_names:
     error-tiny:                         Error-Tiny
     etk-perl:                           Etk-Perl
     explain:                            Explain
+    ExtUtils-embed:                     ExtUtils-Embed
+    feedGnuplot:                        feedgnuplot
+    File-BasicFLock:                    File-BasicFlock
+    File-Logreader:                     File-LogReader
+    File-SafeDO:                        File-SafeDo
+    File-Sharedir-Install:              File-ShareDir-Install
+    file-statcache:                     File-StatCache
+    FileSys-Ext2:                       Filesys-Ext2
+    Filesys-getfsent:                   Filesys-Getfsent
+    finance-btce:                       Finance-btce
+    finance-quote:                      Finance-Quote
+    finance-yahooquote:                 Finance-YahooQuote
+    Findbin-Real:                       FindBin-Real
+    flat-fa:                            FLAT-FA
+    Fp:                                 fp
+    ft817os:                            FT817OS
     Math-gsl:                           Math-GSL
 
 backpan_normalize_releases:
