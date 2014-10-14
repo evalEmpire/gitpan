@@ -266,6 +266,19 @@ backpan_normalize_dist_names:
     vms-sysinfo:                        VMS-SysInfo
     vms-user:                           VMS-User
     voicent:                            Voicent
+    Weather-Yr:                         Weather-YR
+    Webservice-ClinicalTrialsdotGov:    WebService-ClinicalTrialsdotGov
+    Webservice-Instagram:               WebService-Instagram
+    Webservice-Validator-HTML-W3C:      WebService-Validator-HTML-W3C
+    WebService-Viglink:                 WebService-VigLink
+    webtools:                           WebTools
+    win32-gui-xmlbuilder:               Win32-GUI-XMLBuilder
+    Win32-HardLink:                     Win32-Hardlink
+    win32-IIS-rasdialer:                Win32-IIS-RASdialer
+    Win32-lglcd:                        Win32-Lglcd
+    Win32-Monitoring-DLLInject:         Win32-Monitoring-DllInject
+    Win32-PerfMon-Perl:                 Win32-Perfmon-Perl
+    win32-snarl:                        Win32-Snarl
 
 backpan_normalize_releases:
     authors/id/M/MA/MARCEL/-0.01.tar.gz:
