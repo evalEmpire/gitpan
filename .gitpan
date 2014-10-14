@@ -74,7 +74,7 @@ backpan_normalize_releases:
     authors/id/C/CD/CDRAKE/Crypt-MatrixSSL3.tar.gz:
         dist:    Crypt-MatrixSSL3
         version: ~
-    authors/id/K/KE/KERR/DP41/Current-0.3.pm.tar.gz
+    authors/id/K/KE/KERR/DP41/Current-0.3.pm.tar.gz:
         dist:    Omega-DP41-Data-Current
         version: 0.3
 
