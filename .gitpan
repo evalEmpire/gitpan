@@ -370,6 +370,9 @@ skip:
         - SHARYANTO/ReForm-0.00.tar.gz
         - RANDY/sleep-1.0.tar.gz
         - IANPX/Stem-0.1.tar.gz
+        - YEWEI/test.tgz
+        - JAMSHAID/test-1.1.tar.gz
+        - WWOLF/Test-0.001.tar.gz
 
 backpan_always_update: 0
 backpan_cache_ttl: 604800
