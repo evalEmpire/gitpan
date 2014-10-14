@@ -248,6 +248,8 @@ backpan_normalize_dist_names:
     test-monkeymock:                    Test-MonkeyMock
     Test-postgresql:                    Test-PostgreSQL
     test-tcp:                           Test-TCP
+    text-haml:                          Text-Haml
+    timer-runtime:                      Timer-Runtime
 
 backpan_normalize_releases:
     authors/id/M/MA/MARCEL/-0.01.tar.gz:
