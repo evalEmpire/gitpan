@@ -166,6 +166,10 @@ backpan_normalize_dist_names:
     Mpp:                                makepp
     Msql-mysql-modules:                 DBD-mysql
     Msql-Mysql-modules:                 DBD-mysql
+    MSSQL-OlleDb:                       MSSQL-OlleDB
+    Mssql:                              mssql
+    multicat:                           MultiCat
+    Mysql-Backup:                       MySQL-Backup
 
 backpan_normalize_releases:
     authors/id/M/MA/MARCEL/-0.01.tar.gz:
