@@ -111,6 +111,26 @@ backpan_normalize_dist_names:
     geanfammer:                         Geanfammer
     geography-china-provinces:          Geography-China-Provinces
     GeoHash:                            Geohash
+    Graphics-PLPLOT:                    Graphics-PLplot
+    HASH-Sanitize:                      Hash-Sanitize
+    haver-client:                       Haver-Client
+    haver-core:                         Haver-Core
+    haver-server:                       Haver-Server
+    Helm:                               helm
+    Hey-heyPass:                        hey-heyPass
+    HG:                                 Hg
+    html-diff:                          HTML-Diff
+    html-table:                         HTML-Table
+    HTML-Tagreader:                     HTML-TagReader
+    HTML-Widget-sideBar:                HTML-Widget-SideBar
+    HTTP-Daemon-patch-ipv6:             HTTP-Daemon-Patch-IPv6
+    http-handle:                        HTTP-Handle
+    http-headers-useragent:             HTTP-Headers-UserAgent
+    ikiwiki-plugin-syntax:              IkiWiki-Plugin-syntax
+    Image-EPEG:                         Image-Epeg
+    Image-Exif:                         Image-EXIF
+    Image-Xbin:                         Image-XBin
+    Inline-Webchat:                     Inline-WebChat
     Math-gsl:                           Math-GSL
 
 backpan_normalize_releases:
