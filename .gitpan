@@ -91,6 +91,7 @@ skip:
         - KHAREC/Bool/Bool-0.02.tar.gz
         - KHAREC/Bool/Bool-0.021.tar.gz
         - SCHUBIGER/scripts/crypt-0.1.tar.gz
+        - VIDUL/cwd.tar.gz
 
 backpan_always_update: 0
 backpan_cache_ttl: 604800
