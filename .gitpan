@@ -56,12 +56,15 @@ backpan_normalize_dist_names:
     config-model:                       Config-Model
     Constants:                          File-ManualFlock-Constants
     contenticious:                      Contenticious
+    Crypt-AoN-Util:                     Crypt-AON-Util
+    Crypt-TEA:                          Crypt-Tea
     Math-gsl:                           Math-GSL
 
 backpan_normalize_releases:
     authors/id/M/MA/MARCEL/-0.01.tar.gz:
         dist:    Bi
         version: 0.01
+
 skip:
     dists:
         - perl
