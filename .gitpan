@@ -223,6 +223,7 @@ backpan_normalize_dist_names:
     rt-extension-escalationdates:       RT-Extension-EscalationDates
     rt-extension-mandatoryfields:       RT-Extension-MandatoryFields
     rt-extension-stallfutureticket:     RT-Extension-StallFutureTicket
+    sane:                               sane-PUNYTAN
 
 backpan_normalize_releases:
     authors/id/M/MA/MARCEL/-0.01.tar.gz:
