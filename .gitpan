@@ -307,6 +307,8 @@ backpan_normalize_releases:
         dist:    time-HOOO
     authors/id/H/HO/HOOO/time-1.0014.tar.gz:
         dist:    time-HOOO
+    authors/id/J/JO/JOBA/TinkerForge-0.01.tar.gz:
+        dist:    TinkerForge-JOBA
 
 skip:
     dists:
