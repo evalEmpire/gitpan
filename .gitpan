@@ -190,6 +190,8 @@ backpan_normalize_releases:
     authors/id/N/NO/NOKY/Log.tar.gz:
         dist:    Log
         version: 0.01
+    authors/id/C/CP/CPWILLMOT/Namespace-0.03.tar.gz:
+        dist:    DBIx-Namespace
 
 skip:
     dists:
