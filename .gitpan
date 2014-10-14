@@ -193,6 +193,12 @@ backpan_normalize_dist_names:
     package:                            package-HOOO
     Palm-KeyRing:                       Palm-Keyring
     PDf-CreateSimple:                   PDF-CreateSimple
+    Perinci-Sub-property-curry:         Perinci-Sub-Property-curry
+    Perinci-Sub-property-dies_on_error: Perinci-Sub-Property-dies_on_error
+    Perinci-Sub-property-drops_privilege:       Perinci-Sub-Property-drops_privilege
+    Perinci-Sub-property-result_postfilter:     Perinci-Sub-Property-result_postfilter
+    Perinci-Sub-property-retry:         Perinci-Sub-Property-retry
+    Perinci-Sub-property-timeout:       Perinci-Sub-Property-timeout
 
 backpan_normalize_releases:
     authors/id/M/MA/MARCEL/-0.01.tar.gz:
