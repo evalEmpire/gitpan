@@ -136,6 +136,7 @@ backpan_normalize_dist_names:
     kephra:                             Kephra
     Labkey-Query:                       LabKey-Query
     Labkey-query:                       LabKey-Query
+    LEOCHARRE-DEBUG:                    LEOCHARRE-Debug
     Math-gsl:                           Math-GSL
 
 backpan_normalize_releases:
