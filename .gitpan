@@ -224,6 +224,7 @@ skip:
         - CHTTRAX/mirror-1.11.tgz
         - VALDEZ/Mobile-WURFL-0.01.tar.gz
         - VALDEZ/Mobile-WURFL-0.02.tar.gz
+        - AMIRITE/Mojolicious-Plugin-YAMLConfig-0.01.tar.gz
 
 backpan_always_update: 0
 backpan_cache_ttl: 604800
