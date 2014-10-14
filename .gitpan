@@ -334,6 +334,7 @@ skip:
         - EIKEG/doc/perl-tutorial_2.0.tar.gz
         - EIKEG/doc/perl-tutorial_2.0.zip
         - SHARYANTO/ReForm-0.00.tar.gz
+        - RANDY/sleep-1.0.tar.gz
 
 backpan_always_update: 0
 backpan_cache_ttl: 604800
