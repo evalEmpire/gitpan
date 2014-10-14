@@ -171,6 +171,19 @@ backpan_normalize_dist_names:
     multicat:                           MultiCat
     Mysql-Backup:                       MySQL-Backup
     Nagios-NRPE:                        Nagios-NRPE-AMARSCHKE
+    net-cups:                           Net-CUPS
+    net-ext:                            Net-ext
+    Net-IMAP-SImple-SSL:                Net-IMAP-Simple-SSL
+    Net-LastFMAPI:                      net-lastfmapi
+    NET-LDAPAPI:                        Net-LDAPapi
+    NET-MitM:                           Net-MitM
+    NET-NETCONF:                        Net-Netconf
+    NET-Sieve-Script:                   Net-Sieve-Script
+    NET-Sieve:                          Net-Sieve
+    Net-SNMP-Mixin-Dot1abLLDP:          Net-SNMP-Mixin-Dot1abLldp
+    Net-STOMP:                          Net-Stomp
+    net-tacacsplus:                     Net-TacacsPlus
+    Net-Trackback:                      Net-TrackBack
 
 backpan_normalize_releases:
     authors/id/M/MA/MARCEL/-0.01.tar.gz:
