@@ -63,6 +63,8 @@ backpan_normalize_dist_names:
     dancer-serializer-messagepack:      Dancer-Serializer-Messagepack
     data-multihash:                     Data-Multihash
     Data-Unixish-ansi:                  Data-Unixish-ANSI
+    Data-XpathLike:                     MarpaX-xPathLike
+    Data-xPathLike:                     MarpaX-xPathLike
     Math-gsl:                           Math-GSL
 
 backpan_normalize_releases:
