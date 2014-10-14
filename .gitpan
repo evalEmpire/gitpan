@@ -252,6 +252,7 @@ backpan_normalize_dist_names:
     timer-runtime:                      Timer-Runtime
     Tk-Updown:                          Tk-UpDown
     Toolset-Bundle:                     ToolSet-Bundle
+    TUXEDO:                             Tuxedo
 
 backpan_normalize_releases:
     authors/id/M/MA/MARCEL/-0.01.tar.gz:
