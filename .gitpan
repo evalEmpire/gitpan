@@ -84,6 +84,8 @@ backpan_normalize_dist_names:
     dockhand:                           Dockhand
     DsmlRpc:                            DSMLRPC
     dsmlrpc:                            DSMLRPC
+    ElasticSearch:                      Search-Elasticsearch
+    Elasticsearch:                      Search-Elasticsearch
     Math-gsl:                           Math-GSL
 
 backpan_normalize_releases:
