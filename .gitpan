@@ -215,6 +215,7 @@ skip:
         - FKUO/MCrypt-0.9.tar.gz
         - FKUO/MCrypt-0.91.tar.gz
         - FKUO/MCrypt-0.92.tar.gz
+        - CHTTRAX/mirror-1.11.tgz
 
 backpan_always_update: 0
 backpan_cache_ttl: 604800
