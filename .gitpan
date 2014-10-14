@@ -107,6 +107,8 @@ backpan_normalize_dist_names:
     flat-fa:                            FLAT-FA
     Fp:                                 fp
     ft817os:                            FT817OS
+    Games-PerlWar:                      Games-Perlwar
+    geanfammer:                         Geanfammer
     Math-gsl:                           Math-GSL
 
 backpan_normalize_releases:
