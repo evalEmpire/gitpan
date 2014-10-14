@@ -280,6 +280,8 @@ backpan_normalize_dist_names:
     Win32-PerfMon-Perl:                 Win32-Perfmon-Perl
     win32-snarl:                        Win32-Snarl
     WordNet-SenseRelate-Allwords:       WordNet-SenseRelate-AllWords
+    Writeat:                            WriteAt
+    WWW-AllTop:                         WWW-Alltop
 
 backpan_normalize_releases:
     authors/id/M/MA/MARCEL/-0.01.tar.gz:
