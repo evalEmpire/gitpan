@@ -318,6 +318,12 @@ backpan_normalize_releases:
         dist:    Term-TUI
     authors/id/S/SI/SIZUR/Types-0.1.tar.gz:
         dist:    Types-SIZUR
+    authors/id/V/VT/VTI/Underscore-0.01.tar.gz:
+        dist:    UnderscoreJS
+    authors/id/V/VT/VTI/Underscore-0.03.tar.gz:
+        dist:    UnderscoreJS
+    authors/id/V/VT/VTI/Underscore-0.04.tar.gz:
+        dist:    UnderscoreJS
 
 skip:
     dists:
