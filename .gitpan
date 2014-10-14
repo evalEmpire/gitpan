@@ -232,6 +232,10 @@ backpan_normalize_dist_names:
     simpleXMLParse:                     simplexmlparse
     sofu:                               Sofu
     sparse:                             C-sparse
+    spice:                              Spice
+    STATISTICS-DESCRIPTIVE:             Statistics-Descriptive
+    statistics-discrete:                Statistics-Discrete
+    statistics-forecast:                Statistics-Forecast
 
 backpan_normalize_releases:
     authors/id/M/MA/MARCEL/-0.01.tar.gz:
