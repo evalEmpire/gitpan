@@ -285,6 +285,9 @@ skip:
         - SCHUBIGER/scripts/newsletter-1.8.tar.gz
         - SCHUBIGER/scripts/newsletter-1.9.tar.gz
         - HMBRAND/perl-meta-3.5-20.tgz
+        - EIKEG/doc/perl-tutorial_1.0.tar.gz
+        - EIKEG/doc/perl-tutorial_2.0.tar.gz
+        - EIKEG/doc/perl-tutorial_2.0.zip
 
 backpan_always_update: 0
 backpan_cache_ttl: 604800
