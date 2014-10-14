@@ -142,6 +142,9 @@ backpan_normalize_dist_names:
     Lingua-PT-pln:                      Lingua-PT-PLN
     Lingua-Stardict-Gen:                Lingua-StarDict-Gen
     Lingua-Stem-it:                     Lingua-Stem-It
+    list-moreutils:                     List-MoreUtils
+    log-log4perl-layout-gelf:           Log-Log4perl-Layout-GELF
+    logic-kleene:                       Logic-Kleene
     Math-gsl:                           Math-GSL
 
 backpan_normalize_releases:
@@ -156,6 +159,12 @@ backpan_normalize_releases:
         version: 0.3
     authors/id/A/AT/ATG/Debug-1.00.tar.gz:
         dist:    Debug-Message
+    authors/id/S/ST/STRYTOAST/log.tar.gz:
+        dist:    Games-Quake-Log
+        version: 1.01
+    authors/id/N/NO/NOKY/Log.tar.gz:
+        dist:    Log
+        version: 0.01
 
 skip:
     dists:
