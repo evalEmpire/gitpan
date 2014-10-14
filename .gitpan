@@ -139,6 +139,7 @@ skip:
         - Constant
         - cpan
         - Debug
+        - geo-ecef
     releases:
         - DMUEY/all-v0.0.1.tar.gz
         - KHAREC/Bool/Bool-0.01.tar.gz
