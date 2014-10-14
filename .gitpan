@@ -241,6 +241,7 @@ backpan_normalize_dist_names:
     sub-curry:                          Sub-Curry
     Sub-Spec-To-POD:                    Sub-Spec-To-Pod
     svk:                                SVK
+    taint:                              Taint
 
 backpan_normalize_releases:
     authors/id/M/MA/MARCEL/-0.01.tar.gz:
