@@ -78,6 +78,10 @@ backpan_normalize_dist_names:
     DBIX-DataModel:                     DBIx-DataModel
     DBIx-ORACLELogin:                   DBIx-OracleLogin
     dbix-thinsql-sqlite:                DBIx-ThinSQL-SQLite
+    devel-nytprof:                      Devel-NYTProf
+    Dist-Zilla-Plugin-Perltidy:         Dist-Zilla-Plugin-PerlTidy
+    Dist-Zilla-PluginBundle-Bioperl:    Dist-Zilla-PluginBundle-BioPerl
+    dockhand:                           Dockhand
     Math-gsl:                           Math-GSL
 
 backpan_normalize_releases:
