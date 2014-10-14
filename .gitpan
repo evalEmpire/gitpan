@@ -253,6 +253,19 @@ backpan_normalize_dist_names:
     Tk-Updown:                          Tk-UpDown
     Toolset-Bundle:                     ToolSet-Bundle
     TUXEDO:                             Tuxedo
+    Unicode-casing:                     Unicode-Casing
+    ups-nut:                            UPS-Nut
+    vms-device:                         VMS-Device
+    vms-librarian:                      VMS-Librarian
+    vms-logical:                        VMS-Logical
+    vms-misc:                           VMS-Misc
+    vms-priv:                           VMS-Priv
+    vms-process:                        VMS-Process
+    vms-procinfo:                       VMS-ProcInfo
+    vms-queue:                          VMS-Queue
+    vms-sysinfo:                        VMS-SysInfo
+    vms-user:                           VMS-User
+    voicent:                            Voicent
 
 backpan_normalize_releases:
     authors/id/M/MA/MARCEL/-0.01.tar.gz:
