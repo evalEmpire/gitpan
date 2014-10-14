@@ -218,6 +218,7 @@ backpan_normalize_dist_names:
     protocol-websocket:                 Protocol-WebSocket
     purplewiki:                         PurpleWiki
     quantum-usrn:                       Quantum-Usrn
+    reaper:                             Reaper
 
 backpan_normalize_releases:
     authors/id/M/MA/MARCEL/-0.01.tar.gz:
