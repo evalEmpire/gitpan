@@ -468,6 +468,8 @@ skip:
         - ILYAZ/os2/tk/binary/Tk-800.012-bin-00-os2.zip
         - LUSOL/Tk804.024.patches-0.1.tar.gz
         - BROWSERUK/ppm/x64/5010/tk-804.028.tar.gz
+        - TOSTI/XBase_0.121-Apollo-patch.tar.gz
+        - TOSTI/XBase_0.121-Apollo-patch.0.1.tar.gz
 
 backpan_always_update: 0
 backpan_cache_ttl: 604800
