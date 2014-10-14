@@ -242,6 +242,9 @@ backpan_normalize_dist_names:
     Sub-Spec-To-POD:                    Sub-Spec-To-Pod
     svk:                                SVK
     taint:                              Taint
+    Template-Plugin-TextToHTML:         Template-Plugin-TextToHtml
+    template-provider-http:             Template-Provider-HTTP
+    template:                           Template
 
 backpan_normalize_releases:
     authors/id/M/MA/MARCEL/-0.01.tar.gz:
