@@ -360,6 +360,12 @@ backpan_normalize_releases:
         dist:    Mock-Net-Ping
     authors/id/E/EJ/EJORDAN/v0.2.1.tar.gz:
         dist:    Parse-STDF
+    authors/id/P/PO/POWERMAN/WITH-0.0.2.tar.gz:
+        dist:    WITH-POWERMAN
+    authors/id/C/CP/CPANIC/With-1.000_000.tar.gz:
+        dist:    Topicalizer-Block
+    authors/id/C/CP/CPANIC/With-1.01.tar.gz:
+        dist:    Topicalizer-Block
 
 skip:
     dists:
