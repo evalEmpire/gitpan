@@ -202,6 +202,7 @@ skip:
         - GSLONDON/iperl.20040205.html.tar.gz
         - GSLONDON/iperl.20040205.zip
         - AOCINAR/lisp-1.0.0.tar.gz
+        - MONS/lvalue-0.01.tar.gz
 
 backpan_always_update: 0
 backpan_cache_ttl: 604800
