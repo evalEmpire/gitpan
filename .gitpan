@@ -373,6 +373,8 @@ skip:
         - YEWEI/test.tgz
         - JAMSHAID/test-1.1.tar.gz
         - WWOLF/Test-0.001.tar.gz
+        - MARSAB/Test.tar.gz
+        - MARSAB/Test123.pm.tar.gz
 
 backpan_always_update: 0
 backpan_cache_ttl: 604800
