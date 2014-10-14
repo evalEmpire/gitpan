@@ -241,6 +241,16 @@ backpan_normalize_releases:
         dist:    DBIx-Namespace
     authors/id/M/MH/MHOSKEN/pdf-0.01.tar.gz:
         dist:    Text-PDF
+    authors/id/S/SU/SUMMER/readonly-1.01.tar.gz:
+        dist:    readonly-SUMMER
+    authors/id/S/SU/SUMMER/readonly-1.02.tar.gz:
+        dist:    readonly-SUMMER
+    authors/id/S/SU/SUMMER/readonly-1.03.tar.gz:
+        dist:    readonly-SUMMER
+    authors/id/S/SU/SUMMER/readonly-1.04.tar.gz:
+        dist:    readonly-SUMMER
+    authors/id/S/SU/SUMMER/readonly-1.05.tar.gz:
+        dist:    readonly-SUMMER
 
 skip:
     dists:
