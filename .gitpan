@@ -383,6 +383,8 @@ backpan_normalize_releases:
         dist:    WWW-Gmail-DANNYT
     authors/id/D/DA/DANNYT/WWW-Youtube-1.0.tar.gz:
         dist:    WWW-Youtube-DANNYT
+    authors/id/P/PM/PMQS/XSUB-2.002.tar.gz:
+        dist:    xsubpp
 
 skip:
     dists:
