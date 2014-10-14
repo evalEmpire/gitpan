@@ -316,6 +316,8 @@ backpan_normalize_releases:
         dist:    Term-TUI
     authors/id/S/SB/SBECK/TUI-1.20.tar.gz:
         dist:    Term-TUI
+    authors/id/S/SI/SIZUR/Types-0.1.tar.gz:
+        dist:    Types-SIZUR
 
 skip:
     dists:
