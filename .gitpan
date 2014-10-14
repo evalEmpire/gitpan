@@ -137,6 +137,11 @@ backpan_normalize_dist_names:
     Labkey-Query:                       LabKey-Query
     Labkey-query:                       LabKey-Query
     LEOCHARRE-DEBUG:                    LEOCHARRE-Debug
+    lightwaverf:                        LightWaveRF
+    Lingua-EN-Namegame:                 Lingua-EN-NameGame
+    Lingua-PT-pln:                      Lingua-PT-PLN
+    Lingua-Stardict-Gen:                Lingua-StarDict-Gen
+    Lingua-Stem-it:                     Lingua-Stem-It
     Math-gsl:                           Math-GSL
 
 backpan_normalize_releases:
