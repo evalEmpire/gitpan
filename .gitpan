@@ -214,6 +214,8 @@ backpan_normalize_releases:
         version: 0.01
     authors/id/C/CP/CPWILLMOT/Namespace-0.03.tar.gz:
         dist:    DBIx-Namespace
+    authors/id/M/MH/MHOSKEN/pdf-0.01.tar.gz:
+        dist:    Text-PDF
 
 skip:
     dists:
