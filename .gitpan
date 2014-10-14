@@ -337,6 +337,16 @@ backpan_normalize_releases:
         dist:    UnderscoreJS
     authors/id/V/VT/VTI/Underscore-0.04.tar.gz:
         dist:    UnderscoreJS
+    authors/id/G/GL/GLITCHMR/v1.2.4.tar.gz:
+        dist:    App-Reg
+    authors/id/P/PL/PLOCKABY/v1.0.0.tar.gz:
+        dist:    Thread-Queue-Priority
+    authors/id/J/JG/JGNI/v0.0.1.zip:
+        dist:    Locale-CLDR
+    authors/id/M/MM/MMUSGROVE/v0.09.tar.gz:
+        dist:    Mock-Net-Ping
+    authors/id/E/EJ/EJORDAN/v0.2.1.tar.gz:
+        dist:    Parse-STDF
 
 skip:
     dists:
