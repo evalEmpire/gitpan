@@ -146,6 +146,9 @@ backpan_normalize_dist_names:
     log-log4perl-layout-gelf:           Log-Log4perl-Layout-GELF
     logic-kleene:                       Logic-Kleene
     Math-gsl:                           Math-GSL
+    Mail-ispmailgate:                   Mail-IspMailGate
+    mail-sendmail:                      Mail-Sendmail
+    marc-lint:                          MARC-Lint
 
 backpan_normalize_releases:
     authors/id/M/MA/MARCEL/-0.01.tar.gz:
