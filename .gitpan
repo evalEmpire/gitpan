@@ -284,6 +284,7 @@ skip:
         - SCHUBIGER/scripts/newsletter-1.7.zip
         - SCHUBIGER/scripts/newsletter-1.8.tar.gz
         - SCHUBIGER/scripts/newsletter-1.9.tar.gz
+        - HMBRAND/perl-meta-3.5-20.tgz
 
 backpan_always_update: 0
 backpan_cache_ttl: 604800
