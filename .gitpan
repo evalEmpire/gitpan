@@ -109,6 +109,8 @@ backpan_normalize_dist_names:
     ft817os:                            FT817OS
     Games-PerlWar:                      Games-Perlwar
     geanfammer:                         Geanfammer
+    geography-china-provinces:          Geography-China-Provinces
+    GeoHash:                            Geohash
     Math-gsl:                           Math-GSL
 
 backpan_normalize_releases:
