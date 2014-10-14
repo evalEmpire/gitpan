@@ -164,6 +164,7 @@ skip:
         - Debug
         - geo-ecef
         - Gettext
+        - isa
     releases:
         - DMUEY/all-v0.0.1.tar.gz
         - KHAREC/Bool/Bool-0.01.tar.gz
