@@ -299,6 +299,14 @@ backpan_normalize_releases:
         dist:    makepp
     authors/id/P/PF/PFEIFFER/test-1.50-101107.tgz:
         dist:    makepp
+    authors/id/J/JP/JPRIT/Time-0.01.tar.gz:
+        dist:    Time-JPRIT
+    authors/id/P/PG/PGOLLUCCI/Time-0.01.tar.gz:
+        dist:    Time-PGOLLUCCI
+    authors/id/H/HO/HOOO/time-1.0012.tar.gz:
+        dist:    time-HOOO
+    authors/id/H/HO/HOOO/time-1.0014.tar.gz:
+        dist:    time-HOOO
 
 skip:
     dists:
