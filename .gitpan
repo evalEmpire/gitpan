@@ -65,6 +65,19 @@ backpan_normalize_dist_names:
     Data-Unixish-ansi:                  Data-Unixish-ANSI
     Data-XpathLike:                     MarpaX-xPathLike
     Data-xPathLike:                     MarpaX-xPathLike
+    date-formatter:                     Date-Formatter
+    date-spoken-german:                 Date-Spoken-German
+    DBA-Backup-MySQL:                   DBA-Backup-mysql
+    DBD-cubrid:                         DBD-Cubrid
+    DBD-google:                         DBD-Google
+    dbd-ram:                            DBD-RAM
+    DBD_RDB:                            DBD-RDB
+    dbd_rdb:                            DBD-RDB
+    dbix-Class-DateTime-Epoch:          DBIx-Class-DateTime-Epoch
+    DBIx-Class-Timestamp:               DBIx-Class-TimeStamp
+    DBIX-DataModel:                     DBIx-DataModel
+    DBIx-ORACLELogin:                   DBIx-OracleLogin
+    dbix-thinsql-sqlite:                DBIx-ThinSQL-SQLite
     Math-gsl:                           Math-GSL
 
 backpan_normalize_releases:
