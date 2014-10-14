@@ -130,6 +130,10 @@ skip:
         - MJD/valgrind/ERRORS.tgz
         - SCHUBIGER/scripts/crypt-0.1.tar.gz
         - VIDUL/cwd.tar.gz
+        - AMBS/ExtUtils/ExtUtils-AutoConf-0.00_001.tar.gz
+        - AMBS/ExtUtils/ExtUtils-AutoConf-0.00_002.tar.gz
+        - AMBS/ExtUtils/ExtUtils-AutoConf-0.01.tar.gz
+        - AMBS/ExtUtils/ExtUtils-AutoConf-0.01_001.tar.gz
 
 backpan_always_update: 0
 backpan_cache_ttl: 604800
