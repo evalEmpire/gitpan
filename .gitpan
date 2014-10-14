@@ -90,6 +90,8 @@ backpan_normalize_releases:
     authors/id/K/KE/KERR/DP41/Current-0.3.pm.tar.gz:
         dist:    Omega-DP41-Data-Current
         version: 0.3
+    authors/id/A/AT/ATG/Debug-1.00.tar.gz:
+        dist:    Debug-Message
 
 skip:
     dists:
@@ -105,6 +107,7 @@ skip:
         - Config-Ini
         - Constant
         - cpan
+        - Debug
     releases:
         - DMUEY/all-v0.0.1.tar.gz
         - KHAREC/Bool/Bool-0.01.tar.gz
