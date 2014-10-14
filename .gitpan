@@ -88,6 +88,7 @@ backpan_normalize_dist_names:
     Elasticsearch:                      Search-Elasticsearch
     EPS:                                Graphics-EPS
     Eps:                                Graphics-EPS
+    error-tiny:                         Error-Tiny
     Math-gsl:                           Math-GSL
 
 backpan_normalize_releases:
