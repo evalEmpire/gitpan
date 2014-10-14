@@ -278,6 +278,12 @@ backpan_normalize_releases:
         dist:    readonly-SUMMER
     authors/id/S/SU/SUMMER/readonly-1.05.tar.gz:
         dist:    readonly-SUMMER
+    authors/id/D/DA/DAZJORZ/Term-Prompt-0.02.tar.gz:
+        dist:    Term-Prompt-DAZJORZ
+    authors/id/D/DA/DAZJORZ/term-prompt-0.05.tar.gz:
+        dist:    Term-Prompt-DAZJORZ
+    authors/id/D/DA/DAZJORZ/Term-Prompt-0.05.tar.gz:
+        dist:    Term-Prompt-DAZJORZ
 
 skip:
     dists:
