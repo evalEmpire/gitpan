@@ -213,6 +213,11 @@ backpan_normalize_dist_names:
     pocketio:                           PocketIO
     pod2html:                           Pod-2-html
     Pod2html:                           Pod-2-html
+    prancer:                            Prancer
+    protocol-socketio:                  Protocol-SocketIO
+    protocol-websocket:                 Protocol-WebSocket
+    purplewiki:                         PurpleWiki
+    quantum-usrn:                       Quantum-Usrn
 
 backpan_normalize_releases:
     authors/id/M/MA/MARCEL/-0.01.tar.gz:
