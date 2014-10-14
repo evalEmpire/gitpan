@@ -132,6 +132,7 @@ backpan_normalize_dist_names:
     Image-Xbin:                         Image-XBin
     Inline-Webchat:                     Inline-WebChat
     IPtables-IPv4-DBTarpit:             IPTables-IPv4-DBTarpit
+    jaipo:                              Jaipo
     Math-gsl:                           Math-GSL
 
 backpan_normalize_releases:
