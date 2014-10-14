@@ -287,6 +287,16 @@ backpan_normalize_releases:
         dist:    Term-Prompt-DAZJORZ
     authors/id/D/DA/DAZJORZ/Term-Prompt-0.05.tar.gz:
         dist:    Term-Prompt-DAZJORZ
+    authors/id/P/PF/PFEIFFER/test-1.50-101018.tgz:
+        dist:    makepp
+    authors/id/P/PF/PFEIFFER/test-1.50-101018a.tgz:
+        dist:    makepp
+    authors/id/P/PF/PFEIFFER/test-1.50-101018b.tgz:
+        dist:    makepp
+    authors/id/P/PF/PFEIFFER/test-1.50-101031.tgz:
+        dist:    makepp
+    authors/id/P/PF/PFEIFFER/test-1.50-101107.tgz:
+        dist:    makepp
 
 skip:
     dists:
