@@ -388,6 +388,13 @@ skip:
         - WWOLF/Test-0.001.tar.gz
         - MARSAB/Test.tar.gz
         - MARSAB/Test123.pm.tar.gz
+        - ILYAZ/os2/tk/binary/Tk402.003-OS2-bin.zip
+        - ILYAZ/os2/tk/binary/Tk-402.003-bin-01-os2.zip
+        - ILYAZ/os2/tk/binary/Tk-402.003-bin-02-os2.zip
+        - ILYAZ/os2/tk/binary/Tk-402.003-bin-03-os2.zip
+        - ILYAZ/os2/tk/binary/Tk-800.012-bin-00-os2.zip
+        - LUSOL/Tk804.024.patches-0.1.tar.gz
+        - BROWSERUK/ppm/x64/5010/tk-804.028.tar.gz
 
 backpan_always_update: 0
 backpan_cache_ttl: 604800
