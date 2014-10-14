@@ -177,6 +177,8 @@ skip:
         - AMBS/ExtUtils/ExtUtils-AutoConf-0.01.tar.gz
         - AMBS/ExtUtils/ExtUtils-AutoConf-0.01_001.tar.gz
         - SREZIC/future-0.02.tar.gz
+        - GSLONDON/iperl.20040205.html.tar.gz
+        - GSLONDON/iperl.20040205.zip
 
 backpan_always_update: 0
 backpan_cache_ttl: 604800
