@@ -367,6 +367,8 @@ backpan_normalize_releases:
         dist:    Topicalizer-Block
     authors/id/C/CP/CPANIC/With-1.01.tar.gz:
         dist:    Topicalizer-Block
+    authors/id/D/DB/DBRIAN/Wordnet-0.01.tar.gz:
+        dist:    Lingua-Wordnet
 
 skip:
     dists:
