@@ -58,6 +58,11 @@ backpan_normalize_dist_names:
     contenticious:                      Contenticious
     Crypt-AoN-Util:                     Crypt-AON-Util
     Crypt-TEA:                          Crypt-Tea
+    Curses-DevKit:                      Curses-Devkit
+    daemonise:                          daemonise
+    dancer-serializer-messagepack:      Dancer-Serializer-Messagepack
+    data-multihash:                     Data-Multihash
+    Data-Unixish-ansi:                  Data-Unixish-ANSI
     Math-gsl:                           Math-GSL
 
 backpan_normalize_releases:
