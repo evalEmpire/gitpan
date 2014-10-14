@@ -291,6 +291,8 @@ backpan_normalize_dist_names:
     WWW-wordpress:                      WWW-Wordpress
     www-youtube-download:               WWW-YouTube-Download
     xcruciate:                          Xcruciate
+    xul2ppt_mec:                        Win32-Xul2ppt_mec
+    Xul2ppt_mec:                        Win32-Xul2ppt_mec
 
 backpan_normalize_releases:
     authors/id/M/MA/MARCEL/-0.01.tar.gz:
