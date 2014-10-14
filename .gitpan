@@ -86,6 +86,8 @@ backpan_normalize_dist_names:
     dsmlrpc:                            DSMLRPC
     ElasticSearch:                      Search-Elasticsearch
     Elasticsearch:                      Search-Elasticsearch
+    EPS:                                Graphics-EPS
+    Eps:                                Graphics-EPS
     Math-gsl:                           Math-GSL
 
 backpan_normalize_releases:
