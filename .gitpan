@@ -82,6 +82,8 @@ backpan_normalize_dist_names:
     Dist-Zilla-Plugin-Perltidy:         Dist-Zilla-Plugin-PerlTidy
     Dist-Zilla-PluginBundle-Bioperl:    Dist-Zilla-PluginBundle-BioPerl
     dockhand:                           Dockhand
+    DsmlRpc:                            DSMLRPC
+    dsmlrpc:                            DSMLRPC
     Math-gsl:                           Math-GSL
 
 backpan_normalize_releases:
