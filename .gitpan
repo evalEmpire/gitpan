@@ -89,6 +89,8 @@ backpan_normalize_dist_names:
     EPS:                                Graphics-EPS
     Eps:                                Graphics-EPS
     error-tiny:                         Error-Tiny
+    etk-perl:                           Etk-Perl
+    explain:                            Explain
     Math-gsl:                           Math-GSL
 
 backpan_normalize_releases:
