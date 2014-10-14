@@ -230,6 +230,7 @@ backpan_normalize_dist_names:
     SGI-syssgi:                         SGI-Syssgi
     SimpleXMLParse:                     simplexmlparse
     simpleXMLParse:                     simplexmlparse
+    sofu:                               Sofu
 
 backpan_normalize_releases:
     authors/id/M/MA/MARCEL/-0.01.tar.gz:
