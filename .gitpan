@@ -250,6 +250,7 @@ backpan_normalize_dist_names:
     test-tcp:                           Test-TCP
     text-haml:                          Text-Haml
     timer-runtime:                      Timer-Runtime
+    Tk-Updown:                          Tk-UpDown
 
 backpan_normalize_releases:
     authors/id/M/MA/MARCEL/-0.01.tar.gz:
