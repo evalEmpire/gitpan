@@ -164,6 +164,8 @@ backpan_normalize_dist_names:
     mousex-getopt:                      MouseX-Getopt
     mpp:                                makepp
     Mpp:                                makepp
+    Msql-mysql-modules:                 DBD-mysql
+    Msql-Mysql-modules:                 DBD-mysql
 
 backpan_normalize_releases:
     authors/id/M/MA/MARCEL/-0.01.tar.gz:
