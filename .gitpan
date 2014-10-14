@@ -210,6 +210,7 @@ backpan_normalize_dist_names:
     plack-middleware-session:           Plack-Middleware-Session
     plagger:                            Plagger
     plex:                               Plex
+    pocketio:                           PocketIO
 
 backpan_normalize_releases:
     authors/id/M/MA/MARCEL/-0.01.tar.gz:
