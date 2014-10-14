@@ -233,6 +233,8 @@ skip:
         - TROCKIJ/mon-0.38.16.tar.gz
         - TROCKIJ/mon-0.38.17.tar.gz
         - TROCKIJ/mon-0.38.21.tar.gz
+        - PVERD/mop-1.06.tar.gz
+        - ORTALO/MOP-1.00.tar.gz
 
 backpan_always_update: 0
 backpan_cache_ttl: 604800
