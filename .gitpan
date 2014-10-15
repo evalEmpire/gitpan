@@ -145,6 +145,7 @@ backpan_normalize_dist_names:
     list-moreutils:                     List-MoreUtils
     log-log4perl-layout-gelf:           Log-Log4perl-Layout-GELF
     logic-kleene:                       Logic-Kleene
+    Macro:                              Text-MacroScript
     Math-gsl:                           Math-GSL
     Mail-ispmailgate:                   Mail-IspMailGate
     mail-sendmail:                      Mail-Sendmail
@@ -388,27 +389,65 @@ backpan_normalize_releases:
         dist:    WWW-Youtube-DANNYT
     authors/id/P/PM/PMQS/XSUB-2.002.tar.gz:
         dist:    xsubpp
+    authors/id/J/JS/JSHY/Beancounter-0.01.tar.gz:
+        dist:    Beancounter-JSHY
+    authors/id/E/EL/ELIZABETH/begin-0.01.tar.gz:
+        dist:    begin-ELIZABETH
+    authors/id/E/EL/ELIZABETH/begin-0.02.tar.gz:
+        dist:    begin-ELIZABETH
+    authors/id/A/AJ/AJCT/Common-Sense-0.01.tar.gz:
+        dist:    Common-Sense-AJCT
+    authors/id/W/WO/WOLDRICH/App-re.pl-0.122.tar.gz:
+        dist:    App-repl-WOLDRICH
+    authors/id/W/WO/WOLDRICH/App-repl-0.126.tar.gz:
+        dist:    App-repl-WOLDRICH
+    authors/id/W/WO/WOLDRICH/re.pl-0.120.tar.gz:
+        dist:    App-repl-WOLDRICH
+    authors/id/D/DM/DMUEY/cant-v0.0.1.tar.gz:
+        dist:    cant-DMUEY
+    authors/id/D/DM/DMUEY/cant-v0.0.2.tar.gz:
+        dist:    cant-DMUEY
+    authors/id/A/AV/AVATAR/Config-Ini-1.04.tar.gz:
+        dist:    Config-Ini-AVATAR
+    authors/id/A/AV/AVATAR/Config-Ini-1.04.zip:
+        dist:    Config-Ini-AVATAR
+    authors/id/A/AV/AVATAR/Config-Ini-1.06.tar.gz:
+        dist:    Config-Ini-AVATAR
+    authors/id/A/AV/AVATAR/Config-Ini-1.06.zip:
+        dist:    Config-Ini-AVATAR
+    authors/id/A/AV/AVATAR/Config-Ini-1.07.zip:
+        dist:    Config-Ini-AVATAR
+    authors/id/A/AV/AVATAR/Config-Ini-1.07.tar.gz:
+        dist:    Config-Ini-AVATAR
+    authors/id/A/AV/AVATAR/Config-Ini-1.08.tar.gz:
+        dist:    Config-Ini-AVATAR
+    authors/id/A/AV/AVATAR/Config-Ini-1.08.zip:
+        dist:    Config-Ini-AVATAR
+    authors/id/R/RO/ROODE/Constant-0.04.tar.gz:
+        dist:    Constant-ROODE
+    authors/id/R/RO/ROODE/Constant-0.05.tar.gz:
+        dist:    Constant-ROODE
+    authors/id/J/JJ/JJMB/Debug-0.01.tar.gz:
+        dist:    Debug-JJMB
+    authors/id/J/JJ/JJMB/Debug-0.02.tar.gz:
+        dist:    Debug-JJMB
+    authors/id/M/MS/MSICKEL/geo-ecef-1.0.0.tar.gz:
+        dist:    geo-ecef-MSICKEL
+    authors/id/J/JB/JBRIGGS/Gettext-0.01.tar.gz:
+        dist:    Gettext-JBRIGGS
+    authors/id/G/GB/GBARR/isa-1.01.tar.gz:
+        dist:    isa-GBARR
+    authors/id/M/MA/MAMOD/jQuery-0.004.tar.gz:
+        dist:    jQuery-MAMOD
+    authors/id/S/SE/SEGV/Macro-0.2.tar.gz:
+        dist:    Macro-SEGV
 
 skip:
     dists:
         - perl
         - parrot
         - parrot-cfg
-        - Beancounter
-        - begin
-        - Common-Sense
-        - ALL
-        - App-repl
-        - cant
-        - Config-Ini
-        - Constant
         - cpan
-        - Debug
-        - geo-ecef
-        - Gettext
-        - isa
-        - jQuery
-        - Macro
         - plREADME
         - plreadme
         - plINSTAL
