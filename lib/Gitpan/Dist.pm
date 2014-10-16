@@ -164,6 +164,7 @@ method import_releases(
     Bool        :$push                          = 1,
     Bool        :$clean                         = 1
 ) {
+    # Capture and log warnings.
     local $SIG{__WARN__} = sub {
         $self->main_log("@{[$self->distname]}: $_") for @_;
         $self->dist_log(join "", @_);
@@ -209,6 +210,7 @@ method import_release(
     Bool :$push  = 0,
     Bool :$clean = 0
 ) {
+    # Capture and log warnings, prepending with the specific release.
     local $SIG{__WARN__} = sub {
         $self->main_log("@{[$release->short_path]}: $_") for @_;
         $self->dist_log(join "", @_);
