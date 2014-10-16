@@ -38,8 +38,18 @@ haz _skip_dists =>
   is            => 'ro',
   isa           => HashRef,
   lazy          => 1,
+  clearer       => '_clear_skip_dists',
   default       => method {
       return scalar $self->skip->{dists}->as_hash;
+  };
+
+haz _skip_releases =>
+  is            => 'ro',
+  isa           => HashRef,
+  lazy          => 1,
+  clearer       => '_clear_skip_releases',
+  default       => method {
+      return scalar $self->skip->{releases}->as_hash;
   };
 
 haz committer_email =>
@@ -143,6 +153,11 @@ method BUILD(...) {
 
 method skip_dist(Str $name) {
     return $self->_skip_dists->{$name};
+}
+
+
+method skip_release(Str $name) {
+    return $self->_skip_releases->{$name};
 }
 
 
