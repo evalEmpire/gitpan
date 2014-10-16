@@ -441,6 +441,45 @@ backpan_normalize_releases:
         dist:    jQuery-MAMOD
     authors/id/S/SE/SEGV/Macro-0.2.tar.gz:
         dist:    Macro-SEGV
+    authors/id/K/KH/KHAREC/Bool/Bool-0.01.tar.gz:
+        dist:    Bool-KHAREC
+    authors/id/K/KH/KHAREC/Bool/Bool-0.02.tar.gz:
+        dist:    Bool-KHAREC
+    authors/id/K/KH/KHAREC/Bool/Bool-0.021.tar.gz:
+        dist:    Bool-KHAREC
+    authors/id/D/DM/DMUEY/all-v0.0.1.tar.gz:
+        dist:    all-DMUEY
+    authors/id/V/VI/VIDUL/cwd.tar.gz:
+        dist:    swd
+        version: 0.01
+    authors/id/A/AM/AMBS/ExtUtils/ExtUtils-AutoConf-0.00_001.tar.gz:
+        dist:    ExtUtils-AutoConf-AMBS
+    authors/id/A/AM/AMBS/ExtUtils/ExtUtils-AutoConf-0.00_002.tar.gz:
+        dist:    ExtUtils-AutoConf-AMBS
+    authors/id/A/AM/AMBS/ExtUtils/ExtUtils-AutoConf-0.01.tar.gz:
+        dist:    ExtUtils-AutoConf-AMBS
+    authors/id/A/AM/AMBS/ExtUtils/ExtUtils-AutoConf-0.01_001.tar.gz:
+        dist:    ExtUtils-AutoConf-AMBS
+    authors/id/S/SR/SREZIC/future-0.02.tar.gz:
+        dist:    future-SREZIC
+    authors/id/M/MO/MONS/lvalue-0.01.tar.gz:
+        dist:    lvalue-MONS
+    authors/id/F/FK/FKUO/MCrypt-0.9.tar.gz:
+        dist:    MCrypt-FKUO
+    authors/id/F/FK/FKUO/MCrypt-0.91.tar.gz:
+        dist:    MCrypt-FKUO
+    authors/id/F/FK/FKUO/MCrypt-0.92.tar.gz:
+        dist:    MCrypt-FKUO
+    authors/id/V/VA/VALDEZ/Mobile-WURFL-0.01.tar.gz:
+        dist:    Mobile-WURFL-VALDEZ
+    authors/id/V/VA/VALDEZ/Mobile-WURFL-0.02.tar.gz:
+        dist:    Mobile-WURFL-VALDEZ
+    authors/id/A/AM/AMIRITE/Mojolicious-Plugin-YAMLConfig-0.01.tar.gz:
+        dist:    Mojolicious-Plugin-YAMLConfig-AMIRITE
+    authors/id/P/PV/PVERD/mop-1.06.tar.gz:
+        dist:    mop-PVERD
+    authors/id/O/OR/ORTALO/MOP-1.00.tar.gz:
+        dist:    MOP-ORTALO
 
 skip:
     dists:
@@ -453,30 +492,13 @@ skip:
         - plINSTAL
         - plinstal
     releases:
-        - DMUEY/all-v0.0.1.tar.gz
-        - KHAREC/Bool/Bool-0.01.tar.gz
-        - KHAREC/Bool/Bool-0.02.tar.gz
-        - KHAREC/Bool/Bool-0.021.tar.gz
         - MJD/valgrind/ALL.tgz
         - MJD/valgrind/ERRORS.tgz
         - SCHUBIGER/scripts/crypt-0.1.tar.gz
-        - VIDUL/cwd.tar.gz
-        - AMBS/ExtUtils/ExtUtils-AutoConf-0.00_001.tar.gz
-        - AMBS/ExtUtils/ExtUtils-AutoConf-0.00_002.tar.gz
-        - AMBS/ExtUtils/ExtUtils-AutoConf-0.01.tar.gz
-        - AMBS/ExtUtils/ExtUtils-AutoConf-0.01_001.tar.gz
-        - SREZIC/future-0.02.tar.gz
         - GSLONDON/iperl.20040205.html.tar.gz
         - GSLONDON/iperl.20040205.zip
         - AOCINAR/lisp-1.0.0.tar.gz
-        - MONS/lvalue-0.01.tar.gz
-        - FKUO/MCrypt-0.9.tar.gz
-        - FKUO/MCrypt-0.91.tar.gz
-        - FKUO/MCrypt-0.92.tar.gz
         - CHTTRAX/mirror-1.11.tgz
-        - VALDEZ/Mobile-WURFL-0.01.tar.gz
-        - VALDEZ/Mobile-WURFL-0.02.tar.gz
-        - AMIRITE/Mojolicious-Plugin-YAMLConfig-0.01.tar.gz
         - TROCKIJ/mon-0.37l.tar.gz
         - TROCKIJ/mon-0.38.13.tar.gz
         - TROCKIJ/mon-0.38.14.tar.gz
@@ -484,8 +506,6 @@ skip:
         - TROCKIJ/mon-0.38.16.tar.gz
         - TROCKIJ/mon-0.38.17.tar.gz
         - TROCKIJ/mon-0.38.21.tar.gz
-        - PVERD/mop-1.06.tar.gz
-        - ORTALO/MOP-1.00.tar.gz
         - SCHUBIGER/scripts/newsletter-1.3.tar.gz
         - SCHUBIGER/scripts/newsletter-1.4.zip
         - SCHUBIGER/scripts/newsletter-1.5.zip
