@@ -15,7 +15,7 @@ note "Import $DistName"; {
     isnt $dist->releases_to_import->size, 0;
     note "Importing ".$dist->paths_to_import->join(", ");
 
-    $dist->import_releases;
+    $dist->import_releases( push => 0 );
 
     cmp_deeply $dist->git->releases, [
         "AQUILINA/Acme-Warn-LOLCAT-0.01.tar.gz",

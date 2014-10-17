@@ -93,7 +93,8 @@ note "Import $DistName"; {
     $dist->import_releases(
         before_import   => method($release) {
             note "Importing ".$release->version;
-        }
+        },
+        push            => 0,
     );
 }
 

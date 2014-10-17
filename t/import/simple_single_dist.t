@@ -17,7 +17,7 @@ note "Import $DistName"; {
     isnt $dist->versions_to_import->size, 0;
     note "Importing ".$dist->versions_to_import->join(", ");
 
-    $dist->import_releases;
+    $dist->import_releases( push => 0 );
 
     cmp_deeply $dist->versions_to_import, [];
 }

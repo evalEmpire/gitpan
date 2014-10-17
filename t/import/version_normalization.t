@@ -15,7 +15,8 @@ subtest "version normalization" => sub {
     $dist->import_releases(
         before_import   => method($release) {
             note "Importing ".$release->version;
-        }
+        },
+        push            => 0,
     );
 
     my $git = $dist->git;
