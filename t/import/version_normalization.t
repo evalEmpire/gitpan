@@ -6,6 +6,7 @@ use Gitpan::Test;
 
 use Gitpan::Dist;
 
+# Acme-eng2kor is also a test for authors with no email address.
 subtest "version normalization" => sub {
     my $dist = Gitpan::Dist->new(
         name    => 'Acme-eng2kor'

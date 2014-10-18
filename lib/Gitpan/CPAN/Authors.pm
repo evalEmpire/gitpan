@@ -30,7 +30,8 @@ method _build_authors {
         chomp;
         my($cpanid, $email, $name, $url) = split /\t/, Encode::decode_utf8($_);
 
-        $email   = '' if $email eq 'CENSORED';
+        # Fall back to the author's cpan.org email if none is provided.
+        $email   = lc($cpanid).'@cpan.org' if $email =~ !/\S/ or $email eq 'CENSORED';
         $url   //= '';
 
         $authors->{$cpanid} = Gitpan::CPAN::Author->new(

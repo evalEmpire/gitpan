@@ -36,4 +36,11 @@ note "unicode names"; {
     is $author->name, "Ævar Arnfjörð Bjarmason";
 }
 
+note "CENSORED email fallback"; {
+    my $obj = new_ok "Foo";
+
+    my $author = $obj->cpan_authors->author("AANOAA");
+    is $author->email, 'aanoaa@cpan.org';
+}
+
 done_testing;
