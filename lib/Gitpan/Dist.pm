@@ -125,9 +125,12 @@ method versions_to_import() {
 method releases_to_import() {
     my $imported = $self->git->releases->as_hash;
 
+    my $config = $self->config;
+
     my @releases;
     for my $bp_release ($self->backpan_releases->all) {
         next if $imported->{$bp_release->short_path};
+        next if $config->skip_release($bp_release->short_path);
 
         push @releases, $self->release_from_backpan( $bp_release );
     }
