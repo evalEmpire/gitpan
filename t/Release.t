@@ -29,6 +29,17 @@ note "The basics"; {
 }
 
 
+note "short_path"; {
+    my $german = new_ok 'Gitpan::Release', [
+        distname        => 'Date-Spoken-German',
+        version         => '0.04'
+    ];
+
+    is $german->path,       'authors/id/C/CH/CHRWIN/date-spoken-german/Date-Spoken-German-0.04.tar.gz';
+    is $german->short_path, 'CHRWIN/date-spoken-german/Date-Spoken-German-0.04.tar.gz';
+}
+
+
 note "From a backpan release"; {
     my $pony = Gitpan::Release->new(
         distname        => 'Acme-Pony',

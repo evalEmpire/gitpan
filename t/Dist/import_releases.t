@@ -30,23 +30,22 @@ subtest "error handling" => sub {
 
 subtest "skipping releases" => sub {
     my $dist = Gitpan::Dist->new(
-        name        => "Acme-LookOfDisapproval"
+        name        => "Date-Spoken-German"
     );
     $dist->delete_repo;
 
     # Insert a release to skip into the config.  Be sure to clear out
-    # the skip release cache.
-    $dist->config->skip->{releases}->push('ETHER/Acme-LookOfDisapproval-0.003.tar.gz');
+    # the skip release cache.  We pick this one because it is in a
+    # subdirectory for extra tricks.
+    $dist->config->skip->{releases}->push('CHRWIN/date-spoken-german/date-spoken-german-0.03.tar.gz');
     $dist->config->_clear_skip_releases;
 
     $dist->import_releases( push => 0 );
 
-    cmp_deeply $dist->git->releases, [
-        'ETHER/Acme-LookOfDisapproval-0.001.tar.gz',
-        'ETHER/Acme-LookOfDisapproval-0.002.tar.gz',
-        'ETHER/Acme-LookOfDisapproval-0.004.tar.gz',
-        'ETHER/Acme-LookOfDisapproval-0.005.tar.gz',
-        'ETHER/Acme-LookOfDisapproval-0.006.tar.gz',
+    cmp_deeply scalar $dist->git->releases->sort, [sort 
+        'CHRWIN/date-spoken-german/date-spoken-german-0.02.tar.gz',
+        'CHRWIN/date-spoken-german/Date-Spoken-German-0.04.tar.gz',
+        'CHRWIN/date-spoken-german/Date-Spoken-German-0.05.tar.gz'
     ];
 };
 

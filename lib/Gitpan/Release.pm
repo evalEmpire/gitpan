@@ -41,7 +41,9 @@ haz gitpan_version =>
 require BackPAN::Index::Release;
 # Fuck Type short_path() into BackPAN::Index::Release.
 *BackPAN::Index::Release::short_path = method {
-    return sprintf("%s/%s", $self->cpanid, $self->filename);
+    my $path = $self->path;
+    $path =~ s{^authors/id/\w/\w{2}/}{};
+    return $path;
 };
 
 
