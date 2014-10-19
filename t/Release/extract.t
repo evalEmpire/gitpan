@@ -25,4 +25,20 @@ subtest "basic extract" => sub {
 };
 
 
+subtest "empty archive" => sub {
+    my $empty = new_ok "Gitpan::Release", [
+        distname        => 'Bundle-Slash',
+        version         => '2.11'
+    ];
+
+    $empty->get;
+
+    throws_ok {
+        $empty->extract;
+    } qr{^Archive is empty};
+
+    ok !$empty->extract_dir;
+};
+
+
 done_testing;
