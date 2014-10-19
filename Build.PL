@@ -23,6 +23,7 @@ my $build = MyBuilder->new(
 
         "BackPAN::Index"        => 0.39,
         "Capture::Tiny"         => 0.08,        # exception bug
+        "Email::Valid"          => '1.195',
         "File::chdir"           => 0,
         "File::chmod"           => 0.32,
         "File::Copy::Recursive" => 0.38,

@@ -6,6 +6,7 @@ use Gitpan::Types;
 
 use Gitpan::CPAN::Author;
 use Encode;
+use Email::Valid;
 
 haz __authors =>
   is            => 'ro',
@@ -31,7 +32,7 @@ method _build_authors {
         my($cpanid, $email, $name, $url) = split /\t/, Encode::decode_utf8($_);
 
         # Fall back to the author's cpan.org email if none is provided.
-        $email   = lc($cpanid).'@cpan.org' if $email =~ !/\S/ or $email eq 'CENSORED';
+        $email   = lc($cpanid).'@cpan.org' unless Email::Valid->address($email);
         $url   //= '';
 
         $authors->{$cpanid} = Gitpan::CPAN::Author->new(
