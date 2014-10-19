@@ -17,9 +17,9 @@ note "Authors"; {
 
     my $author = $authors->author("MSCHWERN");
     is $author->cpanid, "MSCHWERN";
-    like $author->name,  qr{schwern}i;
-    like $author->email, qr{schwern}i;
-    like $author->email, qr{\@};
+    is $author->name,  'Michael G Schwern';
+    is $author->email, 'mschwern@cpan.org';
+    is $author->url,   'http://schwern.net';
 }
 
 note "Same object"; {
@@ -41,6 +41,16 @@ note "CENSORED email fallback"; {
 
     my $author = $obj->cpan_authors->author("AANOAA");
     is $author->email, 'aanoaa@cpan.org';
+}
+
+note "Wacky email fallback"; {
+    my $obj = new_ok "Foo";
+
+    # SPROUT has an invalid email
+    is $obj->cpan_authors->author("SPROUT")->email, 'sprout@cpan.org';
+
+    # MSISK has a valid one which is not a cpan.org address
+    is $obj->cpan_authors->author("MSISK")->email,  'sisk@mojotoad.com';
 }
 
 done_testing;
