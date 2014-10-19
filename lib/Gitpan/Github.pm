@@ -53,10 +53,10 @@ method repo_name_on_github(Str $repo //= $self->repo) {
     return $repo;
 }
 
-method exists_on_github( Str :$owner //= $self->owner, Str :$repo //= $self->repo ) {
+method get_repo_info( Str :$owner //= $self->owner, Str :$repo //= $self->repo ) {
     my $repo_on_github = $self->repo_name_on_github($repo);
 
-    $self->dist_log( "Checking if $repo exists on Github as $repo_on_github" );
+    $self->dist_log( "Getting Github repo info for $repo as $repo_on_github" );
 
     my $repo_obj;
     try {
@@ -71,7 +71,13 @@ method exists_on_github( Str :$owner //= $self->owner, Str :$repo //= $self->rep
         }
     };
 
-    return $repo_obj ? 1 : 0;
+    return $repo_obj;
+}
+
+method exists_on_github( Str :$owner //= $self->owner, Str :$repo //= $self->repo ) {
+    $self->dist_log( "Checking if $repo exists on Github" );
+
+    return $self->get_repo_info( owner => $owner, repo => $repo) ? 1 : 0;
 }
 
 method create_repo(
