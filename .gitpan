@@ -488,7 +488,13 @@ skip:
         - plREADME
         - plreadme
         - plINSTAL
+        - plINSTAL-fixed
         - plinstal
+        - plinstl
+        - perl_sh
+        - perl_aou
+        - perl-2007
+        - perl_ste
     releases:
         - MJD/valgrind/ALL.tgz
         - MJD/valgrind/ERRORS.tgz
@@ -534,6 +540,13 @@ skip:
         - TOSTI/XBase_0.121-Apollo-patch.0.1.tar.gz
         - DAZJORZ/term-prompt-0.05.tar.gz
         - BILLWALZ/Data-Shark-v2.1.tar.gz
+        - ILYAZ/patches/patches_possibly_not_in_66.zip
+        - ILYAZ/patches/patches_not_in_66.zip
+        - ILYAZ/patches/patches_not_in_5_50.zip
+        - ILYAZ/patches/diffs_not_in_56_good.zip
+        - ILYAZ/os2/tk401_add.zip
+        - FERNANDES/155.zip
+        - KSTAR/20120109-NoSQL_and_MongoDB.tgz
 
 backpan_always_update: 0
 backpan_cache_ttl: 604800
