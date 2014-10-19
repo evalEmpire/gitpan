@@ -103,24 +103,6 @@ note "get"; {
 }
 
 
-note "extract"; {
-    my $pony = new_ok "Gitpan::Release", [
-        distname => 'Acme-Pony',
-        version  => '1.1.1'
-    ];
-
-    throws_ok {
-        $pony->extract;
-    } qr{\Q@{[$pony->archive_file]} does not exist};
-
-    $pony->get;
-    my $path = $pony->extract;
-    is $path, $pony->extract_dir;
-    ok -d $path;
-    ok -e $path->child("Makefile.PL");
-}
-
-
 note "move"; {
     my $to = Path::Tiny->tempdir;
 
