@@ -5,7 +5,7 @@ use Gitpan::perl5i;
 use Gitpan::OO;
 use Gitpan::Types;
 extends 'Net::GitHub::V3';
-with 'Gitpan::Role::HasConfig';
+with 'Gitpan::Role::HasConfig', 'Gitpan::Role::CanBackoff';
 
 use Encode;
 
@@ -88,7 +88,7 @@ method create_repo(
 {
     $self->dist_log( "Creating Github repo for $repo" );
 
-    return $self->repos->create({
+    my $create_ret = $self->repos->create({
         org             => $self->owner,
         name            => encode_utf8($repo),
         description     => encode_utf8($desc),
@@ -96,6 +96,15 @@ method create_repo(
         has_issues      => 0,
         has_wiki        => 0,
     });
+
+    # Sometimes Github doesn't immediately create the repo, wait
+    # until it exists.
+    $self->do_with_backoff(
+        times => 3,
+        code  => sub { $self->exists_on_github }
+    );
+
+    return $create_ret;
 }
 
 method maybe_create(
@@ -117,12 +126,35 @@ method delete_repo_if_exists( Str :$repo //= $self->repo ) {
     return $self->delete_repo( repo => $repo );
 }
 
+method default_success_check($return?) {
+    return $return ? 1 : 0;
+}
+
 method delete_repo( Str :$repo //= $self->repo ) {
     my $repo_on_github = $self->repo_name_on_github($repo);
 
     $self->dist_log( "Deleting $repo on Github as $repo_on_github" );
 
-    return $self->repos->delete($self->owner, $repo_on_github);
+    my $ok = $self->do_with_backoff(
+        times => 3,
+        code  => sub {
+            eval { $self->repos->delete($self->owner, $repo_on_github); 1 };
+        },
+        check => method($return) {
+            $self->dist_log( "Github repository delete failed" ) if !$return;
+            return $return;
+        }
+    );
+    die "Could not delete repository: $@" unless $ok;
+
+    # Sometimes Github doesn't immediately delete the repo, wait
+    # until does
+    $self->do_with_backoff(
+        times => 3,
+        code  => sub { !$self->exists_on_github }
+    );
+
+    return;
 }
 
 method remote(
