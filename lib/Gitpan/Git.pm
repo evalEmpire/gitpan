@@ -74,7 +74,24 @@ method clone(
 
     $self->dist_log( "git clone from $url in @{[$self->repo_dir]}" );
 
-    my $git = Git::Raw::Repository->clone( $url, $self->repo_dir.'', $options );
+    # sometimes github doesn't have the repo ready immediately after create_repo
+    # returns, so if push fails try it again.
+    my $git;
+    my $ok = $self->do_with_backoff(
+        times => 3,
+        code  => sub {
+            eval {
+                $git = Git::Raw::Repository->clone(
+                    $url, $self->repo_dir.'', $options
+                );
+            };
+            $self->dist_log( "Clone failed: $@" ) if !$git;
+
+            return $git;
+        },
+    );
+    croak "Could not clone from $url: $@" unless $ok;
+
     $self->git_raw($git);
     $self->init_git_config;
 
@@ -207,14 +224,13 @@ method push( Str $remote //= "origin", Str $branch //= "master" ) {
     my $ok = $self->do_with_backoff(
         times => 3,
         code  => sub {
-            eval { $self->run_quiet(push => $remote => $branch); 1 };
+            my $ret = eval { $self->run_quiet(push => $remote => $branch); 1 };
+            $self->dist_log( "Push failed: $@" ) if !$ret;
+
+            return $ret;
         },
-        check => method($return) {
-            $self->dist_log( "Push failed" ) if !$return;
-            return $return;
-        }
     );
-    die "Could not push: $@" unless $ok;
+    croak "Could not push to $remote $branch: $@" unless $ok;
 
     $self->run_quiet( push => $remote => $branch => "--tags" );
 
@@ -227,13 +243,14 @@ method pull( Str $remote //= "origin", Str $branch //= "master" ) {
     my $ok = $self->do_with_backoff(
         times => 3,
         code  => sub {
-            eval { $self->run_quiet(pull => $remote => $branch) } || return
+            my $ret = eval { $self->run_quiet(pull => $remote => $branch); 1 };
+            $self->dist_log( "Pull failed: $@" ) if !$ret;
+
+            return $ret;
         },
-        check => method($return) {
-            $self->dist_log( "Pull failed" ) if !$return;
-            return $return;
-        }
     );
+    croak "Could not pull from $remote $branch: $@" unless $ok;
+
     return $ok;
 }
 
