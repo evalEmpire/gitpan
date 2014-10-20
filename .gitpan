@@ -107,6 +107,7 @@ backpan_normalize_dist_names:
     flat-fa:                            FLAT-FA
     Fp:                                 fp
     ft817os:                            FT817OS
+    Game-BeyondMath24:                  Games-BeyondMath24
     Games-PerlWar:                      Games-Perlwar
     geanfammer:                         Geanfammer
     geography-china-provinces:          Geography-China-Provinces
