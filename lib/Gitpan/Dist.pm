@@ -176,7 +176,7 @@ method import_releases(
     # Check if a repository with the same name, but different casing, already
     # exists on Github.
     my $github_repo = $self->github->get_repo_info;
-    if( $github_repo && $github_repo->{name} ne $self->name ) {
+    if( $github_repo && $github_repo->{name} ne $self->github->repo_name_on_github ) {
         $self->main_log("Error: distribution $github_repo->{name} already exists, @{[$self->distname]} would clash.");
         return 0;
     }
