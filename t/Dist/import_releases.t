@@ -49,5 +49,30 @@ subtest "skipping releases" => sub {
     ];
 };
 
+
+subtest "Same name, different case" => sub {
+    my $dist1 = Gitpan::Dist->new(
+        name    => "Acme-LookOfDisapproval"
+    );
+    $dist1->github->maybe_create;
+
+    my $dist2 = Gitpan::Dist->new(
+        name    => "acme-lookofdisapproval"
+    );
+
+    ok !$dist2->import_releases;
+
+    like $dist2->config->gitpan_log_file->slurp_utf8, qr{^Error: distribution Acme-LookOfDisapproval already exists, acme-lookofdisapproval would clash\.$}ms;
+
+    # This is an awkward way of doing a case sensitive directory check
+    # on a case insensitive filesystem.
+    ok(
+        (grep { $_ eq $dist1->name }
+         map  { $_->basename }
+             $dist2->repo_dir->parent->children),
+        "import stopped before repo created"
+   );
+};
+
 done_testing;
 

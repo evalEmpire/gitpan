@@ -27,6 +27,19 @@ note "repo_name_on_github()"; {
     is $gh->repo_name_on_github("Testing-ünicode"), "Testing--nicode";
 }
 
+
+note "get_repo_info()"; {
+    my $gh = Gitpan::Github->new( repo => "whatever" );
+    ok !$gh->get_repo_info( owner => "evalEmpire", repo => "super-python" );
+
+    my $repo = $gh->get_repo_info( owner => "evalEmpire", repo => "gitpan" );
+    is $repo->{name}, 'gitpan';
+
+    $repo = $gh->get_repo_info( owner => "evalEmpire", repo => "GITPAN" );
+    is $repo->{name}, 'gitpan';
+}
+
+
 note "exists_on_github()"; {
     my $gh = Gitpan::Github->new( repo => "Foo-Bar" );
 
