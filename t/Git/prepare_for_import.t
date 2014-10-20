@@ -43,7 +43,7 @@ subtest "prepare_for_import on a non-empty repository" => sub {
     $foo->touch;
     $bar->spew("first commit");
     $git->add_all;
-    $git->run( "commit", "-m", "first commit" );
+    $git->commit( message => "first commit" );
 
     is $git->current_branch, "master";
 

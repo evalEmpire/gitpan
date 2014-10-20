@@ -98,6 +98,7 @@ method new_or_clone( %args ) {
         repo_dir => $repo_dir,
         distname => $args{distname}
     );
+
     $git->fixup_repo(
         url       => $args{url}
     );
@@ -328,8 +329,6 @@ method releases {
 method commit_release(Gitpan::Release $release) {
     my $author = $release->author;
 
-    my $repo = $self->git_raw;
-
     $self->dist_log( "Committing @{[ $release->short_path ]}" );
 
     my $commit_message = <<"MESSAGE";
@@ -343,28 +342,51 @@ gitpan-cpan-maturity:     @{[ $release->maturity ]}
 
 MESSAGE
 
-    my $author_sig = Git::Raw::Signature->new(
-        Encode::encode_utf8($author->name || $author->cpanid),
-        Encode::encode_utf8($author->email),
-        $release->date,
-        0
-    );
-
-    my $committer_sig = Git::Raw::Signature->default( $self->git_raw );
-
-    my @parents = $repo->is_empty ? () : ($repo->head->target);
-
-    $repo->commit(
-        Encode::encode_utf8($commit_message),
-        $author_sig,
-        $committer_sig,
-        \@parents,
-        $repo->lookup( $repo->index->write_tree ),
+    $self->commit(
+        author          => $author,
+        message         => $commit_message,
+        release         => $release
     );
 
     $self->tag_release($release);
 
     return;
+}
+
+method commit(
+    Gitpan::CPAN::Author :$author,
+    Gitpan::Release      :$release,
+    Str                  :$message!
+) {
+    my $repo = $self->git_raw;
+
+    my $committer_sig = Git::Raw::Signature->default( $self->git_raw );
+
+    my $author_sig;
+    if( $author ) {
+        $author_sig = Git::Raw::Signature->new(
+            Encode::encode_utf8($author->name || $author->cpanid),
+            Encode::encode_utf8($author->email),
+            $release ? $release->date : 'now',
+            0
+        );
+    }
+    else {
+        $author_sig = $committer_sig;
+    }
+
+    my @parents = $repo->is_empty ? () : ($repo->head->target);
+
+    # Refresh our index from disk in case someone else added
+    $repo->index->read;
+
+    return $repo->commit(
+        Encode::encode_utf8($message),
+        $author_sig,
+        $committer_sig,
+        \@parents,
+        $repo->lookup( $repo->index->write_tree ),
+    );
 }
 
 # Some special handling when making versions tag safe.

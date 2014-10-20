@@ -52,7 +52,7 @@ note "new_or_clone"; {
     );
     $origin->repo_dir->child("foo")->touch;
     $origin->run( add => "foo" );
-    $origin->run( commit => "-m" => "testing clone" );
+    $origin->commit( message => "testing clone" );
 
     note "Repo dir does not exist."; {
         my $tempdir = Path::Tiny->tempdir;
@@ -128,7 +128,7 @@ note "revision_exists"; {
 
     $git->repo_dir->child("foo")->touch;
     $git->run( add => "foo" );
-    $git->run( commit => "-m" => "testing" );
+    $git->commit( message => "testing" );
 
     ok $git->revision_exists("master"),                 "revision_exists - true";
     ok !$git->revision_exists("does_not_exist"),        "  false";
@@ -142,7 +142,7 @@ note "commit & log"; {
 
     $git->repo_dir->child("bar")->touch;
     $git->run( add => "bar" );
-    $git->run( commit => "-m" => "testing commit author" );
+    $git->commit( message => "testing commit author" );
 
     my($last_log) = $git->log("-1");
     is $last_log->committer_email, 'schwern+gitpan-test@pobox.com';
@@ -158,7 +158,7 @@ note "clone, push, pull"; {
     );
     $origin->repo_dir->child("foo")->touch;
     $origin->run( add => "foo" );
-    $origin->run( commit => "-m" => "testing clone" );
+    $origin->commit( message => "testing clone" );
 
     my $clone = Gitpan::Git->clone(
         url             => $origin->repo_dir.'',
@@ -175,7 +175,7 @@ note "clone, push, pull"; {
     # Test pull
     $origin->repo_dir->child("bar")->touch;
     $origin->run( add => "bar" );
-    $origin->run( commit => "-m" => "adding bar" );
+    $origin->commit( message => "adding bar" );
 
     $clone->pull;
 
@@ -197,7 +197,7 @@ note "clone, push, pull"; {
     );
     $clone2->repo_dir->child("baz")->touch;
     $clone2->run( add => "baz" );
-    $clone2->run( commit => "-m" => "adding baz" );
+    $clone2->commit( message => "adding baz" );
     $clone2->tag( "some_tag" );
 
     $clone2->push;
@@ -236,7 +236,7 @@ subtest "add_all with .gitignore" => sub {
     $git->add_all;
     cmp_deeply [grep { $_->ignored } $git->status("--ignored")], [];
 
-    $git->run("commit", "-m", "first commit");
+    $git->commit( message => "first commit");
 
     cmp_deeply [grep { $_->ignored } $git->status("--ignored")], [];
 };
@@ -254,7 +254,7 @@ note "rm and add all"; {
     $origin->repo_dir->child("foo")->touch;
     $origin->repo_dir->child("bar")->touch;
     $origin->add_all;
-    $origin->run(commit => "-m" => "Adding foo and bar");
+    $origin->commit( message => "Adding foo and bar");
 
     $clone->pull;
     ok -e $clone->repo_dir->child("foo");
@@ -267,7 +267,7 @@ note "rm and add all"; {
     $origin->repo_dir->child("bar")->touch;
     $origin->repo_dir->child("baz")->touch;    
     $origin->add_all;
-    $origin->run(commit => "-m" => "Adding bar and baz");
+    $origin->commit( message => "Adding bar and baz");
 
     $clone->pull;
     ok -e $clone->repo_dir->child("bar");
