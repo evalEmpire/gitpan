@@ -208,7 +208,11 @@ method clean_extraction_for_import() {
 
     # A .git directory in the tarball will interfere with
     # our own git repository.
-    $dir->child(".git")->remove_tree({ safe => 0 });
+    my $git_dir = $dir->child(".git");
+    if( -e $git_dir ) {
+        $self->dist_log("Removing .git directory from the archive.");
+        $git_dir->remove_tree({ safe => 0 });
+    }
 
     return;
 }
