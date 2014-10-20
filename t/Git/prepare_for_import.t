@@ -19,7 +19,7 @@ subtest "prepare_for_import on an empty repository" => sub {
 
     # Staged file
     $git->repo_dir->child("bar")->touch;
-    $git->run("add", "bar");
+    $git->add( "bar");
 
     $git->prepare_for_import;
     pass("works on a repo with no commits");
@@ -58,7 +58,7 @@ subtest "prepare_for_import on a non-empty repository" => sub {
 
     # Staged change
     $bar->append("Something else");
-    $git->run("add", "bar");
+    $git->add("bar");
 
     # Untracked file
     $git->repo_dir->child("untracked")->touch;

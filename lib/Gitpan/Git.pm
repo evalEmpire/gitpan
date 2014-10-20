@@ -406,6 +406,18 @@ method commit(
     );
 }
 
+method add(@files) {
+    $self->dist_log( "git add @files" );
+
+    croak "No files given to add" unless @files;
+
+    my $index = $self->git_raw->index;
+    $index->add($_) for @files;
+    $index->write;
+
+    return;
+}
+
 # Some special handling when making versions tag safe.
 method ref_safe_version(Str $version) {
     # Specifically change .1 into 0.1

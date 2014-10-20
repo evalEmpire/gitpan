@@ -51,7 +51,7 @@ note "new_or_clone"; {
         distname        => "Foo-Bar"
     );
     $origin->repo_dir->child("foo")->touch;
-    $origin->run( add => "foo" );
+    $origin->add( "foo" );
     $origin->commit( message => "testing clone" );
 
     note "Repo dir does not exist."; {
@@ -127,7 +127,7 @@ note "revision_exists"; {
     );
 
     $git->repo_dir->child("foo")->touch;
-    $git->run( add => "foo" );
+    $git->add( "foo" );
     $git->commit( message => "testing" );
 
     ok $git->revision_exists("master"),                 "revision_exists - true";
@@ -141,7 +141,7 @@ note "commit & log"; {
     );
 
     $git->repo_dir->child("bar")->touch;
-    $git->run( add => "bar" );
+    $git->add( "bar" );
     $git->commit( message => "testing commit author" );
 
     my($last_log) = $git->log("-1");
@@ -157,7 +157,7 @@ note "clone, push, pull"; {
         distname        => "Foo-Bar"
     );
     $origin->repo_dir->child("foo")->touch;
-    $origin->run( add => "foo" );
+    $origin->add( "foo" );
     $origin->commit( message => "testing clone" );
 
     my $clone = Gitpan::Git->clone(
@@ -174,7 +174,7 @@ note "clone, push, pull"; {
 
     # Test pull
     $origin->repo_dir->child("bar")->touch;
-    $origin->run( add => "bar" );
+    $origin->add( "bar" );
     $origin->commit( message => "adding bar" );
 
     $clone->pull;
@@ -196,7 +196,7 @@ note "clone, push, pull"; {
         distname => "Foo-Bar"
     );
     $clone2->repo_dir->child("baz")->touch;
-    $clone2->run( add => "baz" );
+    $clone2->add( "baz" );
     $clone2->commit( message => "adding baz" );
     $clone2->tag( "some_tag" );
 
