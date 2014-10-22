@@ -681,6 +681,7 @@ skip:
         - KSTAR/20120109-NoSQL_and_MongoDB.tgz
         - RENEEB/-0.01.tar.gz
         - JPIERCE/0.11.tgz
+        - BRIAND/bpd.PW44-0.10.tar.gz
 
 backpan_always_update: 0
 backpan_cache_ttl: 604800
