@@ -580,6 +580,8 @@ skip:
         - ILYAZ/os2/tk401_add.zip
         - FERNANDES/155.zip
         - KSTAR/20120109-NoSQL_and_MongoDB.tgz
+        - COLINO/Allegro-0.02_0-ppm-MSWin32-x86-multi-thread-5.6.tar.gz:
+        - COLINO/Allegro-0.02_0-ppm-MSWin32-x86-multi-thread-5.8.tar.gz:
 
 backpan_always_update: 0
 backpan_cache_ttl: 604800
