@@ -608,6 +608,7 @@ skip:
         - COLINO/Allegro-0.02_0-ppm-MSWin32-x86-multi-thread-5.8.tar.gz
         - GSM/SNMP-1.8.1-bin-x86-ASPerl5.005_03-515.zip
         - GSM/SNMP-3.1.0-bin-x86-ASPerl5.005_03-515.zip
+        - AREIBENS/PDF-Maki-0.00_04.MSWin32-4.0.ppm.zip
 
 backpan_always_update: 0
 backpan_cache_ttl: 604800
