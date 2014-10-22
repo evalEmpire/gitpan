@@ -56,6 +56,7 @@ backpan_normalize_dist_names:
     config-model:                       Config-Model
     Constants:                          File-ManualFlock-Constants
     contenticious:                      Contenticious
+    Cryptoki:                           Crypt-Cryptoki
     Crypt-AoN-Util:                     Crypt-AON-Util
     Crypt-TEA:                          Crypt-Tea
     Curses-DevKit:                      Curses-Devkit
@@ -341,6 +342,21 @@ backpan_normalize_releases:
         dist:    makepp
     authors/id/P/PF/PFEIFFER/test-1.50-101107.tgz:
         dist:    makepp
+    authors/id/P/PF/PFEIFFER/makepp-121020-test.tgz:
+        dist:    makepp
+        version: 121020-test
+    authors/id/P/PF/PFEIFFER/makepp-121021-test.tgz:
+        dist:    makepp
+        version: 121021-test
+    authors/id/P/PF/PFEIFFER/makepp-121023-test.tgz:
+        dist:    makepp
+        version: 121023-test
+    authors/id/P/PF/PFEIFFER/makepp-cvs-100210test.tgz:
+        dist:    makepp
+        version: cvs-100210test
+    authors/id/P/PF/PFEIFFER/makepp-prerelease-111114.tgz:
+        dist:    makepp
+        version: prerelease-111114
     authors/id/J/JP/JPRIT/Time-0.01.tar.gz:
         dist:    Time-JPRIT
     authors/id/P/PG/PGOLLUCCI/Time-0.01.tar.gz:
@@ -535,6 +551,21 @@ backpan_normalize_releases:
     authors/id/T/TU/TURNERMM/HTML-WikiConverter-DokuWikiFCK-0.32_Feb-27-2013.tgz:
         dist:    HTML-WikiConverter-DokuWikiFCK
         version: 0.32_Feb-27-2013
+    authors/id/A/AP/APEIRON/-0.01.tar.gz:
+        dist:    mu
+        version: 0.01
+    authors/id/J/JA/JALOPEURA/perl_HaikuKits-0.01_20110820-135621.tar.gz:
+        dist:    HaikuKits
+        version: 0.01
+    authors/id/J/JR/JROCKWAY/__-0.01.tar.gz:
+        dist:    __
+        version: 0.01
+    authors/id/M/MN/MNIKHIL/0.01.tar.gz:
+        dist:    Dancer-Serializer-Messagepack
+        version: 0.01
+    authors/id/M/ML/MLARUE/0.1_02.zip:
+        dist:    Crypt-Cryptoki
+        version  0.1_02
 
 skip:
     dists:
@@ -602,6 +633,7 @@ skip:
         - ILYAZ/patches/patches_not_in_5_50.zip
         - ILYAZ/patches/diffs_not_in_56_good.zip
         - ILYAZ/os2/tk401_add.zip
+        - ILYAZ/os2/Tk400201book.zip
         - FERNANDES/155.zip
         - KSTAR/20120109-NoSQL_and_MongoDB.tgz
         - COLINO/Allegro-0.02_0-ppm-MSWin32-x86-multi-thread-5.6.tar.gz
@@ -609,6 +641,9 @@ skip:
         - GSM/SNMP-1.8.1-bin-x86-ASPerl5.005_03-515.zip
         - GSM/SNMP-3.1.0-bin-x86-ASPerl5.005_03-515.zip
         - AREIBENS/PDF-Maki-0.00_04.MSWin32-4.0.ppm.zip
+        - AREIBENS/PDF-APIx-Layout-0.00_001.MSWin32-5.0.ppm.zip
+        - KSTAR/20120109-NoSQL_and_MongoDB.tgz
+        - RENEEB/-0.01.tar.gz
 
 backpan_always_update: 0
 backpan_cache_ttl: 604800
