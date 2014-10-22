@@ -541,6 +541,9 @@ backpan_normalize_releases:
     authors/id/J/JA/JALOPEURA/perl_HaikuKits-0.01_20110820-135621.tar.gz:
         dist:    HaikuKits
         version: 0.01
+    authors/id/J/JR/JROCKWAY/__-0.01.tar.gz:
+        dist:    __
+        version: 0.01
 
 skip:
     dists:
