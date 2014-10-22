@@ -38,9 +38,14 @@ haz repo =>
   is            => 'ro',
   isa           => InstanceOf['Gitpan::Repo'],
   handles       => [qw(
+      git
+      has_git
+      clear_git
+
       github
       has_github
       clear_github
+
       repo_dir
   )],
   default       => method {
@@ -49,24 +54,6 @@ haz repo =>
       );
   };
 
-
-haz git     =>
-  isa       => InstanceOf["Gitpan::Git"],
-  required  => 1,
-  lazy      => 1,
-  predicate => 'has_git',
-  clearer   => 'clear_git',
-  default   => method {
-      my $github = $self->github;
-      $github->maybe_create;
-
-      require Gitpan::Git;
-      return Gitpan::Git->new_or_clone(
-          repo_dir => $self->repo_dir,
-          url      => $github->remote,
-          distname => $self->name,
-      );
-  };
 
 method BUILDARGS($class: %args) {
     croak "name or backpan_dist required"
