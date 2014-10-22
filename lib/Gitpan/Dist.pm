@@ -58,17 +58,16 @@ haz git     =>
   };
 
 haz github  =>
-  isa       => HashRef|InstanceOf['Gitpan::Github'],
+  is        => 'ro',
+  isa       => InstanceOf['Gitpan::Github'],
   lazy      => 1,
   predicate => 'has_github',
-  coerce    => 0,
-  trigger   => method($new, $old?) {
-      return $new if $new->isa("Gitpan::Github");
-      my $gh = $self->_new_github($new);
-      $self->github( $gh );
-  },
+  clearer   => 'clear_github',
   default   => method {
-      return $self->_new_github;
+      require Gitpan::Github;
+      return Gitpan::Github->new(
+          repo          => $self->distname
+      );
   };
 
 method BUILDARGS($class: %args) {
@@ -76,14 +75,6 @@ method BUILDARGS($class: %args) {
       unless $args{name} // $args{backpan_dist};
 
     return \%args;
-}
-
-method _new_github(HashRef $args = {}) {
-    require Gitpan::Github;
-    return Gitpan::Github->new(
-        repo      => $self->name,
-        %$args,
-    );
 }
 
 method exists_on_github() {

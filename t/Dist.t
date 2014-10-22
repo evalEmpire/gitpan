@@ -70,33 +70,11 @@ note "dist data"; {
 
 note "github"; {
     my $dist = $CLASS->new( name => "Foo-Bar" );
+
     my $gh = $dist->github;
     isa_ok $gh, "Gitpan::Github";
     is $gh->owner, "gitpan-test";
     is $gh->repo,  "Foo-Bar";
-
-    $dist->github({ login => "wibble", access_token => 12345 });
-    $gh = $dist->github;
-    isa_ok $gh, "Gitpan::Github";
-    is $gh->login, "wibble";
-    is $gh->access_token, 12345;
-    is $gh->owner, "gitpan-test";
-    is $gh->repo,  "Foo-Bar";
-
-    my $dist2 = $CLASS->new(
-        name      => "Test-This",
-    );
-    $dist2->github({
-        access_token => 54321,
-        login        => 12345,
-    });
-    isa_ok $dist2, $CLASS;
-    $gh = $dist2->github;
-    isa_ok $gh, "Gitpan::Github";
-    is $gh->login, "12345";
-    is $gh->access_token, "54321";
-    is $gh->owner, "gitpan-test";
-    is $gh->repo,  "Test-This";
 }
 
 
