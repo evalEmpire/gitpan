@@ -478,6 +478,27 @@ backpan_normalize_releases:
         dist:    mop-PVERD
     authors/id/O/OR/ORTALO/MOP-1.00.tar.gz:
         dist:    MOP-ORTALO
+    authors/id/S/SO/SOKOLOV/HTML-Macro.1-13.tgz:
+        dist:    HTML-Macro
+        version: 1.13
+    authors/id/S/SO/SOKOLOV/HTML-Macro.1-14.tgz:
+        dist:    HTML-Macro
+        version: 1.14
+    authors/id/S/SO/SOKOLOV/HTML-Macro.1-15.tgz:
+        dist:    HTML-Macro
+        version: 1.15
+    authors/id/S/SO/SOKOLOV/HTML-Macro.1-17.tgz:
+        dist:    HTML-Macro
+        version: 1.17
+    authors/id/S/SO/SOKOLOV/HTML-Macro.1-18.tgz:
+        dist:    HTML-Macro
+        version: 1.18
+    authors/id/S/SO/SOKOLOV/HTML-Macro.1-19.tgz:
+        dist:    HTML-Macro
+        version: 1.19
+    authors/id/S/SO/SOKOLOV/HTML-Macro.1-20.tgz:
+        dist:    HTML-Macro
+        version: 1.20
 
 skip:
     dists:
