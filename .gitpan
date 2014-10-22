@@ -511,6 +511,12 @@ backpan_normalize_releases:
     authors/id/S/SN/SNEEX/HTML_Month.v6a.zip:
         dist:    HTML_Month
         version: v6a
+    authors/id/E/EH/EHOOD/perlSGML.1995Dec08.tar.gz:
+        dist:    perlSGML
+        version: 1995Dec08
+    authors/id/E/EH/EHOOD/perlSGML.1997Sep18.tar.gz:
+        dist:    perlSGML
+        version: 1997Sep18
 
 skip:
     dists:
