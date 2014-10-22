@@ -46,11 +46,16 @@ note "CENSORED email fallback"; {
 note "Wacky email fallback"; {
     my $obj = new_ok "Foo";
 
+    my $authors = $obj->cpan_authors;
+
     # SPROUT has an invalid email
-    is $obj->cpan_authors->author("SPROUT")->email, 'sprout@cpan.org';
+    is $authors->author("SPROUT")->email, 'sprout@cpan.org';
 
     # MSISK has a valid one which is not a cpan.org address
-    is $obj->cpan_authors->author("MSISK")->email,  'sisk@mojotoad.com';
+    is $authors->author("MSISK")->email,  'sisk@mojotoad.com';
+
+    # MYSOCIETY has angle brackets which can get past Email::Valid
+    is $authors->author("MYSOCIETY")->email, 'mysociety@cpan.org';
 }
 
 done_testing;

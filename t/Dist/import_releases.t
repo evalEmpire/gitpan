@@ -12,19 +12,27 @@ subtest "error handling" => sub {
     );
     $dist->delete_repo;
 
-    my $break_at = $dist->release_from_version(0.003);
+    my $error_at = $dist->release_from_version(0.003);
 
-    ok !$dist->import_releases(
-        after_import => method($release) {
-            die "Testing error" if $release->version == $break_at->version;
+    $dist->import_releases(
+        before_import => method($release) {
+            die "Testing error" if $release->version == $error_at->version;
         },
         push => 0,
     );
 
     like $dist->config->gitpan_log_file->slurp_utf8,
-      qr{^Error importing @{[$break_at->short_path]}: Testing error }ms;
+      qr{^Error importing @{[$error_at->short_path]}: Testing error }ms;
     like $dist->dist_log_file->slurp_utf8,
       qr{^Testing error }ms;
+
+    cmp_deeply $dist->git->releases, [
+        "ETHER/Acme-LookOfDisapproval-0.001.tar.gz",
+        "ETHER/Acme-LookOfDisapproval-0.002.tar.gz",
+        "ETHER/Acme-LookOfDisapproval-0.004.tar.gz",
+        "ETHER/Acme-LookOfDisapproval-0.005.tar.gz",
+        "ETHER/Acme-LookOfDisapproval-0.006.tar.gz",
+    ], "import_releases() continues after a bad release";
 };
 
 

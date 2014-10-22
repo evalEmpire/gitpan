@@ -56,6 +56,7 @@ backpan_normalize_dist_names:
     config-model:                       Config-Model
     Constants:                          File-ManualFlock-Constants
     contenticious:                      Contenticious
+    Cryptoki:                           Crypt-Cryptoki
     Crypt-AoN-Util:                     Crypt-AON-Util
     Crypt-TEA:                          Crypt-Tea
     Curses-DevKit:                      Curses-Devkit
@@ -342,6 +343,21 @@ backpan_normalize_releases:
         dist:    makepp
     authors/id/P/PF/PFEIFFER/test-1.50-101107.tgz:
         dist:    makepp
+    authors/id/P/PF/PFEIFFER/makepp-121020-test.tgz:
+        dist:    makepp
+        version: 121020-test
+    authors/id/P/PF/PFEIFFER/makepp-121021-test.tgz:
+        dist:    makepp
+        version: 121021-test
+    authors/id/P/PF/PFEIFFER/makepp-121023-test.tgz:
+        dist:    makepp
+        version: 121023-test
+    authors/id/P/PF/PFEIFFER/makepp-cvs-100210test.tgz:
+        dist:    makepp
+        version: cvs-100210test
+    authors/id/P/PF/PFEIFFER/makepp-prerelease-111114.tgz:
+        dist:    makepp
+        version: prerelease-111114
     authors/id/J/JP/JPRIT/Time-0.01.tar.gz:
         dist:    Time-JPRIT
     authors/id/P/PG/PGOLLUCCI/Time-0.01.tar.gz:
@@ -479,6 +495,117 @@ backpan_normalize_releases:
         dist:    mop-PVERD
     authors/id/O/OR/ORTALO/MOP-1.00.tar.gz:
         dist:    MOP-ORTALO
+    authors/id/S/SO/SOKOLOV/HTML-Macro.1-13.tgz:
+        dist:    HTML-Macro
+        version: 1.13
+    authors/id/S/SO/SOKOLOV/HTML-Macro.1-14.tgz:
+        dist:    HTML-Macro
+        version: 1.14
+    authors/id/S/SO/SOKOLOV/HTML-Macro.1-15.tgz:
+        dist:    HTML-Macro
+        version: 1.15
+    authors/id/S/SO/SOKOLOV/HTML-Macro.1-17.tgz:
+        dist:    HTML-Macro
+        version: 1.17
+    authors/id/S/SO/SOKOLOV/HTML-Macro.1-18.tgz:
+        dist:    HTML-Macro
+        version: 1.18
+    authors/id/S/SO/SOKOLOV/HTML-Macro.1-19.tgz:
+        dist:    HTML-Macro
+        version: 1.19
+    authors/id/S/SO/SOKOLOV/HTML-Macro.1-20.tgz:
+        dist:    HTML-Macro
+        version: 1.20
+    authors/id/H/HU/HURRICUP/034.Class-Accessor-Lazy.zip:
+        dist:    Class-Accessor-Lazy
+        version: 0.34
+    authors/id/H/HU/HURRICUP/034.ClassAccessorLazy.zip:
+        dist:    Class-Accessor-Lazy
+        version: 0.34
+    authors/id/C/CY/CYCLES/ocharles-Test-Magpie-v0.04-2-g9a8e649.tar.gz:
+        dist:    Test-Magpie
+        version: 0.05
+    authors/id/S/SN/SNEEX/HTML_Month.v6a.zip:
+        dist:    HTML_Month
+        version: v6a
+    authors/id/E/EH/EHOOD/perlSGML.1995Dec08.tar.gz:
+        dist:    perlSGML
+        version: 1995Dec08
+    authors/id/E/EH/EHOOD/perlSGML.1997Sep18.tar.gz:
+        dist:    perlSGML
+        version: 1997Sep18
+    authors/id/T/TU/TURNERMM/HTML-WikiConverter-DokuWikiFCK-0.30.09-Oct_08-07_09.tgz:
+        dist:    HTML-WikiConverter-DokuWikiFCK
+        version: 0.30.09-Oct_08-07_09
+    authors/id/T/TU/TURNERMM/HTML-WikiConverter-DokuWikiFCK-0.31.09-Nov_16-09_00.tgz:
+        dist:    HTML-WikiConverter-DokuWikiFCK
+        version: 0.31.09-Nov_16-09_00
+    authors/id/T/TU/TURNERMM/HTML-WikiConverter-DokuWikiFCK-0.32.10-Feb_09-12_16.tgz:
+        dist:    HTML-WikiConverter-DokuWikiFCK
+        version: 0.32.10-Feb_09-12_16
+    authors/id/T/TU/TURNERMM/HTML-WikiConverter-DokuWikiFCK-0.32.10-Sep_09-08_10.tgz:
+        dist:    HTML-WikiConverter-DokuWikiFCK
+        version: 0.32.10-Sep_09-08_10
+    authors/id/T/TU/TURNERMM/HTML-WikiConverter-DokuWikiFCK-0.32_Feb-26-2013.tgz:
+        dist:    HTML-WikiConverter-DokuWikiFCK
+        version: 0.32_Feb-26-2013
+    authors/id/T/TU/TURNERMM/HTML-WikiConverter-DokuWikiFCK-0.32_Feb-27-2013.tgz:
+        dist:    HTML-WikiConverter-DokuWikiFCK
+        version: 0.32_Feb-27-2013
+    authors/id/A/AP/APEIRON/-0.01.tar.gz:
+        dist:    mu
+        version: 0.01
+    authors/id/J/JA/JALOPEURA/perl_HaikuKits-0.01_20110820-135621.tar.gz:
+        dist:    HaikuKits
+        version: 0.01
+    authors/id/J/JR/JROCKWAY/__-0.01.tar.gz:
+        dist:    __
+        version: 0.01
+    authors/id/M/MN/MNIKHIL/0.01.tar.gz:
+        dist:    Dancer-Serializer-Messagepack
+        version: 0.01
+    authors/id/M/ML/MLARUE/0.1_02.zip:
+        dist:    Crypt-Cryptoki
+        version: 0.1_02
+    authors/id/J/JB/JBAKER/mod_perl-1.07_03-Win32-bin.tar.gz:
+        dist:    mod_perl-bin-win32
+        version: 1.07_03-Win32
+    authors/id/J/JB/JBAKER/mod_perl-1.07_03-bin-bindist1-i386-win32-vc5.tar.gz:
+        dist:    mod_perl-bin-win32
+        version: 1.07_03-bindist1-i386-win32-vc5
+    authors/id/J/JB/JBAKER/mod_perl-1.07_04-bin-bindist1-i386-win32-vc5.zip:
+        dist:    mod_perl-bin-win32
+        version: 1.07_04-bindist1-i386-win32-vc5
+    authors/id/J/JB/JBAKER/mod_perl-1.07_04-bin-bindist2-i386-win32-vc5.zip:
+        dist:    mod_perl-bin-win32
+        version: 1.07_04-bindist2-i386-win32-vc5
+    authors/id/J/JB/JBAKER/mod_perl-1.08-bin-bindist1-i386-win32-vc5.zip:
+        dist:    mod_perl-bin-win32
+        version: 1.08-bindist1-i386-win32-vc5
+    authors/id/J/JB/JBAKER/mod_perl-1.10-bin-bindist1-i386-win32-vc5.zip:
+        dist:    mod_perl-bin-win32
+        version: 1.10-bindist1-i386-win32-vc5
+    authors/id/J/JB/JBAKER/mod_perl-1.11-bin-bindist1-i386-win32-vc5.zip:
+        dist:    mod_perl-bin-win32
+        version: 1.11-bindist1-i386-win32-vc5
+    authors/id/J/JB/JBAKER/mod_perl-1.11-bin-bindist3-i386-win32-vc5.zip:
+        dist:    mod_perl-bin-win32
+        version: 1.11-bindist3-i386-win32-vc5
+    authors/id/J/JB/JBAKER/mod_perl-1.15-bin-bindist1-i386-win32-vc5.zip:
+        dist:    mod_perl-bin-win32
+        version: 1.15-bindist1-i386-win32-vc5
+    authors/id/J/JB/JBAKER/mod_perl-1.16-bin-bindist1-i386-win32-vc5.zip:
+        dist:    mod_perl-bin-win32
+        version: 1.16-bindist1-i386-win32-vc5
+    authors/id/J/JB/JBAKER/perl-5.005_02+apache1.3.3+modperl-1.16-bin-bindist1-i386-win32-vc5.zip:
+        dist:    mod_perl-perl-apache-bin-win32
+        version: perl-5.005_02+apache-1.3.3+mod_perl-1.16-bindist1-i386-vc5
+    authors/id/J/JO/JOCASA/futils.02Jun96.zip:
+        dist:    FUtils
+        version: 02Jun96
+    authors/id/A/AL/ALFIE/MySQL--Replication-5953e9a.tar.gz:
+        dist:    MySQL-Replication
+        version: 5953e9a
 
 skip:
     dists:
@@ -546,8 +673,20 @@ skip:
         - ILYAZ/patches/patches_not_in_5_50.zip
         - ILYAZ/patches/diffs_not_in_56_good.zip
         - ILYAZ/os2/tk401_add.zip
+        - ILYAZ/os2/Tk400201book.zip
         - FERNANDES/155.zip
         - KSTAR/20120109-NoSQL_and_MongoDB.tgz
+        - COLINO/Allegro-0.02_0-ppm-MSWin32-x86-multi-thread-5.6.tar.gz
+        - COLINO/Allegro-0.02_0-ppm-MSWin32-x86-multi-thread-5.8.tar.gz
+        - GSM/SNMP-1.8.1-bin-x86-ASPerl5.005_03-515.zip
+        - GSM/SNMP-3.1.0-bin-x86-ASPerl5.005_03-515.zip
+        - AREIBENS/PDF-Maki-0.00_04.MSWin32-4.0.ppm.zip
+        - AREIBENS/PDF-APIx-Layout-0.00_001.MSWin32-5.0.ppm.zip
+        - KSTAR/20120109-NoSQL_and_MongoDB.tgz
+        - RENEEB/-0.01.tar.gz
+        - JPIERCE/0.11.tgz
+        - BRIAND/bpd.PW44-0.10.tar.gz
+        - ANDYD/5.003_07-2.U.tar.gz
 
 backpan_always_update: 0
 backpan_cache_ttl: 604800

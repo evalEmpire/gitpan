@@ -50,6 +50,7 @@ my $build = MyBuilder->new(
         "Test::TypeConstraints" => 0.05,
     },
 
-    recursive_test_files => 1
+    # Avoid picking up tests in t/gitpan/repo/SO/Some-Dist/t/*
+    test_files => "t/*.t t/*/*.t t/*/*/*.t",
 );
 $build->create_build_script;

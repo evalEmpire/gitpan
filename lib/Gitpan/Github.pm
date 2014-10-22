@@ -48,8 +48,9 @@ after BUILD => method(...) {
 };
 
 # Github doesn't like non alphanumerics as repository names.
+# Dots seem ok.
 method repo_name_on_github(Str $repo //= $self->repo) {
-    $repo =~ s{[^a-z0-9-_]+}{-}ig;
+    $repo =~ s{[^a-z0-9-_.]+}{-}ig;
     return $repo;
 }
 
