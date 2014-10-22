@@ -582,6 +582,8 @@ skip:
         - KSTAR/20120109-NoSQL_and_MongoDB.tgz
         - COLINO/Allegro-0.02_0-ppm-MSWin32-x86-multi-thread-5.6.tar.gz
         - COLINO/Allegro-0.02_0-ppm-MSWin32-x86-multi-thread-5.8.tar.gz
+        - GSM/SNMP-1.8.1-bin-x86-ASPerl5.005_03-515.zip
+        - GSM/SNMP-3.1.0-bin-x86-ASPerl5.005_03-515.zip
 
 backpan_always_update: 0
 backpan_cache_ttl: 604800
