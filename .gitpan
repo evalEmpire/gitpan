@@ -517,6 +517,24 @@ backpan_normalize_releases:
     authors/id/E/EH/EHOOD/perlSGML.1997Sep18.tar.gz:
         dist:    perlSGML
         version: 1997Sep18
+    authors/id/T/TU/TURNERMM/HTML-WikiConverter-DokuWikiFCK-0.30.09-Oct_08-07_09.tgz:
+        dist:    HTML-WikiConverter-DokuWikiFCK
+        version: 0.30.09-Oct_08-07_09
+    authors/id/T/TU/TURNERMM/HTML-WikiConverter-DokuWikiFCK-0.31.09-Nov_16-09_00.tgz:
+        dist:    HTML-WikiConverter-DokuWikiFCK
+        version: 0.31.09-Nov_16-09_00
+    authors/id/T/TU/TURNERMM/HTML-WikiConverter-DokuWikiFCK-0.32.10-Feb_09-12_16.tgz:
+        dist:    HTML-WikiConverter-DokuWikiFCK
+        version  0.32.10-Feb_09-12_16
+    authors/id/T/TU/TURNERMM/HTML-WikiConverter-DokuWikiFCK-0.32.10-Sep_09-08_10.tgz:
+        dist:    HTML-WikiConverter-DokuWikiFCK
+        version: 0.32.10-Sep_09-08_10
+    authors/id/T/TU/TURNERMM/HTML-WikiConverter-DokuWikiFCK-0.32_Feb-26-2013.tgz:
+        dist:    HTML-WikiConverter-DokuWikiFCK
+        version: 0.32_Feb-26-2013
+    authors/id/T/TU/TURNERMM/HTML-WikiConverter-DokuWikiFCK-0.32_Feb-27-2013.tgz:
+        dist:    HTML-WikiConverter-DokuWikiFCK
+        version: 0.32_Feb-27-2013
 
 skip:
     dists:
