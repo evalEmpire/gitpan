@@ -541,7 +541,7 @@ backpan_normalize_releases:
         version: 0.31.09-Nov_16-09_00
     authors/id/T/TU/TURNERMM/HTML-WikiConverter-DokuWikiFCK-0.32.10-Feb_09-12_16.tgz:
         dist:    HTML-WikiConverter-DokuWikiFCK
-        version  0.32.10-Feb_09-12_16
+        version: 0.32.10-Feb_09-12_16
     authors/id/T/TU/TURNERMM/HTML-WikiConverter-DokuWikiFCK-0.32.10-Sep_09-08_10.tgz:
         dist:    HTML-WikiConverter-DokuWikiFCK
         version: 0.32.10-Sep_09-08_10
@@ -565,7 +565,7 @@ backpan_normalize_releases:
         version: 0.01
     authors/id/M/ML/MLARUE/0.1_02.zip:
         dist:    Crypt-Cryptoki
-        version  0.1_02
+        version: 0.1_02
     authors/id/J/JB/JBAKER/mod_perl-1.07_03-Win32-bin.tar.gz:
         dist:    mod_perl-bin-win32
         version: 1.07_03-Win32
