@@ -6,6 +6,8 @@ use Gitpan::Release;
 use Gitpan::OO;
 use Gitpan::Types;
 
+use Gitpan::Repo;
+
 with 'Gitpan::Role::HasBackpanIndex';
 
 use overload
@@ -32,12 +34,21 @@ haz backpan_dist =>
   };
 
 
-haz repo_dir =>
-  isa           => Path,
-  lazy          => 1,
+haz repo =>
+  is            => 'ro',
+  isa           => InstanceOf['Gitpan::Repo'],
+  handles       => [qw(
+      github
+      has_github
+      clear_github
+      repo_dir
+  )],
   default       => method {
-      $self->config->gitpan_repo_dir->child($self->distname_path);
+      return Gitpan::Repo->new(
+          distname      => $self->name
+      );
   };
+
 
 haz git     =>
   isa       => InstanceOf["Gitpan::Git"],
@@ -54,19 +65,6 @@ haz git     =>
           repo_dir => $self->repo_dir,
           url      => $github->remote,
           distname => $self->name,
-      );
-  };
-
-haz github  =>
-  is        => 'ro',
-  isa       => InstanceOf['Gitpan::Github'],
-  lazy      => 1,
-  predicate => 'has_github',
-  clearer   => 'clear_github',
-  default   => method {
-      require Gitpan::Github;
-      return Gitpan::Github->new(
-          repo          => $self->distname
       );
   };
 
