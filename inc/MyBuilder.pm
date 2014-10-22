@@ -27,4 +27,12 @@ sub ACTION_build {
     return $self->SUPER::ACTION_build;
 }
 
+sub find_test_files {
+    my $self = shift;
+
+    my $tests = $self->SUPER::find_test_files;
+
+    return [sort { lc $a cmp lc $b } @$tests];
+}
+
 1;
