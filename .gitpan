@@ -544,6 +544,9 @@ backpan_normalize_releases:
     authors/id/J/JR/JROCKWAY/__-0.01.tar.gz:
         dist:    __
         version: 0.01
+    authors/id/M/MN/MNIKHIL/0.01.tar.gz:
+        dist:    Dancer-Serializer-Messagepack
+        version: 0.01
 
 skip:
     dists:
