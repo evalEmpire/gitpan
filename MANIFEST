@@ -29,7 +29,6 @@ META.json
 META.yml
 README.md
 src/BackPAN-Index-0.42_01.tar.gz
-src/Method-Signatures-20140806.0226_002.tar.gz
 t/backpan/authors/01mailrc.txt.gz
 t/backpan/authors/02authors.txt.gz
 t/backpan/authors/id/A/AA/AANOAA/Acme-eng2kor-0.0.1.tar.gz
