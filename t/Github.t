@@ -20,11 +20,20 @@ func rand_distname {
 
 note "repo_name_on_github()"; {
     my $gh = Gitpan::Github->new( repo => "Foo-Bar" );
-    is $gh->repo_name_on_github("gitpan"), "gitpan";
-    is $gh->repo_name_on_github("Foo-Bar"), "Foo-Bar";
-    is $gh->repo_name_on_github("Some_Thing"), "Some_Thing";
-    is $gh->repo_name_on_github("This::Thât"), "This-Th-t";
-    is $gh->repo_name_on_github("Testing-ünicode"), "Testing--nicode";
+
+    my %tests = (
+        "gitpan"                => "gitpan",
+        "Foo-Bar"               => "Foo-Bar",
+        "Some_Thing"            => "Some_Thing",
+        "This::Thât"            => "This-Th-t",
+        "Testing-ünicode"       => "Testing--nicode",
+        "bpd.PW44"              => "bpd.PW44",
+        "perl-5.005_02+apache1.3.3+modperl" => "perl-5.005_02-apache1.3.3-modperl",
+    );
+
+    %tests->each(func($have, $want) {
+        is $gh->repo_name_on_github($have), $want, "$have -> $want";
+    });
 }
 
 
