@@ -54,3 +54,25 @@ haz git =>
           distname => $self->distname,
       );
   };
+
+
+method delete_repo {
+    $self->dist_log("Deleting repository");
+
+    $self->github->delete_repo_if_exists;
+
+    # The ->git accessor will recreate the Github repo and clone it.
+    # Avoid that.
+    require Gitpan::Git;
+    my $git = Gitpan::Git->init(
+        repo_dir => $self->repo_dir,
+        distname => $self->distname,
+    );
+    $git->delete_repo;
+
+    # ->git may contain a now bogus object, kill it so the Dist object 
+    # can get a fresh git repo and still be useful.
+    $self->clear_git;
+
+    return;
+}

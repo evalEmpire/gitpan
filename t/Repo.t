@@ -40,4 +40,34 @@ note "git"; {
 }
 
 
+note "delete_repo that doesn't exist"; {
+    my $repo = $CLASS->new( distname => "Blah-Blah-Blah" );
+
+    ok !$repo->github->exists_on_github;
+    ok !-e $repo->repo_dir;
+
+    $repo->delete_repo;
+
+    ok !-e $repo->repo_dir;
+    ok !$repo->github->exists_on_github;
+}
+
+
+note "delete_repo"; {
+    my $repo = $CLASS->new( distname => "Some-Repo-Thing" );
+
+    # This will create a Github repository and clone it.
+    my $git = $repo->git;
+
+    ok -e $repo->repo_dir;
+    ok $repo->github->exists_on_github;
+
+    $repo->delete_repo;
+
+    ok !-e $repo->repo_dir;
+    ok !$repo->github->exists_on_github;
+    ok !$repo->has_git;
+}
+
+
 done_testing;
