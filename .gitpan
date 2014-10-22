@@ -508,6 +508,9 @@ backpan_normalize_releases:
     authors/id/C/CY/CYCLES/ocharles-Test-Magpie-v0.04-2-g9a8e649.tar.gz:
         dist:    Test-Magpie
         version: 0.05
+    authors/id/S/SN/SNEEX/HTML_Month.v6a.zip:
+        dist:    HTML_Month
+        version: v6a
 
 skip:
     dists:
