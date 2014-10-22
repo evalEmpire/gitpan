@@ -620,6 +620,7 @@ skip:
         - GSM/SNMP-3.1.0-bin-x86-ASPerl5.005_03-515.zip
         - AREIBENS/PDF-Maki-0.00_04.MSWin32-4.0.ppm.zip
         - AREIBENS/PDF-APIx-Layout-0.00_001.MSWin32-5.0.ppm.zip
+        - KSTAR/20120109-NoSQL_and_MongoDB.tgz
 
 backpan_always_update: 0
 backpan_cache_ttl: 604800
