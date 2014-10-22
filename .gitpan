@@ -342,6 +342,21 @@ backpan_normalize_releases:
         dist:    makepp
     authors/id/P/PF/PFEIFFER/test-1.50-101107.tgz:
         dist:    makepp
+    authors/id/P/PF/PFEIFFER/makepp-121020-test.tgz:
+        dist:    makepp
+        version: 121020-test
+    authors/id/P/PF/PFEIFFER/makepp-121021-test.tgz:
+        dist:    makepp
+        version: 121021-test
+    authors/id/P/PF/PFEIFFER/makepp-121023-test.tgz:
+        dist:    makepp
+        version: 121023-test
+    authors/id/P/PF/PFEIFFER/makepp-cvs-100210test.tgz:
+        dist:    makepp
+        version: cvs-100210test
+    authors/id/P/PF/PFEIFFER/makepp-prerelease-111114.tgz:
+        dist:    makepp
+        version: prerelease-111114
     authors/id/J/JP/JPRIT/Time-0.01.tar.gz:
         dist:    Time-JPRIT
     authors/id/P/PG/PGOLLUCCI/Time-0.01.tar.gz:
