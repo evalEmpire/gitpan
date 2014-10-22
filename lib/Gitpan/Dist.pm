@@ -62,12 +62,6 @@ method BUILDARGS($class: %args) {
     return \%args;
 }
 
-method exists_on_github() {
-    # Optimization, asking github is expensive
-    return 1 if $self->git->remote("origin") =~ /github.com/;
-    return $self->github->exists_on_github();
-}
-
 method backpan_releases {
     return $self->backpan_dist->releases->search(
         # Ignore ppm releases, we only care about source releases.
