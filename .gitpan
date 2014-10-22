@@ -505,6 +505,9 @@ backpan_normalize_releases:
     authors/id/H/HU/HURRICUP/034.ClassAccessorLazy.zip:
         dist:    Class-Accessor-Lazy
         version: 0.34
+    authors/id/C/CY/CYCLES/ocharles-Test-Magpie-v0.04-2-g9a8e649.tar.gz:
+        dist:    Test-Magpie
+        version: 0.05
 
 skip:
     dists:
