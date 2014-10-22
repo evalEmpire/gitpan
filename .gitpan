@@ -499,6 +499,12 @@ backpan_normalize_releases:
     authors/id/S/SO/SOKOLOV/HTML-Macro.1-20.tgz:
         dist:    HTML-Macro
         version: 1.20
+    authors/id/H/HU/HURRICUP/034.Class-Accessor-Lazy.zip:
+        dist:    Class-Accessor-Lazy
+        version: 0.34
+    authors/id/H/HU/HURRICUP/034.ClassAccessorLazy.zip:
+        dist:    Class-Accessor-Lazy
+        version: 0.34
 
 skip:
     dists:
