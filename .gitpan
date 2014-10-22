@@ -535,6 +535,9 @@ backpan_normalize_releases:
     authors/id/T/TU/TURNERMM/HTML-WikiConverter-DokuWikiFCK-0.32_Feb-27-2013.tgz:
         dist:    HTML-WikiConverter-DokuWikiFCK
         version: 0.32_Feb-27-2013
+    authors/id/A/AP/APEIRON/-0.01.tar.gz:
+        dist:    mu
+        version: 0.01
 
 skip:
     dists:
