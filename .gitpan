@@ -605,6 +605,7 @@ skip:
         - ILYAZ/patches/patches_not_in_5_50.zip
         - ILYAZ/patches/diffs_not_in_56_good.zip
         - ILYAZ/os2/tk401_add.zip
+        - ILYAZ/os2/Tk400201book.zip
         - FERNANDES/155.zip
         - KSTAR/20120109-NoSQL_and_MongoDB.tgz
         - COLINO/Allegro-0.02_0-ppm-MSWin32-x86-multi-thread-5.6.tar.gz
