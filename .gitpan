@@ -624,6 +624,7 @@ skip:
         - AREIBENS/PDF-Maki-0.00_04.MSWin32-4.0.ppm.zip
         - AREIBENS/PDF-APIx-Layout-0.00_001.MSWin32-5.0.ppm.zip
         - KSTAR/20120109-NoSQL_and_MongoDB.tgz
+        - RENEEB/-0.01.tar.gz
 
 backpan_always_update: 0
 backpan_cache_ttl: 604800
