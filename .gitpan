@@ -602,6 +602,9 @@ backpan_normalize_releases:
     authors/id/J/JO/JOCASA/futils.02Jun96.zip:
         dist:    FUtils
         version: 02Jun96
+    authors/id/A/AL/ALFIE/MySQL--Replication-5953e9a.tar.gz:
+        dist:    MySQL-Replication
+        version: 5953e9a
 
 skip:
     dists:
