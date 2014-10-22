@@ -27,7 +27,11 @@ my $gitpan = Gitpan->new;
 
 my @dists;
 if( @ARGV ) {
-    $gitpan->import_from_distnames(\@ARGV, overwrite_repo => $opts{overwrite_repo});
+    $gitpan->import_from_distnames(
+        \@ARGV,
+        num_workers    => $opts{workers},
+        overwrite_repo => $opts{overwrite_repo}
+    );
 }
 else {
     my $dists = $gitpan->backpan_index->dists;
@@ -60,7 +64,7 @@ else {
 
     $gitpan->import_from_backpan_dists(
         $dists,
-        num_workers => $opts{workers},
+        num_workers    => $opts{workers},
         overwrite_repo => $opts{overwrite_repo},
     );
 }
