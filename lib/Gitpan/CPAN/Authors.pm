@@ -32,7 +32,7 @@ method _build_authors {
         my($cpanid, $email, $name, $url) = split /\t/, Encode::decode_utf8($_);
 
         # Fall back to the author's cpan.org email if none is provided.
-        $email   = lc($cpanid).'@cpan.org' unless Email::Valid->address($email);
+        $email   = lc($cpanid).'@cpan.org' unless $self->is_valid_email($email);
         $url   //= '';
 
         $authors->{$cpanid} = Gitpan::CPAN::Author->new(
@@ -49,4 +49,11 @@ method _build_authors {
 
 method author(Str $cpanid) {
     return $self->__authors->{$cpanid};
+}
+
+
+method is_valid_email(Str $email) {
+    return 0 if !Email::Valid->address($email);
+    return 0 if $email =~ /[<>]/;  # git does not like angle brackets
+    return 1;
 }
