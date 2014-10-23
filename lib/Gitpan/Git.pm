@@ -98,22 +98,38 @@ method clone(
 }
 
 
-method new_or_clone( %args ) {
-    my $repo_dir = $args{repo_dir};
+method new_or_action( $class: ... ) {
+    my %params = @_;
+    my $action = delete $params{action};
+
+    my $repo_dir = $params{repo_dir};
 
     # There's a directory but no repository, get rid of it.
     $repo_dir->remove_tree({ safe => 0 })
       if -d $repo_dir && !-d $repo_dir->child(".git");
 
     # There's no repository.
-    return Gitpan::Git->clone(%args)
+    return Gitpan::Git->$action(%params)
       if !-d $repo_dir;
 
     # There is a repository.
     my $git = Gitpan::Git->new(
         repo_dir => $repo_dir,
-        distname => $args{distname}
+        distname => $params{distname}
     );
+
+    return $git;
+}
+
+
+method new_or_init( $class: ... ) {
+    return $class->new_or_action( action => "init", @_ );
+}
+
+method new_or_clone( $class: ... ) {
+    my %args = @_;
+
+    my $git = $class->new_or_action( action => "clone", %args );
 
     $git->fixup_repo(
         url       => $args{url}
@@ -121,6 +137,7 @@ method new_or_clone( %args ) {
 
     return $git;
 }
+
 
 method init_git_config() {
     my $config = $self->config;
