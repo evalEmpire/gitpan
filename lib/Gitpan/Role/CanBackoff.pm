@@ -7,7 +7,7 @@ requires "default_success_check";
 
 use Gitpan::Types;
 
-use Time::HiRes qw(usleep);
+use Time::HiRes qw(sleep);
 
 method do_with_backoff(Int :$times=6, CodeRef :$code!, CodeRef :$check) {
     $check //= $self->can("default_success_check");
@@ -17,7 +17,7 @@ method do_with_backoff(Int :$times=6, CodeRef :$code!, CodeRef :$check) {
         return $return if $self->$check($return);
 
         # .5 1 2 4 8 ...
-        usleep(2**($time-1)/2);
+        sleep(2**($time-1)/2) unless $time == $times;
     }
 
     return;
