@@ -243,19 +243,17 @@ method push(
 
     # sometimes github doesn't have the repo ready immediately after create_repo
     # returns, so if push fails try it again.
-    my $error;
     my $ok = $self->do_with_backoff(
         code  => sub {
             my $ret = eval { $self->run_quiet(push => $remote => $branch); 1 };
             if( !$ret ) {
-                $error = $@;
                 $self->dist_log( "Push failed: $@" );
             }
 
             return $ret;
         },
     );
-    croak "Could not push to $remote $branch: $error" unless $ok;
+    croak "Could not push to $remote $branch: $@" unless $ok;
 
     $self->run_quiet( push => $remote => $branch => "--tags" );
 
@@ -272,7 +270,6 @@ method pull(
     my @options;
     @options->push("--ff-only") if $ff_only;
 
-    my $error;
     my $ok = $self->do_with_backoff(
         code  => sub {
             my $ret = eval {
@@ -280,14 +277,13 @@ method pull(
                 1;
             };
             if( !$ret ) {
-                $error = $@;
                 $self->dist_log( "Pull failed: $@" );
             }
 
             return $ret;
         },
     );
-    croak "Could not pull from $remote $branch: $error" unless $ok;
+    croak "Could not pull from $remote $branch: $@" unless $ok;
 
     return $ok;
 }
