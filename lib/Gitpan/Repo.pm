@@ -89,6 +89,57 @@ method delete_repo {
 }
 
 
+method prepare_for_push() {
+    return 1 if $self->is_prepared_for_push;
+
+    require Gitpan::Git;
+
+    my $github = $self->github;
+
+    if( $self->have_github_repo ) {
+        # We have a Git repo, update it from Github
+        if( $self->have_git_repo ) {
+            my $git = Gitpan::Git->new(
+                repo_dir    => $self->repo_dir,
+                distname    => $self->distname
+            );
+            $self->git($git);
+
+            $git->change_remote( origin => $self->github->remote );
+            $git->pull( "ff_only" => 1 );
+        }
+        # No local repo, clone Github
+        else {
+            my $git = Gitpan::Git->clone(
+                repo_dir    => $self->repo_dir,
+                distname    => $self->distname,
+                url         => $self->github->remote
+            );
+            $self->git($git);
+        }
+    }
+    # No Github repo, make one.
+    else {
+        $github->create_repo;
+
+        # Init a repo, or use an existing one,
+        # and set the remote to the new Github repo.
+        # Save the cost of cloning nothing.
+        my $git = Gitpan::Git->new_or_init(
+            repo_dir    => $self->repo_dir,
+            distname    => $self->distname
+        );
+        $git->change_remote( origin => $self->github->remote );
+        $self->git($git);
+    }
+
+    $self->is_prepared_for_commits(1);
+    $self->is_prepared_for_push(1);
+
+    return 1;
+}
+
+
 method prepare_for_commits() {
     return 1 if $self->is_prepared_for_commits;
 
@@ -140,4 +191,10 @@ method have_git_repo() {
 
 method have_github_repo() {
     return $self->github->exists_on_github;
+}
+
+
+method are_git_and_github_on_the_same_commit() {
+    my $branch_info = $self->github->branch_info;
+    return $self->git->head->target->id eq $branch_info->{commit}{sha};
 }
