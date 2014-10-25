@@ -88,4 +88,32 @@ note "create and delete repos"; {
     ok !$gh->exists_on_github;
 }
 
+
+subtest "branch_info" => sub {
+    my $gh = Gitpan::Github->new(
+        repo => rand_distname()
+    );
+    $gh->create_repo;
+
+    require Gitpan::Git;
+    my $git = Gitpan::Git->clone(
+        url             => $gh->remote,
+        distname        => $gh->distname
+    );
+    $git->repo_dir->child("foo")->touch;
+    $git->add_all;
+    $git->commit( message => "for testing" );
+
+    # Push at the same time we're trying to get branch info
+    my $child = child {
+        note "Trying push";
+        $git->push;
+        note "push done";
+    };
+    my $info = $gh->branch_info;
+    $child->wait;
+
+    is $info->{commit}{sha}, $git->head->target->id, "git and Github match after push";
+};
+
 done_testing();

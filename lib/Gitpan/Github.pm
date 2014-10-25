@@ -180,6 +180,29 @@ method delete_repo() {
     return;
 }
 
+method branch_info(
+    Str :$branch //= 'master'
+) {
+    my $info = $self->do_with_backoff(
+        code    => sub {
+            $self->dist_log("Trying to get info for $branch");
+            my $ret = eval {
+                $self->repos->branch($branch);
+            };
+            if( !$ret ) {
+                $self->dist_log("Attempt to get branch info for $branch failed: $@");
+                croak $@ unless $@ =~ /Branch not found/;
+            }
+
+            return $ret;
+        }
+    );
+
+    croak "Could not get the Github branch info for $branch: $@" if !$info;
+
+    return $info;
+}
+
 method remote() {
     my $owner = $self->owner;
     my $repo  = $self->repo_name_on_github;
