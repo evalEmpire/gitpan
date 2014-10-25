@@ -19,8 +19,6 @@ func rand_distname {
 }
 
 note "repo_name_on_github()"; {
-    my $gh = Gitpan::Github->new( repo => "Foo-Bar" );
-
     my %tests = (
         "gitpan"                => "gitpan",
         "Foo-Bar"               => "Foo-Bar",
@@ -32,37 +30,40 @@ note "repo_name_on_github()"; {
     );
 
     %tests->each(func($have, $want) {
-        is $gh->repo_name_on_github($have), $want, "$have -> $want";
+        my $gh = Gitpan::Github->new( repo => $have );
+        is $gh->repo_name_on_github, $want, "$have -> $want";
     });
 }
 
 
 note "get_repo_info()"; {
-    my $gh = Gitpan::Github->new( repo => "whatever" );
-    ok !$gh->get_repo_info( owner => "evalEmpire", repo => "super-python" );
+    my $gh = Gitpan::Github->new( repo => "super-python", owner => "evalEmpire" );
+    ok !$gh->get_repo_info;
 
-    my $repo = $gh->get_repo_info( owner => "evalEmpire", repo => "gitpan" );
-    is $repo->{name}, 'gitpan';
+    $gh = Gitpan::Github->new( owner => "evalEmpire", repo => "gitpan" );
+    is $gh->get_repo_info->{name}, 'gitpan';
 
-    $repo = $gh->get_repo_info( owner => "evalEmpire", repo => "GITPAN" );
-    is $repo->{name}, 'gitpan';
+    $gh = Gitpan::Github->new( owner => "evalEmpire", repo => "GITPAN" );
+    is $gh->get_repo_info->{name}, 'gitpan';
 }
 
 
 note "exists_on_github()"; {
-    my $gh = Gitpan::Github->new( repo => "Foo-Bar" );
+    my $gh = Gitpan::Github->new( owner => "evalEmpire", repo => "gitpan" );
+    ok $gh->exists_on_github;
 
-    ok $gh->exists_on_github( owner => "evalEmpire", repo => "gitpan" );
-    ok !$gh->exists_on_github( owner => "evalEmpire", repo => "super-python" );
-    ok !$gh->exists_on_github( repo => "i-do-not-exist-pretty-sure" );
+    $gh = Gitpan::Github->new( owner => "evalEmpire", repo => "super-python" );
+    ok !$gh->exists_on_github;
+
+    $gh = Gitpan::Github->new( repo => "i-do-not-exist-pretty-sure" ); 
+    ok !$gh->exists_on_github;
 }
 
 
 note "remote"; {
-    my $gh = Gitpan::Github->new( repo => "Foo-Bar" );
+    my $gh = Gitpan::Github->new( repo => "gitpan" );
 
-    like $gh->remote( repo => "gitpan" ),
-         qr{^https://.*?:\@github.com/gitpan-test/gitpan.git};
+    like $gh->remote(), qr{^https://.*?:\@github.com/gitpan-test/gitpan.git};
 }
 
 

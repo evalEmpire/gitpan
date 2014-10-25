@@ -15,6 +15,20 @@ with "Gitpan::Role::CanDistLog";
 haz "repo" =>
   required      => 1;
 
+haz "repo_name_on_github" =>
+  is            => 'ro',
+  isa           => Str,
+  lazy          => 1,
+  default       => method {
+      my $repo = $self->repo;
+
+      # Github doesn't like non alphanumerics as repository names.
+      # Dots seem ok.
+      $repo =~ s{[^a-z0-9-_.]+}{-}ig;
+
+      return $repo;
+  };
+
 haz "owner" =>
   is            => 'ro',
   isa           => Str,
@@ -47,15 +61,10 @@ after BUILD => method(...) {
     return;
 };
 
-# Github doesn't like non alphanumerics as repository names.
-# Dots seem ok.
-method repo_name_on_github(Str $repo //= $self->repo) {
-    $repo =~ s{[^a-z0-9-_.]+}{-}ig;
-    return $repo;
-}
-
-method get_repo_info( Str :$owner //= $self->owner, Str :$repo //= $self->repo ) {
-    my $repo_on_github = $self->repo_name_on_github($repo);
+method get_repo_info() {
+    my $repo           = $self->repo;
+    my $repo_on_github = $self->repo_name_on_github;
+    my $owner          = $self->owner;
 
     $self->dist_log( "Getting Github repo info for $repo as $repo_on_github" );
 
@@ -75,18 +84,19 @@ method get_repo_info( Str :$owner //= $self->owner, Str :$repo //= $self->repo )
     return $repo_obj;
 }
 
-method exists_on_github( Str :$owner //= $self->owner, Str :$repo //= $self->repo ) {
-    $self->dist_log( "Checking if $repo exists on Github" );
+method exists_on_github {
+    $self->dist_log( "Checking if @{[ $self->repo ]} exists on Github" );
 
-    return $self->get_repo_info( owner => $owner, repo => $repo) ? 1 : 0;
+    return $self->get_repo_info ? 1 : 0;
 }
 
 method create_repo(
-    :$repo      //= $self->repo,
-    :$desc      //= "Read-only release history for $repo",
-    :$homepage  //= "http://metacpan.org/release/$repo"
+    :$desc      //= "Read-only release history for @{[$self->repo]}",
+    :$homepage  //= "http://metacpan.org/release/@{[$self->repo]}"
 )
 {
+    my $repo = $self->repo;
+
     $self->dist_log( "Creating Github repo for $repo" );
 
     my $create_ret = $self->repos->create({
@@ -108,30 +118,31 @@ method create_repo(
 }
 
 method maybe_create(
-    :$repo              //= $self->repo,
     Str :$desc,
     Str :$homepage
 )
 {
-    return $repo if $self->exists_on_github(repo => $repo);
+    my $repo = $self->repo;
+
+    return $repo if $self->exists_on_github;
     return $self->create_repo(
-        repo        => $repo,
         desc        => $desc,
         homepage    => $homepage,
     );
 }
 
-method delete_repo_if_exists( Str :$repo //= $self->repo ) {
-    return if !$self->exists_on_github( repo => $repo );
-    return $self->delete_repo( repo => $repo );
+method delete_repo_if_exists() {
+    return if !$self->exists_on_github;
+    return $self->delete_repo;
 }
 
 method default_success_check($return?) {
     return $return ? 1 : 0;
 }
 
-method delete_repo( Str :$repo //= $self->repo ) {
-    my $repo_on_github = $self->repo_name_on_github($repo);
+method delete_repo() {
+    my $repo           = $self->repo;
+    my $repo_on_github = $self->repo_name_on_github;
 
     $self->dist_log( "Deleting $repo on Github as $repo_on_github" );
 
@@ -155,20 +166,19 @@ method delete_repo( Str :$repo //= $self->repo ) {
     return;
 }
 
-method remote(
-    Str :$token //= $self->access_token,
-    Str :$owner //= $self->owner,
-    Str :$repo  //= $self->repo,
-    Str :$host  //= $self->remote_host,
-) {
-    $repo = $self->repo_name_on_github($repo);
+method remote() {
+    my $owner = $self->owner;
+    my $repo  = $self->repo_name_on_github;
+    my $token = $self->access_token;
+    my $host  = $self->remote_host;
+
     return qq[https://$token:\@$host/$owner/$repo.git];
 }
 
 method change_repo_info(%changes) {
     return 1 unless keys %changes;
 
-    my $repo = $self->repo_name_on_github($self->repo);
+    my $repo = $self->repo_name_on_github;
 
     my $log_changes = join ", ", map { "$_ => $changes{$_}" } keys %changes;
     $log_changes =~ s{\n}{\\n}g;
