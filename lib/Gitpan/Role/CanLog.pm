@@ -10,6 +10,8 @@ requires "config";
 
 method _log(Path::Tiny :$file, Str|Object :$message) {
     $message .= "\n" unless $message =~ m{\n$};
+
+    local $@;
     return $file->append_utf8($message);
 }
 

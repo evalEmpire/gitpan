@@ -30,6 +30,16 @@ END
 };
 
 
+subtest q[don't blow over $@] => sub {
+    local $@ = 'foo';
+
+    my $obj = Foo->new;
+    $obj->main_log("something");
+    is $@, 'foo';
+
+    $obj->config->gitpan_log_file->remove;
+};
+
 subtest "main_log overloaded object" => sub {
     {
         package Bar;

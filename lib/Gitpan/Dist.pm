@@ -202,9 +202,8 @@ method import_releases(
             $self->$after_import($release);
             1;
         } or do {
-            my $error = $@;
-            $self->main_log("Error importing @{[$release->short_path]}: $error");
-            $self->dist_log("$error");
+            $self->main_log("Error importing @{[$release->short_path]}: $@");
+            $self->dist_log("$@");
         };
     }
 
