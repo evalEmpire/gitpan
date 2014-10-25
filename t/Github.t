@@ -79,8 +79,12 @@ note "create and delete repos"; {
         desc            => "Testing Ünicode",
         homepage        => "http://example.com/Ünicode"
     );
+    ok $gh->_exists_on_github_cache, "create sets the exists cache";
     ok $gh->exists_on_github;
+
     $gh->delete_repo_if_exists;
+
+    ok !$gh->_exists_on_github_cache, "delete unsets the exists cache";
     ok !$gh->exists_on_github;
 }
 

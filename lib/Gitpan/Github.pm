@@ -51,6 +51,11 @@ haz "remote_host" =>
       return $self->config->github_remote_host;
   };
 
+haz "_exists_on_github_cache" =>
+  is            => 'rw',
+  isa           => Bool,
+  default       => 0;
+
 # BUILD in Moo roles don't appear to stack nicely, so we
 # go around it.
 after BUILD => method(...) {
@@ -87,7 +92,12 @@ method get_repo_info() {
 method exists_on_github {
     $self->dist_log( "Checking if @{[ $self->repo ]} exists on Github" );
 
-    return $self->get_repo_info ? 1 : 0;
+    return 1 if $self->_exists_on_github_cache;
+
+    my $info = $self->get_repo_info;
+    $self->_exists_on_github_cache(1) if $info;
+
+    return $info ? 1 : 0;
 }
 
 method create_repo(
@@ -160,7 +170,11 @@ method delete_repo() {
     # Sometimes Github doesn't immediately delete the repo, wait
     # until does
     $self->do_with_backoff(
-        code  => sub { !$self->exists_on_github }
+        code  => sub {
+            # Delete the cache before checking
+            $self->_exists_on_github_cache(0);
+            return !$self->exists_on_github;
+        }
     );
 
     return;
