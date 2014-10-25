@@ -22,12 +22,8 @@ my $build = MyBuilder->new(
         perl                    => '5.18.1',
 
         "BackPAN::Index"        => 0.39,
-        "Capture::Tiny"         => 0.08,        # exception bug
         "Email::Valid"          => '1.195',
-        "File::chdir"           => 0,
-        "File::chmod"           => 0.32,
         "File::Copy::Recursive" => 0.38,
-        "Getopt::Long::Descriptive"    => 0.085,
         "Git::Raw"              => '0.42',
         "Git::Repository"       => 1.300,
         "Git::Repository::Log"  => 1.312,
