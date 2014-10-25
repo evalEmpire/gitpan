@@ -147,6 +147,7 @@ note "commit & log"; {
     $git->commit( message => "testing commit author" );
 
     ok !$git->is_empty;
+    is $git->head->shorthand, "master";
 
     my($last_log) = $git->log("-1");
     is $last_log->committer_email, 'schwern+gitpan-test@pobox.com';

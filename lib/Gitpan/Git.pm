@@ -43,6 +43,7 @@ haz git_raw =>
   isa           => InstanceOf["Git::Raw::Repository"],
   handles       => [qw(
       is_empty
+      head
   )],
   lazy          => 1,
   default       => method {
