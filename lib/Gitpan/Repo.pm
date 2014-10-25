@@ -36,9 +36,8 @@ haz github =>
       );
   };
 
-
 haz git =>
-  is            => 'ro',
+  is            => 'rw',
   isa           => InstanceOf["Gitpan::Git"],
   lazy          => 1,
   predicate     => 'has_git',
@@ -54,6 +53,16 @@ haz git =>
           distname => $self->distname,
       );
   };
+
+haz is_prepared_for_commits =>
+  is            => 'rw',
+  isa           => Bool,
+  default       => 0;
+
+haz is_prepared_for_push =>
+  is            => 'rw',
+  isa           => Bool,
+  default       => 0;
 
 
 method delete_repo {
@@ -77,4 +86,58 @@ method delete_repo {
     $self->clear_git;
 
     return;
+}
+
+
+method prepare_for_commits() {
+    return 1 if $self->is_prepared_for_commits;
+
+    require Gitpan::Git;
+
+    # There's a Git repo
+    if( $self->have_git_repo ) {
+        my $git = Gitpan::Git->new(
+            repo_dir    => $self->repo_dir,
+            distname    => $self->distname
+        );
+        $self->git($git);
+
+        if( $self->have_github_repo ) {
+            $git->change_remote( origin => $self->github->remote );
+            $git->pull( "ff_only" => 1 );
+            $self->is_prepared_for_push(1);
+        }
+    }
+    # There's no git repo, but there is a Github repo
+    elsif( $self->have_github_repo ) {
+        my $git = Gitpan::Git->clone(
+            repo_dir    => $self->repo_dir,
+            distname    => $self->distname,
+            url         => $self->github->remote
+        );
+        $self->git($git);
+        $self->is_prepared_for_push(1);
+    }
+    # There's no Git or Gitpan repo
+    else {
+        my $git = Gitpan::Git->init(
+            repo_dir    => $self->repo_dir,
+            distname    => $self->distname
+        );
+        $self->git($git);
+    }
+
+    $self->is_prepared_for_commits(1);
+
+    return 1;
+}
+
+
+method have_git_repo() {
+    return -d $self->repo_dir->child(".git");
+}
+
+
+method have_github_repo() {
+    return $self->github->exists_on_github;
 }
