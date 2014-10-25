@@ -143,8 +143,6 @@ method import_releases(
     $self->main_log( "Importing @{[$self->distname]} versions $versions" );
     $self->dist_log( "Importing $versions" );
 
-    $self->git->prepare_for_import;
-
     for my $release (@$releases) {
         eval {
             $self->$before_import($release);
@@ -157,8 +155,8 @@ method import_releases(
         };
     }
 
-    $self->git->push  if $push;
-    $self->git->clean if $clean;
+    $self->repo->push   if $push;
+    $self->git->clean   if $clean;
 
     return 1;
 }
@@ -178,6 +176,8 @@ method import_release(
     $self->main_log( "Importing @{[$release->short_path]}" );
     $self->dist_log( "Importing @{[$release->short_path]}" );
 
+    $self->repo->prepare_for_commits;
+
     my $git = $self->git;
 
     $release->get;
@@ -190,8 +190,8 @@ method import_release(
 
     $git->commit_release($release);
 
-    $git->push  if $push;
-    $git->clean if $clean;
+    $self->repo->push   if $push;
+    $git->clean         if $clean;
 
     return;
 }

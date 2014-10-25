@@ -43,13 +43,9 @@ haz git =>
   predicate     => 'has_git',
   clearer       => 'clear_git',
   default       => method {
-      my $github = $self->github;
-      $github->maybe_create;
-
       require Gitpan::Git;
-      return Gitpan::Git->new_or_clone(
+      return Gitpan::Git->new_or_init(
           repo_dir => $self->repo_dir,
-          url      => $github->remote,
           distname => $self->distname,
       );
   };
@@ -91,6 +87,8 @@ method delete_repo {
 
 method prepare_for_push() {
     return 1 if $self->is_prepared_for_push;
+
+    $self->dist_log("Repo prepare_for_push");
 
     require Gitpan::Git;
 
@@ -143,6 +141,8 @@ method prepare_for_push() {
 method prepare_for_commits() {
     return 1 if $self->is_prepared_for_commits;
 
+    $self->dist_log("Repo prepare_for_commits");
+
     require Gitpan::Git;
 
     # There's a Git repo
@@ -151,6 +151,7 @@ method prepare_for_commits() {
             repo_dir    => $self->repo_dir,
             distname    => $self->distname
         );
+        $git->prepare_for_commits;
         $self->git($git);
 
         if( $self->have_github_repo ) {
@@ -197,4 +198,13 @@ method have_github_repo() {
 method are_git_and_github_on_the_same_commit() {
     my $branch_info = $self->github->branch_info;
     return $self->git->head->target->id eq $branch_info->{commit}{sha};
+}
+
+method push(...) {
+    $self->prepare_for_push;
+    return $self->git->push(@_);
+}
+
+method pull(...) {
+    return $self->git->pull(@_);
 }

@@ -6,12 +6,12 @@ use Gitpan::Test;
 
 use Gitpan::Git;
 
-subtest "prepare_for_import on an empty repository" => sub {
+subtest "prepare_for_commits on an empty repository" => sub {
     my $git = Gitpan::Git->init(
         distname        => "Foo-Bar"
     );
 
-    lives_ok { $git->prepare_for_import; }
+    lives_ok { $git->prepare_for_commits; }
       "Doesn't choke when there's no files";
 
     # Untracked file
@@ -21,7 +21,7 @@ subtest "prepare_for_import on an empty repository" => sub {
     $git->repo_dir->child("bar")->touch;
     $git->add( "bar");
 
-    $git->prepare_for_import;
+    $git->prepare_for_commits;
     pass("works on a repo with no commits");
 
     ok !-e $git->repo_dir->child("foo"), "deletes uncommitted files";
@@ -31,7 +31,7 @@ subtest "prepare_for_import on an empty repository" => sub {
 };
 
 
-subtest "prepare_for_import on a non-empty repository" => sub {
+subtest "prepare_for_commits on a non-empty repository" => sub {
     my $git = Gitpan::Git->init(
         distname        => "Foo-Bar"
     );
@@ -63,7 +63,7 @@ subtest "prepare_for_import on a non-empty repository" => sub {
     # Untracked file
     $git->repo_dir->child("untracked")->touch;
 
-    $git->prepare_for_import;
+    $git->prepare_for_commits;
 
     is $git->current_branch, "master", "branch set to master";
     ok !-e $git->repo_dir->child("untracked"), "untracked files deleted";

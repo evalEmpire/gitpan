@@ -135,9 +135,9 @@ method new_or_clone( $class: ... ) {
 
     my $git = $class->new_or_action( action => "clone", %args );
 
-    $git->fixup_repo(
-        url       => $args{url}
-    );
+    # If there's an existing repository, turn it into an effective clone.
+    $git->change_remote( origin => $args{url} );
+    $git->pull( "ff_only" => 1 );
 
     return $git;
 }
@@ -325,8 +325,8 @@ method remove_working_copy {
     }
 }
 
-method prepare_for_import {
-    $self->dist_log( "git prepare_for_import" );
+method prepare_for_commits {
+    $self->dist_log( "Git prepare_for_commits" );
 
     # Without any commits, we need different techniques.
     return $self->prepare_for_import_empty_repo if !$self->revision_exists("HEAD");
@@ -340,13 +340,6 @@ method prepare_for_import {
     $self->run_quiet("checkout", "-f", "master");
 
     return;
-}
-
-
-method fixup_repo( Str :$url! ) {
-    $self->prepare_for_import;
-    $self->change_remote( origin => $url );
-    $self->pull;
 }
 
 

@@ -56,7 +56,7 @@ note "delete_repo that doesn't exist"; {
 note "delete_repo"; {
     my $repo = $CLASS->new( distname => "Some-Repo-Thing" );
 
-    # This will create a Github repository and clone it.
+    $repo->github->maybe_create;
     my $git = $repo->git;
 
     ok -e $repo->repo_dir;
