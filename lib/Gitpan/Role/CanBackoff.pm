@@ -9,7 +9,7 @@ use Gitpan::Types;
 
 use Time::HiRes qw(sleep);
 
-method do_with_backoff(Int :$times=6, CodeRef :$code!, CodeRef :$check) {
+method do_with_backoff(Int :$times=3, CodeRef :$code!, CodeRef :$check) {
     $check //= $self->can("default_success_check");
 
     for my $time (1..$times) {

@@ -101,7 +101,6 @@ method create_repo(
     # Sometimes Github doesn't immediately create the repo, wait
     # until it exists.
     $self->do_with_backoff(
-        times => 3,
         code  => sub { $self->exists_on_github }
     );
 
@@ -137,7 +136,6 @@ method delete_repo( Str :$repo //= $self->repo ) {
     $self->dist_log( "Deleting $repo on Github as $repo_on_github" );
 
     my $ok = $self->do_with_backoff(
-        times => 3,
         code  => sub {
             eval { $self->repos->delete($self->owner, $repo_on_github); 1 };
         },
@@ -151,7 +149,6 @@ method delete_repo( Str :$repo //= $self->repo ) {
     # Sometimes Github doesn't immediately delete the repo, wait
     # until does
     $self->do_with_backoff(
-        times => 3,
         code  => sub { !$self->exists_on_github }
     );
 
