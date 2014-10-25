@@ -16,6 +16,8 @@ note "Check the repo was created"; {
     );
     isa_ok $git, "Gitpan::Git";
 
+    ok $git->is_empty;
+
     ok -d $Repo_Dir;
     ok -d $Repo_Dir->child(".git");
     is $git->repo_dir, $Repo_Dir;
@@ -144,6 +146,8 @@ note "commit & log"; {
     $git->add( "bar" );
     $git->commit( message => "testing commit author" );
 
+    ok !$git->is_empty;
+
     my($last_log) = $git->log("-1");
     is $last_log->committer_email, 'schwern+gitpan-test@pobox.com';
     is $last_log->committer_name,  'Gitpan Test';
@@ -208,6 +212,35 @@ note "clone, push, pull"; {
     my @tags = $bare->list_tags;
     is_deeply \@tags, ["some_tag"], "pushing tags";
 }
+
+
+subtest "push --ff-only" => sub {
+    my $origin = Gitpan::Git->init(
+        distname        => "Foo-Bar"
+    );
+    $origin->repo_dir->child("foo")->touch;
+    $origin->add( "foo" );
+    $origin->commit( message => "testing clone" );
+
+    my $clone = Gitpan::Git->clone(
+        url             => $origin->repo_dir.'',
+        distname        => "Foo-Bar"
+    );
+
+    # Make the clone diverge
+    $clone->repo_dir->child("bar")->touch;
+    $clone->add_all;
+    $clone->commit( message => "clone is diverging" );
+
+    # And now origin
+    $origin->repo_dir->child("baz")->touch;
+    $origin->add_all;
+    $origin->commit( message => "origin is diverging" );
+
+    throws_ok {
+        $clone->pull( ff_only => 1 );
+    } qr/Not possible to fast-forward/;
+};
 
 
 note "delete_repo"; {

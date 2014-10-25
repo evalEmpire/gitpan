@@ -41,6 +41,9 @@ haz git_repo =>
 
 haz git_raw =>
   isa           => InstanceOf["Git::Raw::Repository"],
+  handles       => [qw(
+      is_empty
+  )],
   lazy          => 1,
   default       => method {
       return Git::Raw::Repository->open( $self->repo_dir.'' );
@@ -232,38 +235,59 @@ method default_success_check($return?) {
     return $return ? 1 : 0;
 }
 
-method push( Str $remote //= "origin", Str $branch //= "master" ) {
+method push(
+    Str  :$remote  //= "origin",
+    Str  :$branch  //= "master"
+) {
     $self->dist_log( "Pushing to $remote $branch" );
 
     # sometimes github doesn't have the repo ready immediately after create_repo
     # returns, so if push fails try it again.
+    my $error;
     my $ok = $self->do_with_backoff(
         code  => sub {
             my $ret = eval { $self->run_quiet(push => $remote => $branch); 1 };
-            $self->dist_log( "Push failed: $@" ) if !$ret;
+            if( !$ret ) {
+                $error = $@;
+                $self->dist_log( "Push failed: $@" );
+            }
 
             return $ret;
         },
     );
-    croak "Could not push to $remote $branch: $@" unless $ok;
+    croak "Could not push to $remote $branch: $error" unless $ok;
 
     $self->run_quiet( push => $remote => $branch => "--tags" );
 
     return 1;
 }
 
-method pull( Str $remote //= "origin", Str $branch //= "master" ) {
+method pull(
+    Str  :$remote  //= "origin",
+    Str  :$branch  //= "master",
+    Bool :$ff_only //= 0
+) {
     $self->dist_log( "Pulling from $remote $branch" );
 
+    my @options;
+    @options->push("--ff-only") if $ff_only;
+
+    my $error;
     my $ok = $self->do_with_backoff(
         code  => sub {
-            my $ret = eval { $self->run_quiet(pull => $remote => $branch); 1 };
-            $self->dist_log( "Pull failed: $@" ) if !$ret;
+            my $ret = eval {
+                $self->run_quiet(pull => @options => $remote => $branch);
+                1;
+            };
+            if( !$ret ) {
+                $error = $@;
+                $self->dist_log( "Pull failed: $@" );
+            }
 
             return $ret;
         },
     );
-    croak "Could not pull from $remote $branch: $@" unless $ok;
+    croak "Could not pull from $remote $branch: $error" unless $ok;
 
     return $ok;
 }
