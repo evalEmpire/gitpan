@@ -78,7 +78,6 @@ method clone(
     # returns, so if push fails try it again.
     my $git;
     my $ok = $self->do_with_backoff(
-        times => 3,
         code  => sub {
             eval {
                 $git = Git::Raw::Repository->clone(
@@ -222,7 +221,6 @@ method push( Str $remote //= "origin", Str $branch //= "master" ) {
     # sometimes github doesn't have the repo ready immediately after create_repo
     # returns, so if push fails try it again.
     my $ok = $self->do_with_backoff(
-        times => 3,
         code  => sub {
             my $ret = eval { $self->run_quiet(push => $remote => $branch); 1 };
             $self->dist_log( "Push failed: $@" ) if !$ret;
@@ -241,7 +239,6 @@ method pull( Str $remote //= "origin", Str $branch //= "master" ) {
     $self->dist_log( "Pulling from $remote $branch" );
 
     my $ok = $self->do_with_backoff(
-        times => 3,
         code  => sub {
             my $ret = eval { $self->run_quiet(pull => $remote => $branch); 1 };
             $self->dist_log( "Pull failed: $@" ) if !$ret;
