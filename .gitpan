@@ -614,6 +614,8 @@ backpan_normalize_releases:
         dist:    mirrors
     authors/id/H/HO/HOLLIFM/mirror_1.1.tar.gz:
         dist:    mirrors
+    authors/id/J/JR/JROCKWAY/AddressBook-0.03.tar.gz:
+        dist:    AddressBook-JROCKWAY
 
 skip:
     dists:
