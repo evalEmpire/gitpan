@@ -28,4 +28,44 @@ note "The gitpan directory"; {
     }
 }
 
+subtest "new_repo" => sub {
+    {
+        my $repo = new_repo;
+        isa_ok $repo, "Gitpan::Repo";
+    }
+
+    {
+        my $repo = new_repo( distname => "Foo-Bar" );
+        isa_ok $repo, "Gitpan::Repo";
+        is $repo->distname, "Foo-Bar";
+    }
+
+    {
+        my $repo = new_repo( distname => "Foo-Bar" );
+        isa_ok $repo, "Gitpan::Repo";
+        is $repo->distname, "Foo-Bar";
+    }
+};
+
+
+subtest "new_dist" => sub {
+    {
+        my $dist = new_dist;
+        isa_ok $dist, "Gitpan::Dist";
+    }
+
+    {
+        my $dist = new_dist( name => "Foo-Bar" );
+        isa_ok $dist, "Gitpan::Dist";
+        is $dist->name, "Foo-Bar";
+    }
+
+    {
+        my $dist = new_dist( name => "Foo-Bar" );
+        isa_ok $dist, "Gitpan::Dist";
+        is $dist->name, "Foo-Bar";
+    }
+};
+
+
 done_testing;

@@ -12,8 +12,7 @@ my $CLASS = 'Gitpan::Repo';
 require_ok $CLASS;
 
 subtest "prepare_for_commits, no git, no github" => sub {
-    my $repo = $CLASS->new( distname => 'This-Is-A-Test' );
-    $repo->delete_repo;
+    my $repo = new_repo;
 
     ok $repo->prepare_for_commits;
     ok $repo->is_prepared_for_commits;
@@ -24,8 +23,7 @@ subtest "prepare_for_commits, no git, no github" => sub {
 
 
 subtest "prepare_for_commits, git repo, no Github" => sub {
-    my $repo = $CLASS->new( distname => 'This-Is-A-Test' );
-    $repo->delete_repo;
+    my $repo = new_repo;
 
     # Make a git repo.
     my $git = Gitpan::Git->init(
@@ -48,8 +46,7 @@ subtest "prepare_for_commits, git repo, no Github" => sub {
 
 
 subtest "prepare_for_commits, no git repo, have Github" => sub {
-    my $repo = $CLASS->new( distname => 'This-Is-A-Test' );
-    $repo->delete_repo;
+    my $repo = new_repo();
 
     # Make a Github repo.
     my $github = $repo->github;
@@ -76,8 +73,7 @@ subtest "prepare_for_commits, no git repo, have Github" => sub {
 
 
 subtest "prepare_for_commits, Github + Git repos, Git is ahead" => sub {
-    my $repo = $CLASS->new( distname => 'This-Is-A-Test' );
-    $repo->delete_repo;
+    my $repo = new_repo();
 
     # Make a Github repo.
     my $github = $repo->github;
@@ -116,8 +112,7 @@ subtest "prepare_for_commits, Github + Git repos, Git is ahead" => sub {
 
 
 subtest "prepare_for_commits, Github + Git repos, Git is behind" => sub {
-    my $repo = $CLASS->new( distname => 'This-Is-A-Test' );
-    $repo->delete_repo;
+    my $repo = new_repo;
 
     # Make a Github repo.
     my $github = $repo->github;
@@ -156,8 +151,7 @@ subtest "prepare_for_commits, Github + Git repos, Git is behind" => sub {
 
 
 subtest "prepare_for_commits, Github + Git repos, diverged" => sub {
-    my $repo = $CLASS->new( distname => 'This-Is-A-Test' );
-    $repo->delete_repo;
+    my $repo = new_repo;
 
     # Make a Github repo.
     my $github = $repo->github;

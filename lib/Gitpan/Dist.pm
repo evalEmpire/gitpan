@@ -69,6 +69,10 @@ haz repo =>
 
 
 method BUILDARGS($class: %args) {
+    # Let Dist take distname like most everything else.
+    $args{name} = delete $args{distname} if
+      defined $args{distname} && !defined $args{name};
+
     croak "name or backpan_dist required"
       unless $args{name} // $args{backpan_dist};
 

@@ -10,7 +10,8 @@ use Gitpan::Types;
 use Gitpan::Github;
 use Gitpan::Git;
 
-with 'Gitpan::Role::HasConfig';
+with 'Gitpan::Role::HasConfig',
+     'Gitpan::Role::CanBackoff';
 
 haz distname =>
   is            => 'ro',
@@ -62,7 +63,12 @@ haz is_prepared_for_push =>
   default       => 0;
 
 
-method delete_repo {
+method default_success_check($return?) {
+    return $return ? 1 : 0;
+}
+
+
+method delete_repo( Bool :$wait = 0 ) {
     $self->dist_log("Deleting repository");
 
     $self->github->delete_repo_if_exists;
@@ -80,6 +86,12 @@ method delete_repo {
     # ->git may contain a now bogus object, kill it so the Repo object
     # can get a fresh git repo and still be useful.
     $self->clear_git;
+
+    my $ok = 1;
+    $ok = $self->do_with_backoff(
+        code => sub { !$self->github->exists_on_github }
+    ) if $wait;
+    croak "Repo was not deleted in time" unless $ok;
 
     return;
 }

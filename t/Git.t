@@ -132,8 +132,24 @@ note "revision_exists"; {
     $git->add( "foo" );
     $git->commit( message => "testing" );
 
-    ok $git->revision_exists("master"),                 "revision_exists - true";
-    ok !$git->revision_exists("does_not_exist"),        "  false";
+    $git->tag("some_tag");
+
+    note "revision_exists on a branch";
+    my $master = $git->revision_exists("master");
+    isa_ok $master, "Git::Raw::Branch";
+    is $master->target->id, $git->head->target->id;
+
+    note "revision_exists on a SHA";
+    my $head = $git->revision_exists($git->head->target->id);
+    isa_ok $head, "Git::Raw::Commit";
+    is $head->id, $git->head->target->id;
+
+    note "revision_exists on a lightweight tag";
+    my $tag = $git->revision_exists("some_tag");
+    isa_ok $tag, "Git::Raw::Reference";
+    is $tag->target->id, $git->head->target->id;
+
+    ok !$git->revision_exists("does_not_exist"), "something which does not exist";
 }
 
 
