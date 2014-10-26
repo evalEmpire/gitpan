@@ -33,6 +33,18 @@ haz backpan_dist =>
       return $self->backpan_index->dist($self->name);
   };
 
+haz backpan_releases =>
+  is            => 'ro',
+  isa           => InstanceOf["DBIx::Class::ResultSet"],
+  lazy          => 1,
+  default       => method {
+      return scalar $self->backpan_dist->releases->search(
+          # Ignore ppm releases, we only care about source releases.
+          { path => { 'not like', '%.ppm' } },
+          # Import releases by date, don't try to figure out versions.
+          { order_by => { -asc => "date" } }
+      );
+  };
 
 haz repo =>
   is            => 'ro',
@@ -61,13 +73,6 @@ method BUILDARGS($class: %args) {
       unless $args{name} // $args{backpan_dist};
 
     return \%args;
-}
-
-method backpan_releases {
-    return $self->backpan_dist->releases->search(
-        # Ignore ppm releases, we only care about source releases.
-        { path => { 'not like', '%.ppm' } },
-        { order_by => { -asc => "date" } } );
 }
 
 method release_from_version(Str $version) {
