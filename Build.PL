@@ -21,6 +21,8 @@ my $build = MyBuilder->new(
     requires            => {
         perl                    => '5.18.1',
 
+        "Archive::Extract"      => '0.72',
+        "Archive::Zip"          => '1.39',
         "BackPAN::Index"        => 0.39,
         "Email::Valid"          => '1.195',
         "File::Copy::Recursive" => 0.38,
