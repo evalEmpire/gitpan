@@ -16,7 +16,8 @@ with 'Gitpan::Role::HasBackpanIndex',
 {
     package Gitpan::Dummy;
     use Gitpan::OO;
-    with 'Gitpan::Role::HasCPANAuthors';
+    with 'Gitpan::Role::HasCPANAuthors',
+         'Gitpan::Role::HasBackpanIndex';
 }
 
 
@@ -32,6 +33,10 @@ method import_from_distnames(
     # Parse the CPAN author's file in the parent so each child doesn't
     # have to redo the work.
     Gitpan::Dummy->new->build_cpan_authors;
+
+    # Make sure the BackPAN index database is created else every
+    # child will try to make it at the same time
+    Gitpan::Dummy->new->backpan_index;
 
     $self->main_log("Starting import from distribution names at @{[gmtime->iso8601]}");
 
@@ -68,6 +73,10 @@ method import_from_backpan_dists(
     # Parse the CPAN author's file in the parent so each child doesn't
     # have to redo the work.
     Gitpan::Dummy->new->build_cpan_authors;
+
+    # Make sure the BackPAN index database is created else every
+    # child will try to make it at the same time
+    Gitpan::Dummy->new->backpan_index;
 
     $self->main_log("Starting import from BackPAN dists at @{[gmtime->iso8601]}");
 
