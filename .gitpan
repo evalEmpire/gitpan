@@ -74,6 +74,7 @@ backpan_normalize_dist_names:
     dbd-ram:                            DBD-RAM
     DBD_RDB:                            DBD-RDB
     dbd_rdb:                            DBD-RDB
+    dbd-rdb:                            DBD-RDB
     dbix-Class-DateTime-Epoch:          DBIx-Class-DateTime-Epoch
     DBIx-Class-Timestamp:               DBIx-Class-TimeStamp
     DBIX-DataModel:                     DBIx-DataModel
