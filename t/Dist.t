@@ -66,10 +66,7 @@ note "dist data"; {
 
 
 note "releases to import"; {
-    my $dist = Gitpan::Dist->new(
-        name    => 'Acme-LookOfDisapproval'
-    );
-    $dist->delete_repo;
+    my $dist = new_dist( name => 'Acme-LookOfDisapproval' );
 
     # Releaes of Acme-LOD as of this writing.
     my @backpan_versions = (0.001, 0.002, 0.003, 0.004, 0.005, 0.006);
@@ -100,14 +97,14 @@ note "restarting from an existing repository"; {
         my $dist = Gitpan::Dist->new(
             name    => 'Acme-LookOfDisapproval'
         );
-        $dist->delete_repo;
+        $dist->delete_repo( wait => 1 );
         $dist->repo->import_release( $dist->release_from_version(0.001), push => 1 );
     }
 
     my $dist = Gitpan::Dist->new(
         name    => 'Acme-LookOfDisapproval'
     );
-    cmp_deeply $dist->git->releases, ["ETHER/Acme-LookOfDisapproval-0.001.tar.gz"];
+    cmp_deeply $dist->repo->releases, ["ETHER/Acme-LookOfDisapproval-0.001.tar.gz"];
 }
 
 done_testing;

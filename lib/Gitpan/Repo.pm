@@ -69,7 +69,7 @@ method default_success_check($return?) {
 
 
 method delete_repo( Bool :$wait = 0 ) {
-    $self->dist_log("Deleting repository");
+    $self->dist_log("Deleting repository @{[$self->distname]}");
 
     $self->github->delete_repo_if_exists;
 
@@ -87,13 +87,29 @@ method delete_repo( Bool :$wait = 0 ) {
     # can get a fresh git repo and still be useful.
     $self->clear_git;
 
-    my $ok = 1;
-    $ok = $self->do_with_backoff(
+    $self->wait_until_deleted if $wait;
+
+    return 1;
+}
+
+
+method wait_until_deleted() {
+    my $ok = $self->do_with_backoff(
         code => sub { !$self->github->exists_on_github }
-    ) if $wait;
+    );
     croak "Repo was not deleted in time" unless $ok;
 
-    return;
+    return 1;
+}
+
+
+method wait_until_created() {
+    my $ok = $self->do_with_backoff(
+        code => sub { $self->github->exists_on_github }
+    );
+    croak "Repo was not created in time" unless $ok;
+
+    return 1;
 }
 
 
@@ -200,6 +216,12 @@ method have_git_repo() {
 
 method have_github_repo() {
     return $self->github->exists_on_github;
+}
+
+
+method releases() {
+    return [] if !$self->have_git_repo;
+    return $self->git->releases;
 }
 
 

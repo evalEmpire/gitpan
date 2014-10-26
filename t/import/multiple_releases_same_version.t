@@ -10,14 +10,14 @@ my $DistName = 'Acme-Buffy';
 
 note "Import $DistName"; {
     my $dist = Gitpan::Dist->new( name => 'Acme-Buffy' );
-    $dist->delete_repo;
+    $dist->delete_repo( wait => 1 );
 
     isnt $dist->releases_to_import->size, 0;
     note "Importing ".$dist->paths_to_import->join(", ");
 
     $dist->import_releases( push => 0 );
 
-    cmp_deeply $dist->git->releases, [
+    cmp_deeply $dist->repo->releases, [
         "JESSE/Acme-Buffy-1.3.tar.gz",
         "LBROCARD/Acme-Buffy-1.1.tar.gz",
         "LBROCARD/Acme-Buffy-1.2.tar.gz",

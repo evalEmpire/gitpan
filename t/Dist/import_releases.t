@@ -7,10 +7,7 @@ use Gitpan::Test;
 use Gitpan::Dist;
 
 subtest "error handling" => sub {
-    my $dist = Gitpan::Dist->new(
-        name        => "Acme-LookOfDisapproval"
-    );
-    $dist->delete_repo;
+    my $dist = new_dist( name => "Acme-LookOfDisapproval" );
 
     my $error_at = $dist->release_from_version(0.003);
 
@@ -26,7 +23,7 @@ subtest "error handling" => sub {
     like $dist->dist_log_file->slurp_utf8,
       qr{^Testing error }ms;
 
-    cmp_deeply $dist->git->releases, [
+    cmp_deeply $dist->repo->releases, [
         "ETHER/Acme-LookOfDisapproval-0.001.tar.gz",
         "ETHER/Acme-LookOfDisapproval-0.002.tar.gz",
         "ETHER/Acme-LookOfDisapproval-0.004.tar.gz",
@@ -37,10 +34,7 @@ subtest "error handling" => sub {
 
 
 subtest "skipping releases" => sub {
-    my $dist = Gitpan::Dist->new(
-        name        => "Date-Spoken-German"
-    );
-    $dist->delete_repo;
+    my $dist = new_dist( name => "Date-Spoken-German" );
 
     # Insert a release to skip into the config.  Be sure to clear out
     # the skip release cache.  We pick this one because it is in a
@@ -50,7 +44,7 @@ subtest "skipping releases" => sub {
 
     $dist->import_releases( push => 0 );
 
-    cmp_deeply scalar $dist->git->releases->sort, [sort 
+    cmp_deeply scalar $dist->repo->releases->sort, [sort 
         'CHRWIN/date-spoken-german/date-spoken-german-0.02.tar.gz',
         'CHRWIN/date-spoken-german/Date-Spoken-German-0.04.tar.gz',
         'CHRWIN/date-spoken-german/Date-Spoken-German-0.05.tar.gz'
@@ -59,44 +53,31 @@ subtest "skipping releases" => sub {
 
 
 subtest "Distribution with no releases" => sub {
-    my $dist_no_releases = Gitpan::Dist->new(
-        name    => "ReForm"
-    );
-    $dist_no_releases->delete_repo;
+    my $dist_no_releases = new_dist( name => "ReForm" );
 
     cmp_deeply $dist_no_releases->releases_to_import, [],
       "distribution has no releases";
 
     $dist_no_releases->import_releases;
-    ok $dist_no_releases->repo->git->is_empty;
+    ok !$dist_no_releases->repo->have_git_repo;
     ok !$dist_no_releases->github->exists_on_github, "did not create a Github repo";
 };
 
 
 subtest "Same name, different case" => sub {
-    my $dist1 = Gitpan::Dist->new(
-        name    => "ReForm"
-    );
-    $dist1->github->maybe_create;
+    # Have to happen at the same time else they will delete each other
+    my $dist1 = new_dist( name => "ReForm" );
+    my $dist2 = new_dist( name => "reform" );
 
-    my $dist2 = Gitpan::Dist->new(
-        name    => "reform"
-    );
+    $dist1->github->create_repo;
+    $dist1->repo->wait_until_created;
 
     ok !$dist2->import_releases;
 
     like $dist2->config->gitpan_log_file->slurp_utf8, qr{^Error: distribution ReForm already exists, reform would clash\.$}ms;
 
-    # This is an awkward way of doing a case sensitive directory check
-    # on a case insensitive filesystem.
-    ok(
-        (grep { $_ eq $dist1->name }
-         map  { $_->basename }
-             $dist2->repo_dir->parent->children),
-        "import stopped before repo created"
-   );
+    ok !$dist2->repo->have_git_repo, "import stopped before repo created";
 };
 
 
 done_testing;
-

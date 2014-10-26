@@ -12,7 +12,7 @@ note "Import $DistName"; {
     my $dist = Gitpan::Dist->new(
         name        => $DistName
     );
-    $dist->delete_repo;
+    $dist->delete_repo( wait => 1 );
 
     isnt $dist->versions_to_import->size, 0;
     note "Importing ".$dist->versions_to_import->join(", ");

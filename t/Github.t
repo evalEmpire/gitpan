@@ -7,17 +7,6 @@ use Gitpan::Test;
 
 use Gitpan::Github;
 
-func rand_distname {
-    my @names;
-
-    my @letters = ("a".."z","A".."Z");
-    for (0..rand(4)+1) {
-        push @names, join "", map { $letters[rand @letters] } 1..rand(20);
-    }
-
-    return @names->join("-");
-}
-
 note "repo_name_on_github()"; {
     my %tests = (
         "gitpan"                => "gitpan",

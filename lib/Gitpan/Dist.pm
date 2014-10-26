@@ -103,7 +103,7 @@ method versions_to_import() {
 }
 
 method releases_to_import() {
-    my $imported = $self->git->releases->as_hash;
+    my $imported = $self->repo->releases->as_hash;
 
     my $config = $self->config;
 

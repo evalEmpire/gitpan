@@ -14,7 +14,7 @@ note "Import $DistName"; {
     my $dist = Gitpan::Dist->new(
         name        => $DistName
     );
-    $dist->delete_repo;
+    $dist->delete_repo( wait => 1 );
 
     cmp_deeply $dist->versions_to_import, ['0.0_2', '0.0_3'];
 
