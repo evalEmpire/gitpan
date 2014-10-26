@@ -7,6 +7,9 @@ use Gitpan::perl5i;
 use Gitpan::OO;
 use Gitpan::Types;
 
+use Gitpan::Github;
+use Gitpan::Git;
+
 with 'Gitpan::Role::HasConfig';
 
 haz distname =>
@@ -30,7 +33,6 @@ haz github =>
   predicate     => 'has_github',
   clearer       => 'clear_github',
   default       => method {
-      require Gitpan::Github;
       return Gitpan::Github->new(
           repo => $self->distname
       );
@@ -43,7 +45,6 @@ haz git =>
   predicate     => 'has_git',
   clearer       => 'clear_git',
   default       => method {
-      require Gitpan::Git;
       return Gitpan::Git->new_or_init(
           repo_dir => $self->repo_dir,
           distname => $self->distname,
@@ -69,7 +70,6 @@ method delete_repo {
     # The ->git accessor will recreate the Github repo and clone it.
     # Avoid that.
     if( $self->have_git_repo ) {
-        require Gitpan::Git;
         my $git = Gitpan::Git->new(
             repo_dir => $self->repo_dir,
             distname => $self->distname,
@@ -89,8 +89,6 @@ method prepare_for_push() {
     return 1 if $self->is_prepared_for_push;
 
     $self->dist_log("Repo prepare_for_push");
-
-    require Gitpan::Git;
 
     my $github = $self->github;
 
@@ -142,8 +140,6 @@ method prepare_for_commits() {
     return 1 if $self->is_prepared_for_commits;
 
     $self->dist_log("Repo prepare_for_commits");
-
-    require Gitpan::Git;
 
     # There's a Git repo
     if( $self->have_git_repo ) {

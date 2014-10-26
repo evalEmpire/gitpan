@@ -15,24 +15,26 @@ has cpan_authors =>
   is            => 'rw',
   isa           => InstanceOf['Gitpan::CPAN::Authors'],
   lazy          => 1,
-  default       => method {
-      state $authors;
-      return $authors if $authors;
+  builder       => 'build_cpan_authors';
 
-      my $authors_url = $self->config->backpan_url->clone;
-      $authors_url->append_path("authors/02authors.txt.gz");
+method build_cpan_authors {
+    state $authors;
+    return $authors if $authors;
 
-      my $authors_file = Path::Tiny->tempfile;
-      my $res = $self->ua->get(
-          $authors_url,
-          ":content_file" => $authors_file.''
-      );
-      croak "Get from @{[$authors_url]} was not successful: ".$res->status_line
-        unless $res->is_success;
+    my $authors_url = $self->config->backpan_url->clone;
+    $authors_url->append_path("authors/02authors.txt.gz");
 
-      $authors = Gitpan::CPAN::Authors->new(
-          file => $authors_file
-      );
+    my $authors_file = Path::Tiny->tempfile;
+    my $res = $self->ua->get(
+        $authors_url,
+        ":content_file" => $authors_file.''
+    );
+    croak "Get from @{[$authors_url]} was not successful: ".$res->status_line
+      unless $res->is_success;
 
-      return $authors;
-  };
+    $authors = Gitpan::CPAN::Authors->new(
+        file => $authors_file
+    );
+
+    return $authors;
+}

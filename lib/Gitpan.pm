@@ -4,7 +4,7 @@ use Gitpan::perl5i;
 use Gitpan::OO;
 use Gitpan::Types;
 
-use version; our $VERSION = qv("v2.1.0");
+use version; our $VERSION = qv("v2.2.0");
 
 use Gitpan::Dist;
 use Parallel::ForkManager;
@@ -12,6 +12,12 @@ use Parallel::ForkManager;
 with 'Gitpan::Role::HasBackpanIndex',
      'Gitpan::Role::HasConfig',
      'Gitpan::Role::CanLog';
+
+{
+    package Gitpan::Dummy;
+    use Gitpan::OO;
+    with 'Gitpan::Role::HasCPANAuthors';
+}
 
 
 method import_from_distnames(
@@ -22,6 +28,10 @@ method import_from_distnames(
     my $fork_man = Parallel::ForkManager->new($num_workers);
 
     my $config = $self->config;
+
+    # Parse the CPAN author's file in the parent so each child doesn't
+    # have to redo the work.
+    Gitpan::Dummy->new->build_cpan_authors;
 
     $self->main_log("Starting import from distribution names at @{[gmtime->iso8601]}");
 
@@ -54,6 +64,10 @@ method import_from_backpan_dists(
     my $fork_man = Parallel::ForkManager->new($num_workers);
 
     my $config = $self->config;
+
+    # Parse the CPAN author's file in the parent so each child doesn't
+    # have to redo the work.
+    Gitpan::Dummy->new->build_cpan_authors;
 
     $self->main_log("Starting import from BackPAN dists at @{[gmtime->iso8601]}");
 
