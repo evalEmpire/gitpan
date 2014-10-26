@@ -355,8 +355,12 @@ method prepare_for_import_empty_repo {
 }
 
 method revision_exists(Str $revision) {
-    my $rev = eval { $self->run("rev-parse", $revision) } || return 0;
-    return 1;
+    my $git_raw = $self->git_raw;
+    for my $prefix ('refs/heads/', 'refs/tags/') {
+        return 1 if Git::Raw::Reference->lookup($prefix.$revision, $git_raw);
+    }
+
+    return 0;
 }
 
 
