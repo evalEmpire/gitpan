@@ -154,6 +154,7 @@ backpan_normalize_dist_names:
     mail-sendmail:                      Mail-Sendmail
     marc-lint:                          MARC-Lint
     Marc:                               MARC-Moose
+    marc-moose:                         MARC-Moose
     Math-Continuedfraction:             Math-ContinuedFraction
     Math-zap:                           Math-Zap
     mediawiki-pod:                      Mediawiki-POD
@@ -263,6 +264,7 @@ backpan_normalize_dist_names:
     vms-librarian:                      VMS-Librarian
     vms-logical:                        VMS-Logical
     vms-misc:                           VMS-Misc
+    VMS-MISC:                           VMS-Misc
     vms-priv:                           VMS-Priv
     vms-process:                        VMS-Process
     vms-procinfo:                       VMS-ProcInfo
@@ -297,6 +299,7 @@ backpan_normalize_dist_names:
     xcruciate:                          Xcruciate
     xul2ppt_mec:                        Win32-Xul2ppt_mec
     Xul2ppt_mec:                        Win32-Xul2ppt_mec
+    Win32-xul2ppt_mec:                  Win32-Xul2ppt_mec
 
 backpan_normalize_releases:
     authors/id/M/MA/MARCEL/-0.01.tar.gz:
