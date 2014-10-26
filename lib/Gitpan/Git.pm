@@ -365,7 +365,8 @@ method revision_exists(Str $revision) {
 
 
 method current_branch {
-    return eval { $self->run("rev-parse", "--abbrev-ref", "HEAD") } || undef;
+    return if $self->is_empty;
+    return $self->head->shorthand;
 }
 
 
