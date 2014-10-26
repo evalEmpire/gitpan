@@ -607,6 +607,10 @@ backpan_normalize_releases:
     authors/id/A/AL/ALFIE/MySQL--Replication-5953e9a.tar.gz:
         dist:    MySQL-Replication
         version: 5953e9a
+    authors/id/H/HO/HOLLIFM/mirror_1.0.tar.gz:
+        dist:    mirrors
+    authors/id/H/HO/HOLLIFM/mirror_1.1.tar.gz:
+        dist:    mirrors
 
 skip:
     dists:
