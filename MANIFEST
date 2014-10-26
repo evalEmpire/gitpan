@@ -29,7 +29,7 @@ MANIFEST.SKIP
 META.json
 META.yml
 README.md
-src/BackPAN-Index-0.42_01.tar.gz
+src/BackPAN-Index-0.42_02.tar.gz
 t/backpan/authors/01mailrc.txt.gz
 t/backpan/authors/02authors.txt.gz
 t/backpan/authors/id/A/AA/AANOAA/Acme-eng2kor-0.0.1.tar.gz
@@ -63,6 +63,9 @@ t/backpan/authors/id/F/FL/FLORA/Math-BigInt-1.96.tar.gz
 t/backpan/authors/id/F/FL/FLORA/Math-BigInt-1.97.tar.gz
 t/backpan/authors/id/F/FL/FLORA/Math-BigInt-1.98.tar.gz
 t/backpan/authors/id/F/FL/FLORA/Math-BigInt-1.99.tar.gz
+t/backpan/authors/id/H/HK/HKOCH/reform-0.1.tar.gz
+t/backpan/authors/id/H/HK/HKOCH/reform-0.2.tar.gz
+t/backpan/authors/id/H/HK/HKOCH/reform-0.3.tar.gz
 t/backpan/authors/id/J/JE/JESSE/Acme-Buffy-1.3.tar.gz
 t/backpan/authors/id/J/JP/JPEACOCK/Math-BigInt-0.01.tar.gz
 t/backpan/authors/id/K/KE/KENFOX/perl-c++-api.0.0_2.tar.gz
@@ -87,6 +90,7 @@ t/backpan/authors/id/P/PJ/PJACKLAM/Math-BigInt-1.993.tar.gz
 t/backpan/authors/id/P/PJ/PJACKLAM/Math-BigInt-1.997.tar.gz
 t/backpan/authors/id/P/PJ/PJACKLAM/Math-BigInt-1.9993.tar.gz
 t/backpan/authors/id/P/PJ/PJACKLAM/Math-BigInt-1.99_05.tar.gz
+t/backpan/authors/id/S/SH/SHARYANTO/ReForm-0.00.tar.gz
 t/backpan/authors/id/T/TE/TELS/Math-BigInt-1.35.tar.gz
 t/backpan/authors/id/T/TE/TELS/Math-BigInt-1.36.tar.gz
 t/backpan/authors/id/T/TE/TELS/Math-BigInt-1.37.tar.gz
