@@ -94,6 +94,7 @@ subtest "branch_info" => sub {
         repo => rand_distname()
     );
     $gh->create_repo;
+    note "Dist log: @{[$gh->dist_log_file]}";
 
     require Gitpan::Git;
     my $git = Gitpan::Git->clone(

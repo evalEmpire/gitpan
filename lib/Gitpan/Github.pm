@@ -118,11 +118,7 @@ method create_repo(
         has_wiki        => 0,
     });
 
-    # Sometimes Github doesn't immediately create the repo, wait
-    # until it exists.
-    $self->do_with_backoff(
-        code  => sub { $self->exists_on_github }
-    );
+    $self->_exists_on_github_cache(1);
 
     return $create_ret;
 }
@@ -165,17 +161,9 @@ method delete_repo() {
             return $return;
         }
     );
-    die "Could not delete repository: $@" unless $ok;
+    croak "Could not delete repository: $@" unless $ok;
 
-    # Sometimes Github doesn't immediately delete the repo, wait
-    # until does
-    $self->do_with_backoff(
-        code  => sub {
-            # Delete the cache before checking
-            $self->_exists_on_github_cache(0);
-            return !$self->exists_on_github;
-        }
-    );
+    $self->_exists_on_github_cache(0);
 
     return;
 }
@@ -184,6 +172,7 @@ method branch_info(
     Str :$branch //= 'master'
 ) {
     my $info = $self->do_with_backoff(
+        times   => 6,
         code    => sub {
             $self->dist_log("Trying to get info for $branch");
             my $ret = eval {

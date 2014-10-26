@@ -66,14 +66,14 @@ method init($class: %args) {
 # Type::Tiny (yet)
 method clone(
     $class:
-    Str :$url!,
-    HashRef :$options = {},
-    Str :$distname!,
+    Str        :$url!,
+    HashRef    :$options = {},
+    Str        :$distname!,
     Path::Tiny :$repo_dir
 ) {
     my $self = $class->new(
-        distname        => $distname,
-        $repo_dir ? (repo_dir        => $repo_dir) : ()
+        distname => $distname,
+        $repo_dir ? (repo_dir => $repo_dir) : ()
     );
 
     $self->dist_log( "git clone from $url in @{[$self->repo_dir]}" );
@@ -279,6 +279,7 @@ method pull(
             };
             if( !$ret ) {
                 $self->dist_log( "Pull failed: $@" );
+                croak $@ if $@ =~ /Not possible to fast-forward/;
             }
 
             return $ret;
