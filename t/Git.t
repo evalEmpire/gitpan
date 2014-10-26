@@ -210,8 +210,8 @@ note "clone, push, pull"; {
     my($clone2_log) = $clone2->log("-1");
     is $bare_log->commit, $clone2_log->commit, "push";
 
-    my @tags = $bare->list_tags;
-    is_deeply \@tags, ["some_tag"], "pushing tags";
+    my $tags = $bare->list_tags;
+    is_deeply $tags, ["some_tag"], "pushing tags";
 }
 
 
@@ -397,11 +397,11 @@ note "Commit release"; {
     like $log_message, qr{^gitpan-cpan-author:\s+ETHER}ms;
     like $log_message, qr{^gitpan-cpan-maturity:\s+released}ms;
 
-    cmp_deeply [$git->cpan_paths],      ["ETHER/Acme-LookOfDisapproval-0.005.tar.gz"];
-    cmp_deeply [$git->gitpan_versions], ["0.005"];
-    cmp_deeply [$git->cpan_versions],   ["0.005"];
-    cmp_deeply [$git->list_tags(patterns => ["stable"])], ["stable"];
-    cmp_deeply [$git->list_tags(patterns => ["ETHER"])],  ["ETHER"];
+    cmp_deeply $git->cpan_paths,      ["ETHER/Acme-LookOfDisapproval-0.005.tar.gz"];
+    cmp_deeply $git->gitpan_versions, ["0.005"];
+    cmp_deeply $git->cpan_versions,   ["0.005"];
+    ok $git->get_tag("stable");
+    ok $git->get_tag("ETHER");
 }
 
 
@@ -454,15 +454,15 @@ note "tag_release, no version"; {
     $git->add_all;
     $git->commit_release($release2);
 
-    cmp_deeply [sort $git->cpan_paths],
+    cmp_deeply scalar $git->cpan_paths->sort,
                [sort 
                      "DHOSS/Acme-Blarghy-McBlarghBlargh.tar.gz",
                      "DHOSS/Acme-Blarghy-McBlarghBlargh-0.002.tar.gz"
                ];
-    cmp_deeply [$git->gitpan_versions], ['0.002'];
-    cmp_deeply [$git->cpan_versions],   ['0.002'];
-    cmp_deeply [$git->list_tags(patterns => ["stable"])], ["stable"];
-    cmp_deeply [$git->list_tags(patterns => ["DHOSS"])],  ["DHOSS"];
+    cmp_deeply $git->gitpan_versions, ['0.002'];
+    cmp_deeply $git->cpan_versions,   ['0.002'];
+    ok $git->get_tag("stable");
+    ok $git->get_tag("DHOSS");
 }
 
 

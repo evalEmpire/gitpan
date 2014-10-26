@@ -330,7 +330,7 @@ method prepare_for_commits {
     $self->dist_log( "Git prepare_for_commits" );
 
     # Without any commits, we need different techniques.
-    return $self->prepare_for_import_empty_repo if !$self->revision_exists("HEAD");
+    return $self->prepare_for_import_empty_repo if $self->is_empty;
 
     # Remove all untracked files
     $self->run("clean", "-dxf");
@@ -368,13 +368,6 @@ method current_branch {
     return eval { $self->run("rev-parse", "--abbrev-ref", "HEAD") } || undef;
 }
 
-
-method releases {
-    return [] unless $self->revision_exists("HEAD");
-
-    my $tag_prefix = $self->config->cpan_path_tag_prefix;
-    return [map { s{^$tag_prefix}{}; $_ } $self->run(tag => '-l', "$tag_prefix*")];
-}
 
 method commit_release(Gitpan::Release $release) {
     my $author = $release->author;
@@ -564,8 +557,20 @@ method tag(Str $name, Bool :$force = 0) {
 }
 
 
-method list_tags( ArrayRef :$patterns = [] ) {
-    return $self->run("tag", "-l", @$patterns);
+method list_tags( Regexp :$pattern? ) {
+    my @tags = map { $_->isa("Git::Raw::Tag") ? $_->name : $_->shorthand }
+                   $self->git_raw->tags;
+
+    @tags = grep m{$pattern}, @tags if $pattern;
+
+    return \@tags;
+}
+
+
+method releases {
+    return [] if $self->is_empty;
+
+    return $self->cpan_paths;
 }
 
 
@@ -584,6 +589,14 @@ method gitpan_versions() {
 }
 
 
+method get_tag( Str $name ) {
+    return Git::Raw::Reference->lookup("refs/tags/$name", $self->git_raw);
+}
+
+
 method list_tags_no_prefix( Str $prefix ) {
-    return map { s{^\Q$prefix}{}; $_ } $self->list_tags( patterns => ["$prefix*"]);
+    my $pattern = qr{^\Q$prefix};
+
+    return [map { s{$pattern}{}; $_ }
+               @{ $self->list_tags( pattern => $pattern ) }];
 }

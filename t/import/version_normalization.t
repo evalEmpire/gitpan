@@ -22,9 +22,9 @@ subtest "version normalization" => sub {
 
     my $git = $dist->git;
 
-    cmp_deeply [$git->cpan_versions],   [ "0.0.1", "v0.0.2" ];
-    cmp_deeply [$git->gitpan_versions], [ "0.0.1", "0.0.2" ];
-    cmp_deeply [$git->cpan_paths], [
+    cmp_deeply $git->cpan_versions,   [ "0.0.1", "v0.0.2" ];
+    cmp_deeply $git->gitpan_versions, [ "0.0.1", "0.0.2" ];
+    cmp_deeply $git->cpan_paths, [
         "AANOAA/Acme-eng2kor-0.0.1.tar.gz",
         "AANOAA/Acme-eng2kor-v0.0.2.tar.gz"
     ];
