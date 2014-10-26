@@ -115,87 +115,9 @@ method releases_to_import() {
 }
 
 
-method import_releases(
-    ArrayRef[Gitpan::Release] :$releases,
-    CodeRef     :$before_import                 = sub {},
-    CodeRef     :$after_import                  = sub {},
-    Bool        :$push                          = 1,
-    Bool        :$clean                         = 1
-) {
-    # Capture and log warnings.
-    local $SIG{__WARN__} = sub {
-        $self->main_log("@{[$self->distname]}: $_") for @_;
-        $self->dist_log(join "", @_);
-    };
-
-    # Do this here, not as a default, so we can catch warnings.
-    $releases ||= $self->releases_to_import;
-    if( !@$releases ) {
-        $self->main_log( "Nothing to import for @{[$self->distname]}" );
-        return;
-    }
-
-    # Check if a repository with the same name, but different casing, already
-    # exists on Github.
-    my $github_repo = $self->github->get_repo_info;
-    if( $github_repo && $github_repo->{name} ne $self->github->repo_name_on_github ) {
-        $self->main_log("Error: distribution $github_repo->{name} already exists, @{[$self->distname]} would clash.");
-        return 0;
-    }
-
-    my $versions = join ", ", map { $_->version } @$releases;
-    $self->main_log( "Importing @{[$self->distname]} versions $versions" );
-    $self->dist_log( "Importing $versions" );
-
-    for my $release (@$releases) {
-        eval {
-            $self->$before_import($release);
-            $self->import_release($release);
-            $self->$after_import($release);
-            1;
-        } or do {
-            $self->main_log("Error importing @{[$release->short_path]}: $@");
-            $self->dist_log("$@");
-        };
-    }
-
-    $self->repo->push   if $push;
-    $self->git->clean   if $clean;
-
-    return 1;
-}
-
-
-method import_release(
-    Gitpan::Release $release,
-    Bool :$push  = 0,
-    Bool :$clean = 0
-) {
-    # Capture and log warnings, prepending with the specific release.
-    local $SIG{__WARN__} = sub {
-        $self->main_log("@{[$release->short_path]}: $_") for @_;
-        $self->dist_log(join "", @_);
-    };
-
-    $self->main_log( "Importing @{[$release->short_path]}" );
-    $self->dist_log( "Importing @{[$release->short_path]}" );
-
-    $self->repo->prepare_for_commits;
-
-    my $git = $self->git;
-
-    $release->get;
-
-    $git->rm_all;
-
-    $release->move($git->repo_dir);
-
-    $git->add_all;
-
-    $git->commit_release($release);
-
-    $self->repo->push   if $push;
-    $git->clean         if $clean;
-
-    return;
+method import_releases(...) {
+    $self->repo->import_releases(
+        releases => $self->releases_to_import,
+        @_
+    );
 }
