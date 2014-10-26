@@ -55,15 +55,15 @@ subtest "new_dist" => sub {
     }
 
     {
-        my $dist = new_dist( name => "Foo-Bar" );
+        my $dist = new_dist( distname => "Foo-Bar" );
         isa_ok $dist, "Gitpan::Dist";
-        is $dist->name, "Foo-Bar";
+        is $dist->distname, "Foo-Bar";
     }
 
     {
-        my $dist = new_dist( name => "Foo-Bar" );
+        my $dist = new_dist( distname => "Foo-Bar" );
         isa_ok $dist, "Gitpan::Dist";
-        is $dist->name, "Foo-Bar";
+        is $dist->distname, "Foo-Bar";
     }
 };
 

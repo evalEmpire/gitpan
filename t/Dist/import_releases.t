@@ -7,7 +7,7 @@ use Gitpan::Test;
 use Gitpan::Dist;
 
 subtest "error handling" => sub {
-    my $dist = new_dist( name => "Acme-LookOfDisapproval" );
+    my $dist = new_dist( distname => "Acme-LookOfDisapproval" );
 
     my $error_at = $dist->release_from_version(0.003);
 
@@ -34,7 +34,7 @@ subtest "error handling" => sub {
 
 
 subtest "skipping releases" => sub {
-    my $dist = new_dist( name => "Date-Spoken-German" );
+    my $dist = new_dist( distname => "Date-Spoken-German" );
 
     # Insert a release to skip into the config.  Be sure to clear out
     # the skip release cache.  We pick this one because it is in a
@@ -53,7 +53,7 @@ subtest "skipping releases" => sub {
 
 
 subtest "Distribution with no releases" => sub {
-    my $dist_no_releases = new_dist( name => "ReForm" );
+    my $dist_no_releases = new_dist( distname => "ReForm" );
 
     cmp_deeply $dist_no_releases->releases_to_import, [],
       "distribution has no releases";
@@ -66,8 +66,8 @@ subtest "Distribution with no releases" => sub {
 
 subtest "Same name, different case" => sub {
     # Have to happen at the same time else they will delete each other
-    my $dist1 = new_dist( name => "ReForm" );
-    my $dist2 = new_dist( name => "reform" );
+    my $dist1 = new_dist( distname => "ReForm" );
+    my $dist2 = new_dist( distname => "reform" );
 
     $dist1->github->create_repo;
     $dist1->repo->wait_until_created;

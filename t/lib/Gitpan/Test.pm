@@ -92,10 +92,8 @@ func new_repo(...) {
 }
 
 
-func new_dist(%params) {
-    # Normalize between name and distname
-    $params{distname} = delete $params{name};
-    return new_dist_or_repo( "Gitpan::Dist::SelfDestruct", %params );
+func new_dist(...) {
+    return new_dist_or_repo( "Gitpan::Dist::SelfDestruct", @_ );
 }
 
 

@@ -9,7 +9,7 @@ use Gitpan::Dist;
 my $DistName = 'Acme-Buffy';
 
 note "Import $DistName"; {
-    my $dist = Gitpan::Dist->new( name => 'Acme-Buffy' );
+    my $dist = Gitpan::Dist->new( distname => 'Acme-Buffy' );
     $dist->delete_repo( wait => 1 );
 
     isnt $dist->releases_to_import->size, 0;

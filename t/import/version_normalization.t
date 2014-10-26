@@ -9,7 +9,7 @@ use Gitpan::Dist;
 # Acme-eng2kor is also a test for authors with no email address.
 subtest "version normalization" => sub {
     my $dist = Gitpan::Dist->new(
-        name    => 'Acme-eng2kor'
+        distname => 'Acme-eng2kor'
     );
     $dist->delete_repo( wait => 1 );
 

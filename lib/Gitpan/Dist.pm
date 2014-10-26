@@ -11,17 +11,15 @@ use Gitpan::Repo;
 with 'Gitpan::Role::HasBackpanIndex';
 
 use overload
-  q[""]     => method { return $self->name },
+  q[""]     => method { return $self->distname },
   fallback  => 1;
 
-haz name =>
+haz distname =>
   is            => 'ro',
   isa           => DistName,
   default       => method {
       $self->backpan_dist->name;
   };
-
-*distname = \&name;
 
 with 'Gitpan::Role::CanDistLog';
 
@@ -30,7 +28,7 @@ haz backpan_dist =>
   isa           => InstanceOf['BackPAN::Index::Dist'],
   lazy          => 1,
   default       => method {
-      return $self->backpan_index->dist($self->name);
+      return $self->backpan_index->dist($self->distname);
   };
 
 haz backpan_releases =>
@@ -63,25 +61,21 @@ haz repo =>
   )],
   default       => method {
       return Gitpan::Repo->new(
-          distname      => $self->name
+          distname      => $self->distname
       );
   };
 
 
 method BUILDARGS($class: %args) {
-    # Let Dist take distname like most everything else.
-    $args{name} = delete $args{distname} if
-      defined $args{distname} && !defined $args{name};
-
-    croak "name or backpan_dist required"
-      unless $args{name} // $args{backpan_dist};
+    croak "distname or backpan_dist required"
+      unless $args{distname} // $args{backpan_dist};
 
     return \%args;
 }
 
 method release_from_version(Str $version) {
     return Gitpan::Release->new(
-        distname        => $self->name,
+        distname        => $self->distname,
         version         => $version
     );
 }

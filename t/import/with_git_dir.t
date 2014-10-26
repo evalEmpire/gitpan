@@ -9,7 +9,7 @@ use Gitpan::Dist;
 my $DistName = 'Acme-Warn-LOLCAT';
 
 note "Import $DistName"; {
-    my $dist = Gitpan::Dist->new( name => $DistName );
+    my $dist = Gitpan::Dist->new( distname => $DistName );
     $dist->delete_repo( wait => 1 );
 
     isnt $dist->releases_to_import->size, 0;

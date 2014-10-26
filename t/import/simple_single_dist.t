@@ -10,7 +10,7 @@ my $DistName = 'Acme-LookOfDisapproval';
 
 note "Import $DistName"; {
     my $dist = Gitpan::Dist->new(
-        name        => $DistName
+        distname => $DistName
     );
     $dist->delete_repo( wait => 1 );
 

@@ -91,7 +91,7 @@ method import_from_backpan_dists(
         my $dist = Gitpan::Dist->new(
             # Pass in the name to avoid sending an open sqlite connection
             # to the child.
-            name => $distname
+            distname => $distname
         );
 
         my $pid = $fork_man->start and next;
@@ -125,7 +125,7 @@ method import_from_distname(
     Bool :$overwrite_repo = 0
 ) {
     $self->import_dist(
-        Gitpan::Dist->new( name => $name ),
+        Gitpan::Dist->new( distname => $name ),
         overwrite_repo => $overwrite_repo
     );
 }

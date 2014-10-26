@@ -9,13 +9,13 @@ my $CLASS = 'Gitpan::Dist';
 require_ok $CLASS;
 
 note "Required args"; {
-    throws_ok { $CLASS->new } qr/^name or backpan_dist required/;
+    throws_ok { $CLASS->new } qr/^distname or backpan_dist required/;
 }
 
 note "The basics"; {
-    my $dist = $CLASS->new( name => "Acme-Pony" );
+    my $dist = $CLASS->new( distname => "Acme-Pony" );
 
-    is $dist->backpan_dist->name, $dist->name;
+    is $dist->backpan_dist->name, $dist->distname;
 
     my $releases = $dist->backpan_releases;
     cmp_ok $releases->count, ">=", 2;
@@ -26,15 +26,15 @@ note "The basics"; {
 
 
 note "new() from BackPAN::Index::Dist"; {
-    my $bp_dist = $CLASS->new( name => "Acme-Pony" )->backpan_dist;
+    my $bp_dist = $CLASS->new( distname => "Acme-Pony" )->backpan_dist;
 
     my $dist = $CLASS->new( backpan_dist => $bp_dist );
-    is $dist->name, 'Acme-Pony';
+    is $dist->distname, 'Acme-Pony';
 }
 
 
 note "release_from_version"; {
-    my $dist = $CLASS->new( name => "Acme-Pony" );
+    my $dist = $CLASS->new( distname => "Acme-Pony" );
 
     my $release = $dist->release_from_version('1.1.1');
     isa_ok $release, "Gitpan::Release";
@@ -44,7 +44,7 @@ note "release_from_version"; {
 
 
 note "release_from_backpan"; {
-    my $dist = $CLASS->new( name => "Acme-Buffy" );
+    my $dist = $CLASS->new( distname => "Acme-Buffy" );
 
     # There are two releases for 1.3
     my @bp_releases = $dist->backpan_releases->search({ version => '1.3' })->all;
@@ -58,15 +58,15 @@ note "release_from_backpan"; {
 }
 
 note "dist data"; {
-    my $dist = $CLASS->new( name => "Foo-Bar" );
+    my $dist = $CLASS->new( distname => "Foo-Bar" );
     isa_ok $dist, $CLASS;
 
-    is $dist->name, "Foo-Bar";
+    is $dist->distname, "Foo-Bar";
 }
 
 
 note "releases to import"; {
-    my $dist = new_dist( name => 'Acme-LookOfDisapproval' );
+    my $dist = new_dist( distname => 'Acme-LookOfDisapproval' );
 
     # Releaes of Acme-LOD as of this writing.
     my @backpan_versions = (0.001, 0.002, 0.003, 0.004, 0.005, 0.006);
@@ -95,14 +95,14 @@ note "releases to import"; {
 note "restarting from an existing repository"; {
     note "Import a release to establish the repository"; {
         my $dist = Gitpan::Dist->new(
-            name    => 'Acme-LookOfDisapproval'
+            distname    => 'Acme-LookOfDisapproval'
         );
         $dist->delete_repo( wait => 1 );
         $dist->repo->import_release( $dist->release_from_version(0.001), push => 1 );
     }
 
     my $dist = Gitpan::Dist->new(
-        name    => 'Acme-LookOfDisapproval'
+        distname    => 'Acme-LookOfDisapproval'
     );
     cmp_deeply $dist->repo->releases, ["ETHER/Acme-LookOfDisapproval-0.001.tar.gz"];
 }
