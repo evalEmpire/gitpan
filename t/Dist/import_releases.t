@@ -58,19 +58,34 @@ subtest "skipping releases" => sub {
 };
 
 
+subtest "Distribution with no releases" => sub {
+    my $dist_no_releases = Gitpan::Dist->new(
+        name    => "ReForm"
+    );
+    $dist_no_releases->delete_repo;
+
+    cmp_deeply $dist_no_releases->releases_to_import, [],
+      "distribution has no releases";
+
+    $dist_no_releases->import_releases;
+    ok $dist_no_releases->repo->git->is_empty;
+    ok !$dist_no_releases->github->exists_on_github, "did not create a Github repo";
+};
+
+
 subtest "Same name, different case" => sub {
     my $dist1 = Gitpan::Dist->new(
-        name    => "Acme-LookOfDisapproval"
+        name    => "ReForm"
     );
     $dist1->github->maybe_create;
 
     my $dist2 = Gitpan::Dist->new(
-        name    => "acme-lookofdisapproval"
+        name    => "reform"
     );
 
     ok !$dist2->import_releases;
 
-    like $dist2->config->gitpan_log_file->slurp_utf8, qr{^Error: distribution Acme-LookOfDisapproval already exists, acme-lookofdisapproval would clash\.$}ms;
+    like $dist2->config->gitpan_log_file->slurp_utf8, qr{^Error: distribution ReForm already exists, reform would clash\.$}ms;
 
     # This is an awkward way of doing a case sensitive directory check
     # on a case insensitive filesystem.
@@ -81,6 +96,7 @@ subtest "Same name, different case" => sub {
         "import stopped before repo created"
    );
 };
+
 
 done_testing;
 

@@ -41,6 +41,10 @@ haz git_repo =>
 
 haz git_raw =>
   isa           => InstanceOf["Git::Raw::Repository"],
+  handles       => [qw(
+      is_empty
+      head
+  )],
   lazy          => 1,
   default       => method {
       return Git::Raw::Repository->open( $self->repo_dir.'' );
@@ -98,29 +102,46 @@ method clone(
 }
 
 
-method new_or_clone( %args ) {
-    my $repo_dir = $args{repo_dir};
+method new_or_action( $class: ... ) {
+    my %params = @_;
+    my $action = delete $params{action};
+
+    my $repo_dir = $params{repo_dir};
 
     # There's a directory but no repository, get rid of it.
     $repo_dir->remove_tree({ safe => 0 })
       if -d $repo_dir && !-d $repo_dir->child(".git");
 
     # There's no repository.
-    return Gitpan::Git->clone(%args)
+    return Gitpan::Git->$action(%params)
       if !-d $repo_dir;
 
     # There is a repository.
     my $git = Gitpan::Git->new(
         repo_dir => $repo_dir,
-        distname => $args{distname}
-    );
-
-    $git->fixup_repo(
-        url       => $args{url}
+        distname => $params{distname}
     );
 
     return $git;
 }
+
+
+method new_or_init( $class: ... ) {
+    return $class->new_or_action( action => "init", @_ );
+}
+
+method new_or_clone( $class: ... ) {
+    my %args = @_;
+
+    my $git = $class->new_or_action( action => "clone", %args );
+
+    # If there's an existing repository, turn it into an effective clone.
+    $git->change_remote( origin => $args{url} );
+    $git->pull( "ff_only" => 1 );
+
+    return $git;
+}
+
 
 method init_git_config() {
     my $config = $self->config;
@@ -215,7 +236,10 @@ method default_success_check($return?) {
     return $return ? 1 : 0;
 }
 
-method push( Str $remote //= "origin", Str $branch //= "master" ) {
+method push(
+    Str  :$remote  //= "origin",
+    Str  :$branch  //= "master"
+) {
     $self->dist_log( "Pushing to $remote $branch" );
 
     # sometimes github doesn't have the repo ready immediately after create_repo
@@ -223,7 +247,9 @@ method push( Str $remote //= "origin", Str $branch //= "master" ) {
     my $ok = $self->do_with_backoff(
         code  => sub {
             my $ret = eval { $self->run_quiet(push => $remote => $branch); 1 };
-            $self->dist_log( "Push failed: $@" ) if !$ret;
+            if( !$ret ) {
+                $self->dist_log( "Push failed: $@" );
+            }
 
             return $ret;
         },
@@ -235,13 +261,25 @@ method push( Str $remote //= "origin", Str $branch //= "master" ) {
     return 1;
 }
 
-method pull( Str $remote //= "origin", Str $branch //= "master" ) {
+method pull(
+    Str  :$remote  //= "origin",
+    Str  :$branch  //= "master",
+    Bool :$ff_only //= 0
+) {
     $self->dist_log( "Pulling from $remote $branch" );
+
+    my @options;
+    @options->push("--ff-only") if $ff_only;
 
     my $ok = $self->do_with_backoff(
         code  => sub {
-            my $ret = eval { $self->run_quiet(pull => $remote => $branch); 1 };
-            $self->dist_log( "Pull failed: $@" ) if !$ret;
+            my $ret = eval {
+                $self->run_quiet(pull => @options => $remote => $branch);
+                1;
+            };
+            if( !$ret ) {
+                $self->dist_log( "Pull failed: $@" );
+            }
 
             return $ret;
         },
@@ -287,8 +325,8 @@ method remove_working_copy {
     }
 }
 
-method prepare_for_import {
-    $self->dist_log( "git prepare_for_import" );
+method prepare_for_commits {
+    $self->dist_log( "Git prepare_for_commits" );
 
     # Without any commits, we need different techniques.
     return $self->prepare_for_import_empty_repo if !$self->revision_exists("HEAD");
@@ -302,13 +340,6 @@ method prepare_for_import {
     $self->run_quiet("checkout", "-f", "master");
 
     return;
-}
-
-
-method fixup_repo( Str :$url! ) {
-    $self->prepare_for_import;
-    $self->change_remote( origin => $url );
-    $self->pull;
 }
 
 

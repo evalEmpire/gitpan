@@ -19,8 +19,6 @@ func rand_distname {
 }
 
 note "repo_name_on_github()"; {
-    my $gh = Gitpan::Github->new( repo => "Foo-Bar" );
-
     my %tests = (
         "gitpan"                => "gitpan",
         "Foo-Bar"               => "Foo-Bar",
@@ -32,37 +30,40 @@ note "repo_name_on_github()"; {
     );
 
     %tests->each(func($have, $want) {
-        is $gh->repo_name_on_github($have), $want, "$have -> $want";
+        my $gh = Gitpan::Github->new( repo => $have );
+        is $gh->repo_name_on_github, $want, "$have -> $want";
     });
 }
 
 
 note "get_repo_info()"; {
-    my $gh = Gitpan::Github->new( repo => "whatever" );
-    ok !$gh->get_repo_info( owner => "evalEmpire", repo => "super-python" );
+    my $gh = Gitpan::Github->new( repo => "super-python", owner => "evalEmpire" );
+    ok !$gh->get_repo_info;
 
-    my $repo = $gh->get_repo_info( owner => "evalEmpire", repo => "gitpan" );
-    is $repo->{name}, 'gitpan';
+    $gh = Gitpan::Github->new( owner => "evalEmpire", repo => "gitpan" );
+    is $gh->get_repo_info->{name}, 'gitpan';
 
-    $repo = $gh->get_repo_info( owner => "evalEmpire", repo => "GITPAN" );
-    is $repo->{name}, 'gitpan';
+    $gh = Gitpan::Github->new( owner => "evalEmpire", repo => "GITPAN" );
+    is $gh->get_repo_info->{name}, 'gitpan';
 }
 
 
 note "exists_on_github()"; {
-    my $gh = Gitpan::Github->new( repo => "Foo-Bar" );
+    my $gh = Gitpan::Github->new( owner => "evalEmpire", repo => "gitpan" );
+    ok $gh->exists_on_github;
 
-    ok $gh->exists_on_github( owner => "evalEmpire", repo => "gitpan" );
-    ok !$gh->exists_on_github( owner => "evalEmpire", repo => "super-python" );
-    ok !$gh->exists_on_github( repo => "i-do-not-exist-pretty-sure" );
+    $gh = Gitpan::Github->new( owner => "evalEmpire", repo => "super-python" );
+    ok !$gh->exists_on_github;
+
+    $gh = Gitpan::Github->new( repo => "i-do-not-exist-pretty-sure" ); 
+    ok !$gh->exists_on_github;
 }
 
 
 note "remote"; {
-    my $gh = Gitpan::Github->new( repo => "Foo-Bar" );
+    my $gh = Gitpan::Github->new( repo => "gitpan" );
 
-    like $gh->remote( repo => "gitpan" ),
-         qr{^https://.*?:\@github.com/gitpan-test/gitpan.git};
+    like $gh->remote(), qr{^https://.*?:\@github.com/gitpan-test/gitpan.git};
 }
 
 
@@ -78,9 +79,41 @@ note "create and delete repos"; {
         desc            => "Testing Ünicode",
         homepage        => "http://example.com/Ünicode"
     );
+    ok $gh->_exists_on_github_cache, "create sets the exists cache";
     ok $gh->exists_on_github;
+
     $gh->delete_repo_if_exists;
+
+    ok !$gh->_exists_on_github_cache, "delete unsets the exists cache";
     ok !$gh->exists_on_github;
 }
+
+
+subtest "branch_info" => sub {
+    my $gh = Gitpan::Github->new(
+        repo => rand_distname()
+    );
+    $gh->create_repo;
+
+    require Gitpan::Git;
+    my $git = Gitpan::Git->clone(
+        url             => $gh->remote,
+        distname        => $gh->distname
+    );
+    $git->repo_dir->child("foo")->touch;
+    $git->add_all;
+    $git->commit( message => "for testing" );
+
+    # Push at the same time we're trying to get branch info
+    my $child = child {
+        note "Trying push";
+        $git->push;
+        note "push done";
+    };
+    my $info = $gh->branch_info;
+    $child->wait;
+
+    is $info->{commit}{sha}, $git->head->target->id, "git and Github match after push";
+};
 
 done_testing();
