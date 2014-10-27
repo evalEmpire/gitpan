@@ -83,7 +83,8 @@ subtest "branch_info" => sub {
         repo => rand_distname()
     );
     $gh->create_repo;
-    note "Dist log: @{[$gh->dist_log_file]}";
+
+    ok $gh->is_empty, "is_empty";
 
     require Gitpan::Git;
     my $git = Gitpan::Git->clone(
@@ -103,6 +104,7 @@ subtest "branch_info" => sub {
     my $info = $gh->branch_info;
     $child->wait;
 
+    ok !$gh->is_empty, "!is_empty";
     is $info->{commit}{sha}, $git->head->target->id, "git and Github match after push";
 };
 

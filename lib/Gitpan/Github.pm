@@ -89,6 +89,18 @@ method get_repo_info() {
     return $repo_obj;
 }
 
+method is_empty() {
+    my $commits = eval {
+        $self->repos->commits(
+            $self->owner, $self->repo_name_on_github, { per_page => 1 }
+        );
+    } // [];
+
+    croak $@ if $@ and $@ !~ /empty/i;
+
+    return @$commits ? 0 : 1;
+}
+
 method exists_on_github {
     $self->dist_log( "Checking if @{[ $self->repo ]} exists on Github" );
 
