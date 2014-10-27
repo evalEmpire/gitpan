@@ -70,30 +70,40 @@ How big is BackPAN?
 -------------------
 
 BackPAN (just the modules, we're not doing perl releases) contains
-about 120k archive files (mostly gzipped tarballs) representing about
-21,000 distributions from 5000 authors taking up 14 gigs of space.
-Tarballs consume about 12 gigs, not sure where the other 2 is going
-(readme files, meta files, random non-distro junk, block size
-rounding?).
+over 230,000 archive files (mostly gzipped tarballs) representing over
+35,000 distributions from over 6500 authors taking over 38 gigs of space.
 
 
 How big is Gitpan?
 ------------------
 
-Gitpan consists of over 21,000 repositories representing each CPAN
-distribution.  Disk usage (garbage collected repositories with no
-checkout) is 4.3 gigs.  It imported 120,000 files weighing in at 9.7
-gigs giving a compression ratio of over 2x.
-
-Gitpan consumes about 150 gigs on github, presumably due to indexing.
+Gitpan consists of over 35,000 repositories representing each CPAN
+distribution.  Disk usage (garbage collected repositories with the
+latest version checked out checkout) is about 30 gigs.  It imported
+over 230,000 releases with a compressed size of over 33 gigs.
 
 
 Did Gitpan skip anything?
 -------------------------
 
-Yes.  It skipped perl, parrot and parrot-cfg.  They're not really CPAN
-modules and they have far more complete repositories.  It may
-skip more in the future, these are the ones I noticed.
+Yes.  Gitpan generally skips things which are not modules, such as
+scripts, binary releases, patches, documentation and other randomness
+which has been uploaded to CPAN over the years.  Gitpan also skips
+releases of Perl and Parrot, they are large and there are plenty of
+better archives for that.
+
+Github has a limit of 100 megs per file, so Gitpan cannot archive the
+few files which go over that limit and will instead replace it with a
+dummy file indicating why it was skipped.
+
+Gitpan skips any archives which cannot be extracted.  Sometimes they
+are corrupt beyond repair, sometimes they can be extracted with some
+manual effort.
+
+Occassionally something which is not a module will be considered of
+sufficient historical interest that it will be included, such as a
+heavily patched version of Perl for an obscure operating system, or a
+set of very old, well developed scripts.
 
 
 Will you be adding X to Gitpan?
@@ -123,8 +133,11 @@ How do I update my module on Gitpan?
 Gitpan will automatically pull new releases from CPAN, you don't have
 to do anything.
 
-Updates are currently suspended pending a rewrite to make Gitpan more
-maintainable.
+
+When does Gitpan update?
+-
+
+Updates happen about once a week.  We hope to make them daily.
 
 
 Where can I get a list of all the repositories?
@@ -200,6 +213,17 @@ the location of your repository, Gitpan doesn't offer anything new to
 the developer.
 
 
+I found a distribution that's out of date, could you update it?
+--
+
+If it's less than a week old, wait another week and it will probably
+happen as part of the normal update process.
+
+If it's more than a week old, please report it to us at
+<http://github.com/evalEmpire/gitpan/issues> or
+schwern+gitpan@pobox.com.
+
+
 I noticed a problem with a repository
 -------------------------------------
 
@@ -234,4 +258,4 @@ How can I contact Gitpan?
 * Web:     http://github.com/gitpan/
 * Dev:     http://github.com/evalEmpire/gitpan
 * Issues:  http://github.com/evalEmpire/gitpan/issues
-* Twitter: #gitpan
+* Twitter: #gitpan and http://twitter.com/gitpan
