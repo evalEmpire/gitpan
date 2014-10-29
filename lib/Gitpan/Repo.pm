@@ -127,6 +127,7 @@ method sync_with_github() {
                 repo_dir    => $self->repo_dir,
                 distname    => $self->distname
             );
+            $git->prepare_for_commits;
             $self->git($git);
 
             $git->change_remote( origin => $self->github->remote );
@@ -189,34 +190,20 @@ method prepare_for_commits() {
 
     $self->dist_log("Repo prepare_for_commits");
 
-    # There's a Git repo
-    if( $self->have_git_repo ) {
+    # There's a Github repo
+    if( $self->have_github_repo ) {
+        $self->sync_with_github;
+    }
+    # There's no Github repo, but there is a Git repo
+    elsif( $self->have_git_repo ) {
         my $git = Gitpan::Git->new(
             repo_dir    => $self->repo_dir,
             distname    => $self->distname
         );
         $git->prepare_for_commits;
         $self->git($git);
-
-        if( $self->have_github_repo ) {
-            $git->change_remote( origin => $self->github->remote );
-            $git->pull( "ff_only" => 1 );
-            $self->is_prepared_for_push(1);
-            $self->is_synced_with_github(1);
-        }
     }
-    # There's no git repo, but there is a Github repo
-    elsif( $self->have_github_repo ) {
-        my $git = Gitpan::Git->clone(
-            repo_dir    => $self->repo_dir,
-            distname    => $self->distname,
-            url         => $self->github->remote
-        );
-        $self->git($git);
-        $self->is_prepared_for_push(1);
-        $self->is_synced_with_github(1);
-    }
-    # There's no Git or Gitpan repo
+    # There's no Git or Github repo
     else {
         my $git = Gitpan::Git->init(
             repo_dir    => $self->repo_dir,
