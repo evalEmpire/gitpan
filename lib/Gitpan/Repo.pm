@@ -62,6 +62,10 @@ haz is_prepared_for_push =>
   isa           => Bool,
   default       => 0;
 
+haz is_synced_with_github =>
+  is            => 'rw',
+  isa           => Bool,
+  default       => 0;
 
 method default_success_check($return?) {
     return $return ? 1 : 0;
@@ -113,12 +117,8 @@ method wait_until_created() {
 }
 
 
-method prepare_for_push() {
-    return 1 if $self->is_prepared_for_push;
-
-    $self->dist_log("Repo prepare_for_push");
-
-    my $github = $self->github;
+method sync_with_github() {
+    return 1 if $self->is_synced_with_github;
 
     if( $self->have_github_repo ) {
         # We have a Git repo, update it from Github
@@ -141,6 +141,26 @@ method prepare_for_push() {
             );
             $self->git($git);
         }
+
+        $self->is_prepared_for_commits(1);
+        $self->is_prepared_for_push(1);
+    }
+
+    $self->is_synced_with_github(1);
+
+    return 1;
+}
+
+
+method prepare_for_push() {
+    return 1 if $self->is_prepared_for_push;
+
+    $self->dist_log("Repo prepare_for_push");
+
+    my $github = $self->github;
+
+    if( $self->have_github_repo ) {
+        $self->sync_with_github();
     }
     # No Github repo, make one.
     else {
@@ -182,6 +202,7 @@ method prepare_for_commits() {
             $git->change_remote( origin => $self->github->remote );
             $git->pull( "ff_only" => 1 );
             $self->is_prepared_for_push(1);
+            $self->is_synced_with_github(1);
         }
     }
     # There's no git repo, but there is a Github repo
@@ -193,6 +214,7 @@ method prepare_for_commits() {
         );
         $self->git($git);
         $self->is_prepared_for_push(1);
+        $self->is_synced_with_github(1);
     }
     # There's no Git or Gitpan repo
     else {
