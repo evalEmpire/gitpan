@@ -75,8 +75,6 @@ subtest "Same name, different case" => sub {
     ok !$dist2->import_releases;
 
     like $dist2->config->gitpan_log_file->slurp_utf8, qr{^Error: distribution ReForm already exists, reform would clash\.$}ms;
-
-    ok !$dist2->repo->have_git_repo, "import stopped before repo created";
 };
 
 

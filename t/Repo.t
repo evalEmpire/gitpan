@@ -79,4 +79,32 @@ subtest "empty repo" => sub {
     ok !$repo->have_git_repo, "releases() does not create a git repo";
 };
 
+
+subtest "releases() syncs from Github" => sub {
+    my $dist = new_dist( distname => "Acme-Pony" );
+    my $repo = $dist->repo;
+
+    $repo->import_releases(
+        releases => $dist->releases_to_import
+    );
+    cmp_bag $repo->releases, [
+        "DCANTRELL/Acme-Pony-1.1.1.tar.gz",
+        "DCANTRELL/Acme-Pony-1.1.2.tar.gz"
+    ], "releases() after import with git repo";
+
+    # Delete the Git repo
+    $repo->git->delete_repo;
+
+    # Use a fresh object to simulate a later run with a Github repo
+    # but no Git.
+    my $repo2 = new_repo(
+        distname        => "Acme-Pony",
+        overwrite       => 0
+    );
+    cmp_bag $repo2->releases, [
+        "DCANTRELL/Acme-Pony-1.1.1.tar.gz",
+        "DCANTRELL/Acme-Pony-1.1.2.tar.gz"
+    ], "releases() with Github but no git repo";
+};
+
 done_testing;

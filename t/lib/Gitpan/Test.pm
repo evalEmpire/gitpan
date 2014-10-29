@@ -71,17 +71,17 @@ func rand_distname {
 
 
 func new_dist_or_repo( $class!, %params ) {
-    my $delete = 1;
+    my $overwrite = delete $params{overwrite} // 1;
 
     # If we're using a random dist name, no need to check
     # if it already exists.
     if( !defined $params{distname} ) {
         $params{distname} = rand_distname;
-        $delete = 0;
+        $overwrite = 0;
     }
 
     my $obj = $class->new( %params );
-    $obj->delete_repo( wait => 1 ) if $delete;
+    $obj->delete_repo( wait => 1 ) if $overwrite;
 
     return $obj;
 }

@@ -229,6 +229,8 @@ method have_github_repo() {
 
 
 method releases() {
+    $self->sync_with_github;
+
     return [] if !$self->have_git_repo;
     return $self->git->releases;
 }
