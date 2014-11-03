@@ -173,16 +173,25 @@ method delete_repo() {
 
     $self->dist_log( "Deleting $repo on Github as $repo_on_github" );
 
-    my $ok = $self->do_with_backoff(
+    my $result = $self->do_with_backoff(
         code  => sub {
-            eval { $self->repos->delete($self->owner, $repo_on_github); 1 };
+            $self->pithub->repos->delete;
         },
-        check => method($return) {
-            $self->dist_log( "Github repository delete failed" ) if !$return;
-            return $return;
+        check => method($result) {
+            return 1 if $result->success;
+
+            my $code = $result->response->code;
+            if( $code == 404 ) {
+                $self->dist_log( "Github $repo_on_github not found" );
+            }
+            else {
+                my $message = $result->content->{message};
+                $self->dist_log( "Error deleting $repo_on_github, HTTP $code: $message" );
+            }
+            return 0;
         }
     );
-    croak "Could not delete repository: $@" unless $ok;
+    croak "Could not delete repository" unless $result->success;
 
     $self->_exists_on_github_cache(0);
 
