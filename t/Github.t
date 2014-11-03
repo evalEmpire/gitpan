@@ -79,6 +79,20 @@ note "create and delete repos"; {
 }
 
 
+subtest "change_repo_info" => sub {
+    my $gh = Gitpan::Github->new(
+        repo => rand_distname()
+    );
+    $gh->create_repo;
+
+    $gh->change_repo_info(
+        description => "For testing"
+    );
+    my $info = $gh->get_repo_info;
+    is $info->{description}, "For testing";
+};
+
+
 subtest "branch_info" => sub {
     my $gh = Gitpan::Github->new(
         repo => rand_distname()
@@ -115,5 +129,6 @@ subtest "branch_info" => sub {
     ok !$gh->is_empty, "!is_empty";
     is $info->{commit}{sha}, $git->head->target->id, "git and Github match after push";
 };
+
 
 done_testing();

@@ -223,7 +223,7 @@ method branch_info(
         }
     );
 
-    croak "Could not get the Github branch info for $branch" if !$result;
+    croak "Could not get the Github branch info for $branch" if !$result->success;
 
     return $result->content;
 }
@@ -242,11 +242,31 @@ method change_repo_info(%changes) {
 
     my $repo = $self->repo_name_on_github;
 
+    # The Github API requires you send the name, even if you're not
+    # changing it.  This is silly.
+    $changes{name} ||= $repo;
+
     my $log_changes = join ", ", map { "$_ => $changes{$_}" } keys %changes;
     $log_changes =~ s{\n}{\\n}g;
     $self->dist_log( "Changing @{[$self->repo]} (as $repo) info: $log_changes" );
 
-    return $self->repos->get($self->owner, $repo)->update(
-        \%changes,
+    my $result = $self->do_with_backoff(
+        code    => sub {
+            $self->dist_log("Trying to change the repository");
+            return $self->pithub->repos->update(
+                data => \%changes,
+            );
+        },
+        check   => method($result) {
+            return 1 if $result->success;
+
+            my $code = $result->response->code;
+            my $message = $result->content->{message};
+            $self->dist_log( "HTTP $code: $message" );
+
+            return 0;
+        }
     );
+
+    return $result;
 }
