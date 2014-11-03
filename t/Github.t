@@ -91,6 +91,8 @@ subtest "branch_info" => sub {
         url             => $gh->remote,
         distname        => $gh->distname
     );
+    note $git->dist_log_file;
+
     $git->repo_dir->child("foo")->touch;
     $git->add_all;
     $git->commit( message => "for testing" );
