@@ -181,11 +181,11 @@ method delete_repo() {
             return 1 if $result->success;
 
             my $code = $result->response->code;
+            my $message = $result->content->{message};
             if( $code == 404 ) {
-                $self->dist_log( "Github $repo_on_github not found" );
+                $self->dist_log( "Github $repo_on_github not found: $message" );
             }
             else {
-                my $message = $result->content->{message};
                 $self->dist_log( "Error deleting $repo_on_github, HTTP $code: $message" );
             }
             return 0;
@@ -195,31 +195,37 @@ method delete_repo() {
 
     $self->_exists_on_github_cache(0);
 
-    return;
+    return $result;
 }
 
 method branch_info(
     Str :$branch //= 'master'
 ) {
-    my $info = $self->do_with_backoff(
+    my $result = $self->do_with_backoff(
         times   => 6,
         code    => sub {
             $self->dist_log("Trying to get info for $branch");
-            my $ret = eval {
-                $self->repos->branch($branch);
-            };
-            if( !$ret ) {
-                $self->dist_log("Attempt to get branch info for $branch failed: $@");
-                croak $@ unless $@ =~ /Branch not found/;
+            return $self->pithub->repos->branch( branch => $branch );
+        },
+        check   => method($result) {
+            return 1 if $result->success;
+
+            my $code = $result->response->code;
+            my $message = $result->content->{message};
+            if( $code == 404 ) {
+                $self->dist_log( "Branch info: $message" );
+            }
+            else {
+                $self->dist_log( "Error getting branch info: HTTP $code, $message" );
             }
 
-            return $ret;
+            return 0;
         }
     );
 
-    croak "Could not get the Github branch info for $branch: $@" if !$info;
+    croak "Could not get the Github branch info for $branch" if !$result;
 
-    return $info;
+    return $result->content;
 }
 
 method remote() {
