@@ -4,10 +4,26 @@ use Gitpan::perl5i;
 
 use Gitpan::OO;
 use Gitpan::Types;
+use Pithub;
+
 extends 'Net::GitHub::V3';
 with 'Gitpan::Role::HasConfig', 'Gitpan::Role::CanBackoff';
 
 use Encode;
+
+haz pithub =>
+  is            => 'ro',
+  isa           => InstanceOf['Pithub'],
+  lazy          => 1,
+  default       => method {
+      return Pithub->new(
+          user                  => $self->owner,
+          repo                  => $self->repo_name_on_github,
+          token                 => $self->access_token,
+          per_page              => 100,
+          auto_pagination       => 1,
+      );
+  };
 
 method distname { return $self->repo }
 with "Gitpan::Role::CanDistLog";
