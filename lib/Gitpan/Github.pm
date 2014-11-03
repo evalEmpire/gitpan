@@ -128,18 +128,20 @@ method create_repo(
 
     $self->dist_log( "Creating Github repo for $repo" );
 
-    my $create_ret = $self->repos->create({
-        org             => $self->owner,
-        name            => encode_utf8($repo),
-        description     => encode_utf8($desc),
-        homepage        => encode_utf8($homepage),
-        has_issues      => 0,
-        has_wiki        => 0,
-    });
+    my $result = $self->pithub->repos->create(
+        org     => $self->owner,
+        data    => {
+            name            => encode_utf8($repo),
+            description     => encode_utf8($desc),
+            homepage        => encode_utf8($homepage),
+            has_issues      => 0,
+            has_wiki        => 0,
+        }
+    );
 
     $self->_exists_on_github_cache(1);
 
-    return $create_ret;
+    return $result;
 }
 
 method maybe_create(
