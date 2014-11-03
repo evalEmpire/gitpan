@@ -82,6 +82,11 @@ subtest "branch_info" => sub {
     my $gh = Gitpan::Github->new(
         repo => rand_distname()
     );
+
+    throws_ok {
+        $gh->is_empty;
+    } qr/does not exist/;
+
     $gh->create_repo;
 
     ok $gh->is_empty, "is_empty";

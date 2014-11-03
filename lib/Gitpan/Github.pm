@@ -99,7 +99,12 @@ method get_repo_info() {
 }
 
 method is_empty() {
-    return $self->pithub->repos->commits(per_page => 1)->list->count ? 0 : 1;
+    my $result = $self->pithub->repos->commits(per_page => 1)->list;
+
+    croak $self->repo_name_on_github." does not exist"
+      if $result->response->code == 404;
+
+    return $result->count ? 0 : 1;
 }
 
 method exists_on_github {
