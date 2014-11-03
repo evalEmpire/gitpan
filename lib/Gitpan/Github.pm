@@ -89,13 +89,14 @@ method get_repo_info() {
     $self->dist_log( "Getting Github repo info for $repo as $repo_on_github" );
 
     my $result  = $self->pithub->repos->get;
-    my $content = $result->content;
-    if( !$result->success ) {
-        return if $result->content->{message} eq 'Not Found';
-        croak "Error retrieving info about @{[$self->owner]}/@{[$self->repo_on_github]}: ".$result->response->mo->as_json
-    }
 
-    return $content;
+    return if $result->response->code == 404;
+
+    return $result->content if $result->success;
+
+    croak "Error retrieving repo info about @{[$self->owner]}/$repo_on_github: ".$result->response->mo->as_json;
+
+    return;
 }
 
 method is_empty() {
