@@ -85,24 +85,17 @@ after BUILD => method(...) {
 method get_repo_info() {
     my $repo           = $self->repo;
     my $repo_on_github = $self->repo_name_on_github;
-    my $owner          = $self->owner;
 
     $self->dist_log( "Getting Github repo info for $repo as $repo_on_github" );
 
-    my $repo_obj;
-    try {
-        $repo_obj = $self->repos->get($owner, $repo_on_github);
+    my $result  = $self->pithub->repos->get;
+    my $content = $result->content;
+    if( !$result->success ) {
+        return if $result->content->{message} eq 'Not Found';
+        croak "Error retrieving info about @{[$self->owner]}/@{[$self->repo_on_github]}: ".$result->response->mo->as_json
     }
-    catch {
-        if( /^Not Found\b/ ) {
-            return 0
-        }
-        else {
-            croak "Error checking if a $owner/$repo_on_github exists: $_";
-        }
-    };
 
-    return $repo_obj;
+    return $content;
 }
 
 method is_empty() {
