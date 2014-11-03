@@ -74,6 +74,7 @@ note "create and delete repos"; {
     $gh->delete_repo_if_exists;
 
     ok !$gh->_exists_on_github_cache, "delete unsets the exists cache";
+    sleep 1;
     ok !$gh->exists_on_github;
 }
 
