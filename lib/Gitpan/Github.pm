@@ -5,11 +5,29 @@ use Gitpan::perl5i;
 use Gitpan::OO;
 use Gitpan::Types;
 use Pithub;
+use Encode;
 
-extends 'Net::GitHub::V3';
 with 'Gitpan::Role::HasConfig', 'Gitpan::Role::CanBackoff';
 
-use Encode;
+method distname { return $self->pithub->repo }
+with "Gitpan::Role::CanDistLog";
+
+haz "repo" =>
+  required      => 1;
+
+haz "owner" =>
+  is            => 'ro',
+  isa           => Str,
+  lazy          => 1,
+  default       => method {
+      return $self->config->github_owner;
+  };
+
+haz 'token' =>
+  lazy          => 1,
+  default       => method {
+      return $self->config->github_access_token;
+  };
 
 haz pithub =>
   is            => 'ro',
@@ -19,17 +37,11 @@ haz pithub =>
       return Pithub->new(
           user                  => $self->owner,
           repo                  => $self->repo_name_on_github,
-          token                 => $self->access_token,
+          token                 => $self->token,
           per_page              => 100,
           auto_pagination       => 1,
       );
   };
-
-method distname { return $self->repo }
-with "Gitpan::Role::CanDistLog";
-
-haz "repo" =>
-  required      => 1;
 
 haz "repo_name_on_github" =>
   is            => 'ro',
@@ -45,20 +57,6 @@ haz "repo_name_on_github" =>
       return $repo;
   };
 
-haz "owner" =>
-  is            => 'ro',
-  isa           => Str,
-  lazy          => 1,
-  default       => method {
-      return $self->config->github_owner;
-  };
-
-haz '+access_token' =>
-  lazy          => 1,
-  default       => method {
-      return $self->config->github_access_token;
-  };
-
 haz "remote_host" =>
   is            => 'rw',
   isa           => Str,
@@ -71,16 +69,6 @@ haz "_exists_on_github_cache" =>
   is            => 'rw',
   isa           => Bool,
   default       => 0;
-
-# BUILD in Moo roles don't appear to stack nicely, so we
-# go around it.
-after BUILD => method(...) {
-    if( $self->owner && $self->repo ) {
-        $self->set_default_user_repo($self->owner, $self->repo);
-    }
-
-    return;
-};
 
 method get_repo_info() {
     my $repo           = $self->repo;
@@ -231,7 +219,7 @@ method branch_info(
 method remote() {
     my $owner = $self->owner;
     my $repo  = $self->repo_name_on_github;
-    my $token = $self->access_token;
+    my $token = $self->token;
     my $host  = $self->remote_host;
 
     return qq[https://$token:\@$host/$owner/$repo.git];
