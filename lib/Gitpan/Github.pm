@@ -13,6 +13,7 @@ method distname { return $self->pithub->repo }
 with "Gitpan::Role::CanDistLog";
 
 haz "repo" =>
+  is            => 'ro',
   required      => 1;
 
 haz "owner" =>
@@ -24,6 +25,7 @@ haz "owner" =>
   };
 
 haz 'token' =>
+  is            => 'ro',
   lazy          => 1,
   default       => method {
       return $self->config->github_access_token;
@@ -58,7 +60,7 @@ haz "repo_name_on_github" =>
   };
 
 haz "remote_host" =>
-  is            => 'rw',
+  is            => 'ro',
   isa           => Str,
   lazy          => 1,
   default       => method {
