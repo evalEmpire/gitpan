@@ -65,6 +65,19 @@ haz "remote_host" =>
       return $self->config->github_remote_host;
   };
 
+haz "remote" =>
+  is            => 'ro',
+  isa           => Str,
+  lazy          => 1,
+  default       => method {
+      my $owner = $self->owner;
+      my $repo  = $self->repo_name_on_github;
+      my $token = $self->token;
+      my $host  = $self->remote_host;
+
+      return qq[https://$token:\@$host/$owner/$repo.git];
+  };
+
 haz "_exists_on_github_cache" =>
   is            => 'rw',
   isa           => Bool,
@@ -214,15 +227,6 @@ method branch_info(
     croak "Could not get the Github branch info for $branch" if !$result->success;
 
     return $result->content;
-}
-
-method remote() {
-    my $owner = $self->owner;
-    my $repo  = $self->repo_name_on_github;
-    my $token = $self->token;
-    my $host  = $self->remote_host;
-
-    return qq[https://$token:\@$host/$owner/$repo.git];
 }
 
 method change_repo_info(%changes) {
