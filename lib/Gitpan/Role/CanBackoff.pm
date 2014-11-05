@@ -16,9 +16,22 @@ method do_with_backoff(Int :$times=4, CodeRef :$code!, CodeRef :$check) {
         my $return = $code->();
         return $return if $self->$check($return);
 
-        # .5 1 2 4 8 ...
-        sleep(2**($time-1)/2) unless $time == $times;
+        $self->backoff(tries => $time, max_tries => $times);
     }
+
+    return;
+}
+
+
+method backoff(
+    Int :$tries!,
+    Int :$max_tries
+) {
+    # Infinity is not recognized as an integer
+    $max_tries //= "Inf";
+
+    # .5 1 2 4 8 ...
+    sleep(2**($tries-1)/2) if $tries < $max_tries;
 
     return;
 }

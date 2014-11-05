@@ -16,6 +16,30 @@ note "Setup class for testing"; {
     }
 }
 
+subtest "backoff()" => sub {
+    my $obj = Foo->new;
+
+    test_runtime(
+        code => sub { $obj->backoff( tries => 3 ) },
+        time => 2
+    );
+
+    test_runtime(
+        code => sub { $obj->backoff( tries => 2, max_tries => 2 ) },
+        time => 0
+    );
+
+    test_runtime(
+        code => sub { $obj->backoff( tries => 2, max_tries => 1 ) },
+        time => 0
+    );
+
+    test_runtime(
+        code => sub { $obj->backoff( tries => 2, max_tries => 3 ) },
+        time => 1
+    );
+};
+
 subtest "do_with_backoff()" => sub {
     my $obj = Foo->new;
 

@@ -97,21 +97,22 @@ func new_dist(...) {
     return new_dist_or_repo( "Gitpan::Dist::SelfDestruct", @_ );
 }
 
-use Time::HiRes qw(time);
+
+use Time::HiRes qw(gettimeofday);
 func test_runtime(
     CodeRef :$code!,
     Num     :$time!,
     Num     :$delta     = 0.1
 ) {
-    my $start_time = time;
+    my $start_time = gettimeofday;
     $code->();
-    my $end_time   = time;
+    my $end_time   = gettimeofday;
 
     my $time_spent = $end_time - $start_time;
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
     Test::More::cmp_ok(
-        $time_spent - $time, "<=", $delta,
+        abs($time_spent - $time), "<=", $delta,
         "$time_spent expected about $time"
     );
 }
