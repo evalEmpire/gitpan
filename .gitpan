@@ -172,6 +172,7 @@ backpan_normalize_dist_names:
     Mojolicious-Plugin-Datetime:        Mojolicious-Plugin-DateTime
     Mojolicious-Plugin-DocRenderer:     Mojolicious-Plugin-DOCRenderer
     mojox-session:                      MojoX-Session
+    mon:                                mon-app
     mousex-getopt:                      MouseX-Getopt
     mpp:                                makepp
     Mpp:                                makepp
