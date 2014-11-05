@@ -85,28 +85,86 @@ haz "_exists_on_github_cache" =>
   isa           => Bool,
   default       => 0;
 
+method try_request(
+    Int :$max_tries = 3,
+    CodeRef :$code!,
+    CodeRef :$is_done  = method($result) {
+        return $result->success;
+    },
+    CodeRef :$is_error = method($result) {
+        my $code = $result->response->code;
+
+        # We made a mistake in our request.
+        # See https://developer.github.com/v3/#client-errors
+        return(1) if $code == 400 || $code == 422;
+
+        # Anything else should be retried.  Might be a hiccup.
+        return(0);
+    },
+    CodeRef :$final_check = sub { 0 }
+) {
+    my $result;
+    for my $tries (1..$max_tries) {
+        $result = $code->();
+        return $result if $self->$is_done($result);
+
+        $self->_try_request_error(
+            result => $result
+        ) if $self->$is_error($result);
+
+        $self->backoff( tries => $tries, max_tries => $max_tries );
+    }
+
+    return $result if $self->$final_check($result);
+
+    $self->_try_request_error( result => $result );
+
+    return;
+}
+
+
+method _try_request_error(
+    Pithub::Result :$result!,
+    ArrayRef       :$caller = [caller(2)]
+) {
+    my $function = $caller->[3];
+    my $response = $result->response;
+    croak <<"ERROR";
+Error in $function, HTTP @{[$response->status_line]}
+@{[$result->mo->as_json]}
+ERROR
+
+    return;
+}
+
+
 method get_repo_info() {
     my $repo           = $self->repo;
     my $repo_on_github = $self->repo_name_on_github;
 
     $self->dist_log( "Getting Github repo info for $repo as $repo_on_github" );
 
-    my $result  = $self->pithub->repos->get;
-
-    return if $result->response->code == 404;
+    my $result = $self->try_request(
+        code            => sub { return $self->pithub->repos->get },
+        final_check     => method($result) {
+            return 1 if $result->response->code == 404;
+        }
+    );
 
     return $result->content if $result->success;
-
-    croak "Error retrieving repo info about @{[$self->owner]}/$repo_on_github: ".$result->response->mo->as_json;
-
     return;
 }
 
 method is_empty() {
-    my $result = $self->pithub->repos->commits(per_page => 1)->list;
+    my $result = $self->try_request(
+        code => sub { return $self->pithub->repos->commits(per_page => 1)->list; },
+        is_done => method($result) {
+            return 1 if $result->success;
 
-    croak $self->repo_name_on_github." does not exist"
-      if $result->response->code == 404;
+            # Github returns this if the repository is empty.
+            return 1 if $result->response->code == 409;
+        }
+    );
 
     return $result->count ? 0 : 1;
 }
@@ -131,14 +189,18 @@ method create_repo(
 
     $self->dist_log( "Creating Github repo for $repo" );
 
-    my $result = $self->pithub->repos->create(
-        org     => $self->owner,
-        data    => {
-            name            => encode_utf8($repo),
-            description     => encode_utf8($desc),
-            homepage        => encode_utf8($homepage),
-            has_issues      => 0,
-            has_wiki        => 0,
+    my $result = $self->try_request(
+        code => sub {
+            $self->pithub->repos->create(
+                org     => $self->owner,
+                data    => {
+                    name            => encode_utf8($repo),
+                    description     => encode_utf8($desc),
+                    homepage        => encode_utf8($homepage),
+                    has_issues      => 0,
+                    has_wiki        => 0,
+                }
+            );
         }
     );
 
@@ -166,8 +228,17 @@ method delete_repo_if_exists() {
     return $self->delete_repo;
 }
 
-method default_success_check($return?) {
-    return $return ? 1 : 0;
+method default_success_check($result) {
+    return 1 if $result->success;
+
+    my $code = $result->response->code;
+    my $message = $result->content->{message};
+    $self->dist_log( "HTTP $code, $message" );
+
+    croak "Unexpected HTTP code $code: $message"
+      if $code == 400 or $code == 422;
+
+    return 0;
 }
 
 method delete_repo() {
@@ -176,25 +247,9 @@ method delete_repo() {
 
     $self->dist_log( "Deleting $repo on Github as $repo_on_github" );
 
-    my $result = $self->do_with_backoff(
-        code  => sub {
-            $self->pithub->repos->delete;
-        },
-        check => method($result) {
-            return 1 if $result->success;
-
-            my $code = $result->response->code;
-            my $message = $result->content->{message};
-            if( $code == 404 ) {
-                $self->dist_log( "Github $repo_on_github not found: $message" );
-            }
-            else {
-                $self->dist_log( "Error deleting $repo_on_github, HTTP $code: $message" );
-            }
-            return 0;
-        }
+    my $result = $self->try_request(
+        code  => sub { $self->pithub->repos->delete; }
     );
-    croak "Could not delete repository" unless $result->success;
 
     $self->_exists_on_github_cache(0);
 
@@ -204,29 +259,13 @@ method delete_repo() {
 method branch_info(
     Str :$branch //= 'master'
 ) {
-    my $result = $self->do_with_backoff(
-        times   => 6,
-        code    => sub {
+    my $result = $self->try_request(
+        max_tries       => 6,
+        code            => sub {
             $self->dist_log("Trying to get info for $branch");
             return $self->pithub->repos->branch( branch => $branch );
         },
-        check   => method($result) {
-            return 1 if $result->success;
-
-            my $code = $result->response->code;
-            my $message = $result->content->{message};
-            if( $code == 404 ) {
-                $self->dist_log( "Branch info: $message" );
-            }
-            else {
-                $self->dist_log( "Error getting branch info: HTTP $code, $message" );
-            }
-
-            return 0;
-        }
     );
-
-    croak "Could not get the Github branch info for $branch" if !$result->success;
 
     return $result->content;
 }
@@ -244,22 +283,13 @@ method change_repo_info(%changes) {
     $log_changes =~ s{\n}{\\n}g;
     $self->dist_log( "Changing @{[$self->repo]} (as $repo) info: $log_changes" );
 
-    my $result = $self->do_with_backoff(
+    my $result = $self->try_request(
         code    => sub {
             $self->dist_log("Trying to change the repository");
             return $self->pithub->repos->update(
                 data => \%changes,
             );
         },
-        check   => method($result) {
-            return 1 if $result->success;
-
-            my $code = $result->response->code;
-            my $message = $result->content->{message};
-            $self->dist_log( "HTTP $code: $message" );
-
-            return 0;
-        }
     );
 
     return $result;

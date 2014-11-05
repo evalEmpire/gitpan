@@ -100,7 +100,7 @@ subtest "branch_info" => sub {
 
     throws_ok {
         $gh->is_empty;
-    } qr/does not exist/;
+    } qr/404 Not Found/i;
 
     $gh->create_repo;
 
