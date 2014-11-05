@@ -735,6 +735,7 @@ skip:
         - ANDYD/5.003_07-2.U.tar.gz
         - ADARSHTP/-withoutworldwriteables.tar.gz
         - TZADIKV/-withoutworldwriteables.tar.gz
+        - KSTAR/20120109-NoSQL_and_MongoDB.tgz
 
 backpan_always_update: 0
 backpan_cache_ttl: 604800
