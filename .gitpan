@@ -640,6 +640,9 @@ backpan_normalize_releases:
     authors/id/T/TI/TIMA/0.21.zip:
         dist:    Net-Trackback
         version: 0.21
+    authors/id/N/NO/NOBJAS/0.0.3.tar.gz:
+        dist:    CGI-Session-Auth-Mouse-Role
+        version: 0.0.3
 
 skip:
     dists:
