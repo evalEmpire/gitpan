@@ -649,6 +649,9 @@ backpan_normalize_releases:
     authors/id/J/JI/JIPIPAYO/0.02.tar.gz:
         dist:    App-Dependencio
         version: 0.02
+    authors/id/H/HW/HWAT/0.02.tar.gz:
+        dist:    SWF-ForcibleConverter
+        version: 0.02
 
 skip:
     dists:
