@@ -223,6 +223,7 @@ backpan_normalize_dist_names:
     protocol-websocket:                 Protocol-WebSocket
     purplewiki:                         PurpleWiki
     quantum-usrn:                       Quantum-Usrn
+    RADIUS_XMLParser:                   RADIUS-XMLParser
     reaper:                             Reaper
     routes-tiny:                        Routes-Tiny
     rt-extension-escalationdates:       RT-Extension-EscalationDates
