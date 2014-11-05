@@ -4,8 +4,6 @@ use lib 't/lib';
 use Gitpan::perl5i;
 use Gitpan::Test;
 
-use Time::HiRes qw(time);
-
 note "Setup class for testing"; {
     package Foo;
     use Gitpan::OO;
@@ -42,12 +40,10 @@ subtest "do_with_backoff()" => sub {
 subtest "do_with_backoff timing" => sub {
     my $obj = Foo->new;
 
-    my $start_time = time;
-    $obj->do_with_backoff( times => 4, code => sub { 0 } );
-    my $end_time   = time;
-    my $time_spent = $end_time - $start_time;
-
-    cmp_ok $time_spent - 3.5, "<=", 0.1, "$time_spent expected about 3.5";
+    test_runtime(
+        code    => sub { $obj->do_with_backoff( times => 4, code => sub { 0 } ) },
+        time    => 3.5
+    );
 };
 
 done_testing;

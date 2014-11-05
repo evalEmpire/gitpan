@@ -25,6 +25,7 @@ method import($class: ...) {
     (\&new_repo)->alias( $caller.'::new_repo' );
     (\&new_dist)->alias( $caller.'::new_dist' );
     (\&rand_distname)->alias( $caller.'::rand_distname' );
+    (\&test_runtime)->alias( $caller.'::test_runtime' );
 
     return;
 }
@@ -94,6 +95,25 @@ func new_repo(...) {
 
 func new_dist(...) {
     return new_dist_or_repo( "Gitpan::Dist::SelfDestruct", @_ );
+}
+
+use Time::HiRes qw(time);
+func test_runtime(
+    CodeRef :$code!,
+    Num     :$time!,
+    Num     :$delta     = 0.1
+) {
+    my $start_time = time;
+    $code->();
+    my $end_time   = time;
+
+    my $time_spent = $end_time - $start_time;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+    Test::More::cmp_ok(
+        $time_spent - $time, "<=", $delta,
+        "$time_spent expected about $time"
+    );
 }
 
 
