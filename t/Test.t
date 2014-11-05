@@ -68,4 +68,21 @@ subtest "new_dist" => sub {
 };
 
 
+subtest "deleting a repo twice" => sub {
+    {
+        my $repo1 = new_repo;
+        $repo1->github->create_repo;
+
+        my $repo2 = new_repo(
+            distname    => $repo1->distname,
+            overwrite   => 0,
+        );
+
+        # Make sure the repo is actually created.
+        sleep 1;
+    }
+
+    pass("new_repo() won't try to delete the same repo twice");
+};
+
 done_testing;

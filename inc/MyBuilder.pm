@@ -13,7 +13,7 @@ sub ACTION_build {
 
     # Install distributions from src/ as needed.
     for my $archive (path( $self->base_dir, "src" )->children) {
-        my($dist, $version) = $archive->basename =~ /^(.*)-([\d_.]+)\./;
+        my($dist, $version) = $archive->basename =~ /^(.*)-([\d_.]+)(?:-TRIAL)?\./;
         my $module = $dist;
         $module =~ s{-}{::}g;
         if( !eval "require $module" or

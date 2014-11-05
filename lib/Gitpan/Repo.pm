@@ -98,20 +98,16 @@ method delete_repo( Bool :$wait = 0 ) {
 
 
 method wait_until_deleted() {
-    my $ok = $self->do_with_backoff(
-        code => sub { !$self->github->exists_on_github }
-    );
-    croak "Repo was not deleted in time" unless $ok;
+    croak "Repo was not deleted in time"
+      if $self->github->exists_on_github( retry_if_not_found => 0 );
 
     return 1;
 }
 
 
 method wait_until_created() {
-    my $ok = $self->do_with_backoff(
-        code => sub { $self->github->exists_on_github }
-    );
-    croak "Repo was not created in time" unless $ok;
+    croak "Repo was not created in time"
+      if !$self->github->exists_on_github( retry_if_not_found => 1 );
 
     return 1;
 }

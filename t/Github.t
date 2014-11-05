@@ -78,19 +78,41 @@ note "create and delete repos"; {
 }
 
 
-subtest "branch_info" => sub {
+subtest "change_repo_info" => sub {
     my $gh = Gitpan::Github->new(
         repo => rand_distname()
     );
     $gh->create_repo;
 
-    ok $gh->is_empty, "is_empty";
+    $gh->change_repo_info(
+        description             => "For testing",
+        retry_if_not_found      => 1
+    );
+    my $info = $gh->get_repo_info;
+    is $info->{description}, "For testing";
+};
+
+
+subtest "branch_info" => sub {
+    my $gh = Gitpan::Github->new(
+        repo => rand_distname()
+    );
+
+    throws_ok {
+        $gh->is_empty( retry_if_not_found => 1 );
+    } qr/404 Not Found/i;
+
+    $gh->create_repo;
+
+    ok $gh->is_empty( retry_if_not_found => 1 ), "is_empty";
 
     require Gitpan::Git;
     my $git = Gitpan::Git->clone(
         url             => $gh->remote,
         distname        => $gh->distname
     );
+    note $git->dist_log_file;
+
     $git->repo_dir->child("foo")->touch;
     $git->add_all;
     $git->commit( message => "for testing" );
@@ -101,11 +123,12 @@ subtest "branch_info" => sub {
         $git->push;
         note "push done";
     };
-    my $info = $gh->branch_info;
+    my $info = $gh->branch_info( retry_if_not_found => 1 );
     $child->wait;
 
     ok !$gh->is_empty, "!is_empty";
     is $info->{commit}{sha}, $git->head->target->id, "git and Github match after push";
 };
+
 
 done_testing();
