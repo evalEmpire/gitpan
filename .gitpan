@@ -149,6 +149,7 @@ backpan_normalize_dist_names:
     log-log4perl-layout-gelf:           Log-Log4perl-Layout-GELF
     logic-kleene:                       Logic-Kleene
     Macro:                              Text-MacroScript
+    MakeMaker:                          ExtUtils-MakeMaker
     Math-gsl:                           Math-GSL
     Mail-ispmailgate:                   Mail-IspMailGate
     mail-sendmail:                      Mail-Sendmail
