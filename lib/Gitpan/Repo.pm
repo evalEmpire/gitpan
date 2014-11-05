@@ -233,7 +233,7 @@ method releases() {
 
 
 method are_git_and_github_on_the_same_commit() {
-    my $branch_info = $self->github->branch_info;
+    my $branch_info = $self->github->branch_info( retry_if_not_found => 1 );
     return $self->git->head->target->id eq $branch_info->{commit}{sha};
 }
 
