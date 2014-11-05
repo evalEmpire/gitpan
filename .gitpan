@@ -231,6 +231,8 @@ backpan_normalize_dist_names:
     rt-extension-mandatoryfields:       RT-Extension-MandatoryFields
     rt-extension-stallfutureticket:     RT-Extension-StallFutureTicket
     sane:                               sane-PUNYTAN
+    scalar-reftype                      Scalar-RefType
+    Scalar-Reftype                      Scalar-RefType
     SDL_perl:                           SDL_Perl
     sepia:                              Sepia
     sequin:                             Sequin
@@ -618,6 +620,10 @@ backpan_normalize_releases:
         dist:    mirrors
     authors/id/J/JR/JROCKWAY/AddressBook-0.03.tar.gz:
         dist:    AddressBook-JROCKWAY
+    authors/id/H/HE/HEIKO/Scalar-RefType-0.01.tar.gz:
+        dist:    Scalar-LockRefType
+    authors/id/H/HE/HEIKO/Scalar-RefType-0.02.tar.gz:
+        dist:    Scalar-LockRefType
 
 skip:
     dists:
