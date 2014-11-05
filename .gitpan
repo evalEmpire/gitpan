@@ -652,6 +652,15 @@ backpan_normalize_releases:
     authors/id/H/HW/HWAT/0.02.tar.gz:
         dist:    SWF-ForcibleConverter
         version: 0.02
+    authors/id/S/SE/SEANO/pscope-03-31.tgz:
+        dist:    Sepia
+        version  0.331
+    authors/id/S/SE/SEANO/pscope-04-02.tgz:
+        dist:    Sepia
+        version: 0.402
+    authors/id/S/SE/SEANO/pscope-04-03.tgz:
+        dist:    Sepia
+        version: 0.403
 
 skip:
     dists:
