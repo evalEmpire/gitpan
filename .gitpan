@@ -195,7 +195,7 @@ backpan_normalize_dist_names:
     Net-SNMP-Mixin-Dot1abLLDP:          Net-SNMP-Mixin-Dot1abLldp
     Net-STOMP:                          Net-Stomp
     net-tacacsplus:                     Net-TacacsPlus
-    Net-Trackback:                      Net-TrackBack
+    Net-TrackBack:                      Net-Trackback
     nlp-service:                        NLP-Service
     oauth-lite2:                        OAuth-Lite2
     Object-POOF:                        Object-Poof
@@ -637,6 +637,9 @@ backpan_normalize_releases:
     authors/id/P/PT/PTILL/mod_perl-1.11_1-apache-1.3b7dev-bin-bindist1-i386-win95-vc5.zip:
         dist:    mod_perl-apache-bin-win95
         version: 1.11_1
+    authors/id/T/TI/TIMA/0.21.zip:
+        dist:    Net-Trackback
+        version: 0.21
 
 skip:
     dists:
