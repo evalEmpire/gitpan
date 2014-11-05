@@ -643,6 +643,9 @@ backpan_normalize_releases:
     authors/id/N/NO/NOBJAS/0.0.3.tar.gz:
         dist:    CGI-Session-Auth-Mouse-Role
         version: 0.0.3
+    authors/id/S/SE/SEKIMURA/0.05.tar.gz:
+        dist:    Text-Markdown-Discount
+        version  0.05
 
 skip:
     dists:
