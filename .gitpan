@@ -12,6 +12,7 @@ backpan_normalize_dist_names:
     album:                              Album
     Algorithm-Mastermind:               Algorithm-MasterMind
     aol-toc:                            AOL-TOC
+    apache-session-ldap:                Apache-Session-LDAP
     App-MadEye:                         App-madeye
     App-Nopaste-Service-Dpaste:         App-Nopaste-Service-dpaste
     App-padadoy:                        App-Padadoy
@@ -60,9 +61,10 @@ backpan_normalize_dist_names:
     Crypt-AoN-Util:                     Crypt-AON-Util
     Crypt-TEA:                          Crypt-Tea
     Curses-DevKit:                      Curses-Devkit
-    daemonise:                          daemonise
+    daemonise:                          Daemonise
     dancer-serializer-messagepack:      Dancer-Serializer-Messagepack
     data-multihash:                     Data-Multihash
+    data-recursive-encode:              Data-Recursive-Encode
     Data-Unixish-ansi:                  Data-Unixish-ANSI
     Data-XpathLike:                     MarpaX-xPathLike
     Data-xPathLike:                     MarpaX-xPathLike
@@ -151,6 +153,7 @@ backpan_normalize_dist_names:
     Macro:                              Text-MacroScript
     MakeMaker:                          ExtUtils-MakeMaker
     Math-gsl:                           Math-GSL
+    Math-Gsl:                           Math-GSL
     Mail-ispmailgate:                   Mail-IspMailGate
     mail-sendmail:                      Mail-Sendmail
     marc-lint:                          MARC-Lint
@@ -165,6 +168,8 @@ backpan_normalize_dist_names:
     mogilefs-server:                    MogileFS-Server
     mojar-mysql:                        Mojar-Mysql
     mojar:                              Mojar
+    Mojo-MySQL:                         Mojo-mysql
+    Mojolicious-Plugin-Datetime:        Mojolicious-Plugin-DateTime
     Mojolicious-Plugin-DocRenderer:     Mojolicious-Plugin-DOCRenderer
     mojox-session:                      MojoX-Session
     mousex-getopt:                      MouseX-Getopt
