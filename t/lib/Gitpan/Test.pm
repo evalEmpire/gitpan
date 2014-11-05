@@ -40,7 +40,11 @@ method import($class: ...) {
     extends 'Gitpan::Dist';
 
     method DESTROY {
-        $self->delete_repo;
+        eval {
+            $self->delete_repo;
+        };
+
+        return;
     }
 }
 
@@ -54,7 +58,11 @@ method import($class: ...) {
     extends 'Gitpan::Repo';
 
     method DESTROY {
-        $self->delete_repo;
+        eval {
+            $self->delete_repo;
+        };
+
+        return;
     }
 }
 
