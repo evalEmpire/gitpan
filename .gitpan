@@ -237,8 +237,8 @@ backpan_normalize_dist_names:
     rt-extension-mandatoryfields:       RT-Extension-MandatoryFields
     rt-extension-stallfutureticket:     RT-Extension-StallFutureTicket
     sane:                               sane-PUNYTAN
-    scalar-reftype                      Scalar-RefType
-    Scalar-Reftype                      Scalar-RefType
+    scalar-reftype:                     Scalar-RefType
+    Scalar-Reftype:                     Scalar-RefType
     SDL_perl:                           SDL_Perl
     sepia:                              Sepia
     sequin:                             Sequin
@@ -645,7 +645,7 @@ backpan_normalize_releases:
         version: 0.0.3
     authors/id/S/SE/SEKIMURA/0.05.tar.gz:
         dist:    Text-Markdown-Discount
-        version  0.05
+        version: 0.05
     authors/id/J/JI/JIPIPAYO/0.02.tar.gz:
         dist:    App-Dependencio
         version: 0.02
