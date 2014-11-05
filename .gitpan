@@ -44,7 +44,7 @@ backpan_normalize_dist_names:
     cddb_get:                           CDDB_get
     CGI-Session-ID-UUID:                CGI-Session-ID-uuid
     Cgi-Simple:                         CGI-Simple
-    chart:                              App-Chart
+    chart:                              chart-app
     Chart-GnuPlot:                      Chart-Gnuplot
     CHEF-REST-Client:                   Chef-REST-Client
     CIPP-doc:                           CIPP-Doc
@@ -624,6 +624,10 @@ backpan_normalize_releases:
         dist:    Scalar-LockRefType
     authors/id/H/HE/HEIKO/Scalar-RefType-0.02.tar.gz:
         dist:    Scalar-LockRefType
+    authors/id/D/DB/DBONNER/chart-0.93.tar.gz:
+        dist:    Chart
+    authors/id/D/DB/DBONNER/chart-0.94.tar.gz:
+        dist:    Chart
 
 skip:
     dists:
