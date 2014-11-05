@@ -85,13 +85,19 @@ haz "_exists_on_github_cache" =>
   isa           => Bool,
   default       => 0;
 
+haz "retry_if_not_found" =>
+  is            => "rw",
+  isa           => Bool,
+  default       => 0;
+
 method try_request(
-    Int :$max_tries = 3,
-    CodeRef :$code!,
-    CodeRef :$is_done  = method($result) {
+    Int         :$max_tries = 3,
+    Bool        :$retry_if_not_found //= $self->retry_if_not_found,
+    CodeRef     :$code!,
+    CodeRef     :$is_done  = method($result) {
         return $result->success;
     },
-    CodeRef :$is_error = method($result) {
+    CodeRef     :$is_error = method($result) {
         my $code = $result->response->code;
 
         # We made a mistake in our request.
@@ -101,7 +107,7 @@ method try_request(
         # Anything else should be retried.  Might be a hiccup.
         return(0);
     },
-    CodeRef :$final_check = sub { 0 }
+    CodeRef     :$final_check = sub { 0 }
 ) {
     my $result;
     for my $tries (1..$max_tries) {
@@ -112,7 +118,13 @@ method try_request(
             result => $result
         ) if $self->$is_error($result);
 
+        my $http_code = $result->response->code;
+        return $result if !$retry_if_not_found && $http_code == 404;
+
         $self->backoff( tries => $tries, max_tries => $max_tries );
+
+        my $function = (caller(1))[3];
+        $self->dist_log( "Retrying $function: HTTP $http_code" );
     }
 
     return $result if $self->$final_check($result);
@@ -138,15 +150,18 @@ ERROR
 }
 
 
-method get_repo_info() {
+method get_repo_info(
+    Bool :$retry_if_not_found //= $self->retry_if_not_found
+) {
     my $repo           = $self->repo;
     my $repo_on_github = $self->repo_name_on_github;
 
     $self->dist_log( "Getting Github repo info for $repo as $repo_on_github" );
 
     my $result = $self->try_request(
-        code            => sub { return $self->pithub->repos->get },
-        final_check     => method($result) {
+        code                    => sub { return $self->pithub->repos->get },
+        retry_if_not_found      => $retry_if_not_found,
+        final_check             => method($result) {
             return 1 if $result->response->code == 404;
         }
     );
@@ -155,26 +170,31 @@ method get_repo_info() {
     return;
 }
 
-method is_empty() {
+method is_empty(
+    Bool :$retry_if_not_found //= $self->retry_if_not_found
+) {
     my $result = $self->try_request(
-        code => sub { return $self->pithub->repos->commits(per_page => 1)->list; },
+        code    => sub {
+            return $self->pithub->repos->commits(per_page => 1)->list;
+        },
         is_done => method($result) {
             return 1 if $result->success;
 
             # Github returns this if the repository is empty.
             return 1 if $result->response->code == 409;
-        }
+        },
+        retry_if_not_found => $retry_if_not_found,
     );
 
     return $result->count ? 0 : 1;
 }
 
-method exists_on_github {
+method exists_on_github(...) {
     $self->dist_log( "Checking if @{[ $self->repo ]} exists on Github" );
 
     return 1 if $self->_exists_on_github_cache;
 
-    my $info = $self->get_repo_info;
+    my $info = $self->get_repo_info(@_);
     $self->_exists_on_github_cache(1) if $info;
 
     return $info ? 1 : 0;
@@ -182,7 +202,8 @@ method exists_on_github {
 
 method create_repo(
     :$desc      //= "Read-only release history for @{[$self->repo]}",
-    :$homepage  //= "http://metacpan.org/release/@{[$self->repo]}"
+    :$homepage  //= "http://metacpan.org/release/@{[$self->repo]}",
+    Bool :$retry_if_not_found //= $self->retry_if_not_found
 )
 {
     my $repo = $self->repo;
@@ -201,7 +222,8 @@ method create_repo(
                     has_wiki        => 0,
                 }
             );
-        }
+        },
+        retry_if_not_found => $retry_if_not_found,
     );
 
     $self->_exists_on_github_cache(1);
@@ -211,7 +233,8 @@ method create_repo(
 
 method maybe_create(
     Str :$desc,
-    Str :$homepage
+    Str :$homepage,
+    Bool :$retry_if_not_found //= $self->retry_if_not_found
 )
 {
     my $repo = $self->repo;
@@ -220,12 +243,19 @@ method maybe_create(
     return $self->create_repo(
         desc        => $desc,
         homepage    => $homepage,
+        retry_if_not_found => $retry_if_not_found,
     );
 }
 
-method delete_repo_if_exists() {
-    return if !$self->exists_on_github;
-    return $self->delete_repo;
+method delete_repo_if_exists(
+    Bool :$retry_if_not_found //= $self->retry_if_not_found
+) {
+    return if !$self->exists_on_github(
+        retry_if_not_found => $retry_if_not_found,
+    );
+    return $self->delete_repo(
+        retry_if_not_found => $retry_if_not_found,
+    );
 }
 
 method default_success_check($result) {
@@ -241,14 +271,17 @@ method default_success_check($result) {
     return 0;
 }
 
-method delete_repo() {
+method delete_repo(
+    Bool :$retry_if_not_found //= $self->retry_if_not_found
+) {
     my $repo           = $self->repo;
     my $repo_on_github = $self->repo_name_on_github;
 
     $self->dist_log( "Deleting $repo on Github as $repo_on_github" );
 
     my $result = $self->try_request(
-        code  => sub { $self->pithub->repos->delete; }
+        code  => sub { $self->pithub->repos->delete; },
+        retry_if_not_found => $retry_if_not_found,
     );
 
     $self->_exists_on_github_cache(0);
@@ -257,7 +290,8 @@ method delete_repo() {
 }
 
 method branch_info(
-    Str :$branch //= 'master'
+    Str :$branch //= 'master',
+    Bool :$retry_if_not_found //= $self->retry_if_not_found,
 ) {
     my $result = $self->try_request(
         max_tries       => 6,
@@ -265,12 +299,16 @@ method branch_info(
             $self->dist_log("Trying to get info for $branch");
             return $self->pithub->repos->branch( branch => $branch );
         },
+        retry_if_not_found => $retry_if_not_found,
     );
 
     return $result->content;
 }
 
 method change_repo_info(%changes) {
+    my $retry_if_not_found =
+      delete $changes{retry_if_not_found} // $self->retry_if_not_found;
+
     return 1 unless keys %changes;
 
     my $repo = $self->repo_name_on_github;
@@ -290,6 +328,7 @@ method change_repo_info(%changes) {
                 data => \%changes,
             );
         },
+        retry_if_not_found => $retry_if_not_found
     );
 
     return $result;

@@ -74,7 +74,6 @@ note "create and delete repos"; {
     $gh->delete_repo_if_exists;
 
     ok !$gh->_exists_on_github_cache, "delete unsets the exists cache";
-    sleep 1;
     ok !$gh->exists_on_github;
 }
 
@@ -86,7 +85,8 @@ subtest "change_repo_info" => sub {
     $gh->create_repo;
 
     $gh->change_repo_info(
-        description => "For testing"
+        description             => "For testing",
+        retry_if_not_found      => 1
     );
     my $info = $gh->get_repo_info;
     is $info->{description}, "For testing";
@@ -99,12 +99,12 @@ subtest "branch_info" => sub {
     );
 
     throws_ok {
-        $gh->is_empty;
+        $gh->is_empty( retry_if_not_found => 1 );
     } qr/404 Not Found/i;
 
     $gh->create_repo;
 
-    ok $gh->is_empty, "is_empty";
+    ok $gh->is_empty( retry_if_not_found => 1 ), "is_empty";
 
     require Gitpan::Git;
     my $git = Gitpan::Git->clone(
@@ -123,7 +123,7 @@ subtest "branch_info" => sub {
         $git->push;
         note "push done";
     };
-    my $info = $gh->branch_info;
+    my $info = $gh->branch_info( retry_if_not_found => 1 );
     $child->wait;
 
     ok !$gh->is_empty, "!is_empty";
