@@ -646,6 +646,9 @@ backpan_normalize_releases:
     authors/id/S/SE/SEKIMURA/0.05.tar.gz:
         dist:    Text-Markdown-Discount
         version  0.05
+    authors/id/J/JI/JIPIPAYO/0.02.tar.gz:
+        dist:    App-Dependencio
+        version: 0.02
 
 skip:
     dists:
