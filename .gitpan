@@ -654,7 +654,7 @@ backpan_normalize_releases:
         version: 0.02
     authors/id/S/SE/SEANO/pscope-03-31.tgz:
         dist:    Sepia
-        version  0.331
+        version: 0.331
     authors/id/S/SE/SEANO/pscope-04-02.tgz:
         dist:    Sepia
         version: 0.402
