@@ -23,8 +23,8 @@ with 'Gitpan::Role::HasBackpanIndex',
 
 method import_from_distnames(
     ArrayRef $names,
-    Int  :$num_workers           = 2,
-    Bool :$overwrite_repo           = 0,
+    Int  :$num_workers          //= 2,
+    Bool :$overwrite_repo         = 0,
 ) {
     my $fork_man = Parallel::ForkManager->new($num_workers);
 
@@ -63,8 +63,8 @@ method import_from_distnames(
 
 method import_from_backpan_dists(
     DBIx::Class::ResultSet $bp_dists,
-    Int  :$num_workers  = 2,
-    Bool :$overwrite_repo  = 0
+    Int  :$num_workers          //= 2,
+    Bool :$overwrite_repo         = 0
 ) {
     my $fork_man = Parallel::ForkManager->new($num_workers);
 
@@ -108,13 +108,16 @@ method import_from_backpan_dists(
 method import_dists(
     ArrayRef :$search_args,
     ArrayRef :$order_by_args,
-    Int      :$num_workers      = 2
+    Int      :$num_workers
 ) {
     my $bp_dists = $self->backpan_index->dists;
     $bp_dists = $bp_dists->search_rs(@$search_args) if $search_args;
     $bp_dists->order_by(@$order_by_args)            if $order_by_args;
 
-    $self->import_from_backpan_dists($bp_dists);
+    $self->import_from_backpan_dists(
+        $bp_dists,
+        num_workers     => $num_workers
+    );
 
     return;
 }
