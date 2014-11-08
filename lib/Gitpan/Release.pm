@@ -157,11 +157,12 @@ method extract {
     $ae->extract( to => $dir ) or
       croak "Couldn't extract $archive to $dir: ". $ae->error;
 
+    croak "Archive is empty"                    if !$ae->extract_path;
+    croak "Extraction directory does not exist" if !-e $ae->extract_path;
+
     $self->extract_dir( $ae->extract_path );
 
     $self->fix_permissions;
-
-    croak "Extraction directory does not exist" unless -e $self->extract_dir;
 
     return $self->extract_dir;
 }
@@ -174,7 +175,9 @@ method fix_permissions {
 
     require File::Find;
     File::Find::find(sub {
-        -d $_ ? $_->path->chmod("u+rx") : $_->path->chmod("u+r");
+        -d $_ ? $_->path->chmod("u+rx") :
+        -f $_ ? $_->path->chmod("u+r")  :
+                1;
     }, $self->extract_dir);
 
     return;
