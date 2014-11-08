@@ -88,6 +88,13 @@ haz "gitpan_dir" =>
       return "$ENV{HOME}/gitpan"->path;
   };
 
+haz "gitpan_latest_imported_release_timestamp" =>
+  is            => 'ro',
+  isa           => Path,
+  default       => method {
+      return $self->gitpan_dir->child(".latest_imported_release");
+  };
+
 haz "gitpan_log_dir" =>
   is            => 'ro',
   isa           => Path,

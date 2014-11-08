@@ -68,20 +68,32 @@ method select_dists(
 
 method import_from_backpan_dists(
     DBIx::Class::ResultSet :$bp_dists!,
+    Bool        :$all_dists,
     Int         :$num_workers,
     Bool        :$overwrite_repo,
 ) {
+    $bp_dists = $self->select_dists(
+        bp_dists        => $bp_dists,
+        since           => $self->read_latest_release_timestamp
+    ) if $all_dists;
+
     my $iter = sub {
         my $bp_dist = $bp_dists->next;
         return unless $bp_dist;
         return $bp_dist->name;
     };
 
-    return $self->import_from_iterator(
+    my $latest_release = $self->latest_release_date;
+
+    my $ret = $self->import_from_iterator(
         iterator        => $iter,
         num_workers     => $num_workers,
         overwrite_repo  => $overwrite_repo
-    );    
+    );
+
+    $self->write_latest_release_timestamp($latest_release) if $all_dists;
+
+    return $ret;
 }
 
 
@@ -143,4 +155,26 @@ method import_dist(
 ) {
     $dist->delete_repo if $overwrite_repo;
     $dist->import_releases;
+}
+
+
+method latest_release_date() {
+    return $self->backpan_index->releases->get_column("date")->max;
+}
+
+
+method read_latest_release_timestamp() {
+    my $timestamp_file = $self->config->gitpan_latest_imported_release_timestamp;
+    return 0 if !-e $timestamp_file;
+
+    my($timestamp) = $timestamp_file->lines(
+        {count => 1, chomp => 1}
+    );
+    return $timestamp;
+}
+
+
+method write_latest_release_timestamp( Str $date ) {
+    my $timestamp_file = $self->config->gitpan_latest_imported_release_timestamp;
+    return $timestamp_file->spew($date);
 }
