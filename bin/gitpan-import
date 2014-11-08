@@ -33,13 +33,16 @@ if( @ARGV ) {
     );
 }
 else {
-    $gitpan->import_from_backpan_dists(
+    my $bp_dists = $gitpan->select_dists(
         limit           => $opts{limit},
         name_like       => $opts{name_like},
         author          => $opts{author},
         sort            => $opts{sort},
         random          => $opts{random},
         since           => $opts{since},
+    );
+    $gitpan->import_from_backpan_dists(
+        bp_dists        => $bp_dists,
         num_workers     => $opts{workers},
         overwrite_repo  => $opts{overwrite_repo},
     );

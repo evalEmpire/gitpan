@@ -39,10 +39,8 @@ method import_from_distnames(
 }
 
 
-method import_from_backpan_dists(
+method select_dists(
     DBIx::Class::ResultSet :$bp_dists = $self->backpan_index->dists,
-    Int         :$num_workers,
-    Bool        :$overwrite_repo,
     Maybe[Int]  :$limit,
     Maybe[Str]  :$name_like,
     Maybe[Str]  :$author,
@@ -64,6 +62,15 @@ method import_from_backpan_dists(
 
     $bp_dists = $bp_dists->search( undef, { rows => $limit })           if $limit;
 
+    return $bp_dists;
+}
+
+
+method import_from_backpan_dists(
+    DBIx::Class::ResultSet :$bp_dists!,
+    Int         :$num_workers,
+    Bool        :$overwrite_repo,
+) {
     my $iter = sub {
         my $bp_dist = $bp_dists->next;
         return unless $bp_dist;
