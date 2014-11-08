@@ -25,7 +25,6 @@ GetOptions(
 
 my $gitpan = Gitpan->new;
 
-my @dists;
 if( @ARGV ) {
     $gitpan->import_from_distnames(
         \@ARGV,
@@ -34,38 +33,15 @@ if( @ARGV ) {
     );
 }
 else {
-    my $dists = $gitpan->backpan_index->dists;
-
-    if( $opts{since} ) {
-        $dists = $dists->search( latest_date => \">= $opts{since}" );
-    }
-
-    if( $opts{random} ) {
-        my $num = $opts{random};
-
-        $dists = $dists->search( undef, { order_by => \'random()', rows => $num } );
-    }
-    elsif( $opts{sort} ) {
-        $dists = $dists->search( undef, { order_by => 'name' } );
-    }
-
-    if( $opts{author} ) {
-        $dists = $dists->search({ "releases.cpanid" => $opts{author} },
-                                { join => "releases", distinct => 1 });
-    }
-
-    if( $opts{name_like} ) {
-        $dists = $dists->search({ name => { -like => $opts{name_like} } });
-    }
-
-    if( $opts{limit} ) {
-        $dists = $dists->search( undef, { rows => $opts{limit} });
-    }
-
     $gitpan->import_from_backpan_dists(
-        $dists,
-        num_workers    => $opts{workers},
-        overwrite_repo => $opts{overwrite_repo},
+        limit           => $opts{limit},
+        name_like       => $opts{name_like},
+        author          => $opts{author},
+        sort            => $opts{sort},
+        random          => $opts{random},
+        since           => $opts{since},
+        num_workers     => $opts{workers},
+        overwrite_repo  => $opts{overwrite_repo},
     );
 }
 

@@ -40,10 +40,30 @@ method import_from_distnames(
 
 
 method import_from_backpan_dists(
-    DBIx::Class::ResultSet $bp_dists,
-    Int  :$num_workers,
-    Bool :$overwrite_repo
+    DBIx::Class::ResultSet :$bp_dists = $self->backpan_index->dists,
+    Int         :$num_workers,
+    Bool        :$overwrite_repo,
+    Maybe[Int]  :$limit,
+    Maybe[Str]  :$name_like,
+    Maybe[Str]  :$author,
+    Bool        :$sort,
+    Maybe[Int]  :$random,
+    Maybe[Str]  :$since
 ) {
+    $bp_dists = $bp_dists->search( latest_date => \">= $since" )        if $since;
+
+    $bp_dists = $bp_dists->search( undef, { order_by => \'random()',
+                                            rows => $random } )         if $random;
+
+    $bp_dists = $bp_dists->search( undef, { order_by => 'name' } )      if $sort;
+
+    $bp_dists = $bp_dists->search({ "releases.cpanid" => $author },
+                                  { join => "releases", distinct => 1 }) if $author;
+
+    $bp_dists = $bp_dists->search({ name => { -like => $name_like } })  if $name_like;
+
+    $bp_dists = $bp_dists->search( undef, { rows => $limit })           if $limit;
+
     my $iter = sub {
         my $bp_dist = $bp_dists->next;
         return unless $bp_dist;
