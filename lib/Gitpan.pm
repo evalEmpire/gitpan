@@ -72,10 +72,14 @@ method import_from_backpan_dists(
     Int         :$num_workers,
     Bool        :$overwrite_repo,
 ) {
-    $bp_dists = $self->select_dists(
-        bp_dists        => $bp_dists,
-        since           => $self->read_latest_release_timestamp
-    ) if $all_dists;
+    if( $all_dists ) {
+        my $since = $self->read_latest_release_timestamp;
+        $bp_dists = $self->select_dists(
+            bp_dists        => $bp_dists,
+            since           => $since
+        );
+        $self->main_log("Importing @{[$bp_dists->count]} dists changed since $since");
+    }
 
     my $iter = sub {
         my $bp_dist = $bp_dists->next;
