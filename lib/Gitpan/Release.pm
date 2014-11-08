@@ -175,7 +175,9 @@ method fix_permissions {
 
     require File::Find;
     File::Find::find(sub {
-        -d $_ ? $_->path->chmod("u+rx") : $_->path->chmod("u+r");
+        -d $_ ? $_->path->chmod("u+rx") :
+        -f $_ ? $_->path->chmod("u+r")  :
+                1;
     }, $self->extract_dir);
 
     return;

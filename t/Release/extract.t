@@ -41,4 +41,20 @@ subtest "empty archive" => sub {
 };
 
 
+subtest "bad links" => sub {
+    my $bad_links = new_ok "Gitpan::Release", [
+        distname        => 'SMTP-Server',
+        version         => '1.1'
+    ];
+
+    $bad_links->get;
+    $bad_links->extract;
+    ok $bad_links->extract_dir;
+
+    my $tmp = Path::Tiny->tempdir;
+    $bad_links->move($tmp);
+
+    ok -l $tmp->child("Server/.#Spam.pm");
+};
+
 done_testing;
