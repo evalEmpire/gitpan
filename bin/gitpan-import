@@ -11,13 +11,23 @@ my %opts = (
     overwrite_repo => 0,
 );
 
+# These are options which change what distributions are
+# imported.
+my @search_opts = qw(
+    author
+    random
+    name_like
+    since
+    limit
+);
+
 GetOptions(
     \%opts,
     "author=s",
     "random=i",
     "name_like=s",
-    "sort!",
     "since=s",
+    "sort!",
     "limit=i",
     "workers=i",
     "overwrite_repo!",
@@ -25,7 +35,6 @@ GetOptions(
 
 my $gitpan = Gitpan->new;
 
-my @dists;
 if( @ARGV ) {
     $gitpan->import_from_distnames(
         \@ARGV,
@@ -34,41 +43,30 @@ if( @ARGV ) {
     );
 }
 else {
-    my $dists = $gitpan->backpan_index->dists;
-
-    if( $opts{since} ) {
-        $dists = $dists->search( latest_date => \">= $opts{since}" );
-    }
-
-    if( $opts{random} ) {
-        my $num = $opts{random};
-
-        $dists = $dists->search( undef, { order_by => \'random()', rows => $num } );
-    }
-    elsif( $opts{sort} ) {
-        $dists = $dists->search( undef, { order_by => 'name' } );
-    }
-
-    if( $opts{author} ) {
-        $dists = $dists->search({ "releases.cpanid" => $opts{author} },
-                                { join => "releases", distinct => 1 });
-    }
-
-    if( $opts{name_like} ) {
-        $dists = $dists->search({ name => { -like => $opts{name_like} } });
-    }
-
-    if( $opts{limit} ) {
-        $dists = $dists->search( undef, { rows => $opts{limit} });
-    }
-
+    my $bp_dists = $gitpan->select_dists(
+        limit           => $opts{limit},
+        name_like       => $opts{name_like},
+        author          => $opts{author},
+        sort            => $opts{sort},
+        random          => $opts{random},
+        since           => $opts{since},
+    );
     $gitpan->import_from_backpan_dists(
-        $dists,
-        num_workers    => $opts{workers},
-        overwrite_repo => $opts{overwrite_repo},
+        bp_dists        => $bp_dists,
+        all_dists       => !_has_search_opts(\%opts),
+        num_workers     => $opts{workers},
+        overwrite_repo  => $opts{overwrite_repo},
     );
 }
 
+
+func _has_search_opts( HashRef $opts ) {
+    for my $search_opt (@search_opts) {
+        return 1 if exists $opts->{$search_opt};
+    }
+
+    return 0;
+}
 
 __END__
 
