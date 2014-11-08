@@ -48,7 +48,7 @@ method select_dists(
     Maybe[Int]  :$random,
     Maybe[Str]  :$since
 ) {
-    $bp_dists = $bp_dists->search( latest_date => \">= $since" )        if $since;
+    $bp_dists = $bp_dists->search({ latest_date => \">= $since" })      if $since;
 
     $bp_dists = $bp_dists->search( undef, { order_by => \'random()',
                                             rows => $random } )         if $random;
