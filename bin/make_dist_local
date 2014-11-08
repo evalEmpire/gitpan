@@ -11,12 +11,12 @@ use Gitpan::Dist;
 use Gitpan::Release;
 
 my $dist = Gitpan::Dist->new(
-    name        => shift
+    distname    => shift
 );
 
 my $backpan_dir = "t/backpan/"->path;
 
-for my $backpan_release ($dist->backpan_releases) {
+for my $backpan_release ($dist->backpan_releases->all) {
     my $path = $backpan_release->path;
     say $path;
 
