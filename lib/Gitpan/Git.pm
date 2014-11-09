@@ -170,6 +170,7 @@ method hooks_dir {
 }
 
 method garbage_collect {
+    $self->dist_log("git gc");
     $self->run("gc", "--quiet");
 }
 
