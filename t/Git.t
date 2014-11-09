@@ -409,7 +409,7 @@ note "Commit release"; {
     is $last_commit->author_gmtime,     1382763843;
 
     my $log_message = $last_commit->message;
-    like $log_message, qr{^Import of ETHER/Acme-LookOfDisapproval-0.005 from CPAN}ms;
+    like $log_message, qr{^Import of ETHER/Acme-LookOfDisapproval-0.005.tar.gz from CPAN}ms;
     like $log_message, qr{^gitpan-cpan-distribution:\s+Acme-LookOfDisapproval}ms;
     like $log_message, qr{^gitpan-cpan-version:\s+0.005}ms;
     like $log_message, qr{^gitpan-cpan-path:\s+ETHER/Acme-LookOfDisapproval-0.005.tar.gz}ms;

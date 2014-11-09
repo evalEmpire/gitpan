@@ -375,7 +375,7 @@ method commit_release(Gitpan::Release $release) {
     $self->dist_log( "Committing @{[ $release->short_path ]}" );
 
     my $commit_message = <<"MESSAGE";
-Import of @{[ $author->cpanid ]}/@{[ $release->distvname ]} from CPAN.
+Import of @{[ $release->short_path ]} from CPAN.
 
 gitpan-cpan-distribution: @{[ $release->distname ]}
 gitpan-cpan-version:      @{[ $release->version ]}
