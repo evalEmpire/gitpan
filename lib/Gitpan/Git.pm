@@ -193,6 +193,7 @@ method remotes() {
 
 method remote( Str $name, Str $action = "push" ) {
     my $remote = $self->remotes->{$name};
+    return unless $remote;
     return $action eq "push" ? $remote->pushurl || $remote->url : $remote->url;
 }
 

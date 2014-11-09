@@ -103,6 +103,9 @@ note "Remotes"; {
     );
 
     is_deeply $git->remotes, {};
+
+    ok !$git->remote("foo");
+
     $git->change_remote( foo => "http://example.com" );
 
     is $git->remote( "foo" ),         "http://example.com";
