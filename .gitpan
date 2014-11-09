@@ -743,6 +743,7 @@ skip:
         - TZADIKV/-withoutworldwriteables.tar.gz
         - KSTAR/20120109-NoSQL_and_MongoDB.tgz
         - PTILL/mod_perl-1.11_1-apache-1.3b7dev-bin-bindist1-i386-win95-vc5.zip
+        - JIMI/.\Tk-Markdown-withoutworldwriteables.tar.gz
 
 backpan_always_update: 0
 backpan_cache_ttl: 604800
