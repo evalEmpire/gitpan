@@ -99,7 +99,7 @@ note "get"; {
 
     my $res = $pony->get;
     ok $res->is_success;
-    ok -e $file;
+    ok -e $pony->archive_file;
 }
 
 
@@ -115,6 +115,19 @@ subtest "get - bad size" => sub {
 
     ok $release->get( check_size => 0 );
 };
+
+
+subtest "get from file urls" => sub {
+    my $pony = new_ok "Gitpan::Release", [
+        distname => 'Acme-Pony',
+        version  => '1.1.1'
+    ];
+
+    my $res = $pony->get;
+    ok $res->is_success;
+    is $pony->archive_file, ($pony->url->path.'')->path->absolute;
+};
+
 
 note "move"; {
     my $to = Path::Tiny->tempdir;

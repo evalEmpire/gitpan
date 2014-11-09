@@ -106,7 +106,7 @@ haz work_dir =>
   };
 
 haz archive_file =>
-  is            => 'ro',
+  is            => 'rw',
   isa           => AbsPath,
   lazy          => 1,
   default       => method {
@@ -130,16 +130,24 @@ method BUILDARGS($class: %args) {
 
 
 method get(
-    Bool :$check_size = 1
+    Bool :$check_size           = 1,
+    Bool :$get_file_urls        = 0
 ) {
     my $url = $self->url;
 
     $self->dist_log( "Getting $url" );
 
-    my $res = $self->ua->get(
-        $url,
-        ":content_file" => $self->archive_file.""
-    );
+    my $res;
+    if( !$get_file_urls && $url->scheme eq 'file' ) {
+        $self->archive_file($url->path);
+        $res = HTTP::Response->new( 200, "file URL not copied" );
+    }
+    else {
+        $res = $self->ua->get(
+            $url,
+            ":content_file" => $self->archive_file.""
+        );
+    }
 
     croak "Get from $url was not successful: ".$res->status_line
       unless $res->is_success;
