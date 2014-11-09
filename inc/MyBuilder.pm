@@ -20,7 +20,7 @@ sub ACTION_build {
             version->parse($version) > version->parse($module->VERSION)
         ) {
             say "Installing $archive.";
-            system "cpanm", $archive;
+            system "cpanm", "-n", $archive;
         }
     }
 
