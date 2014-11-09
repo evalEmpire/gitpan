@@ -83,4 +83,29 @@ END
 
 };
 
+
+subtest "tempdir cleanup" => sub {
+    my $pony_work_dir;
+    my $pony_archive_file;
+    {
+        my $pony = new_ok "Gitpan::Release", [
+            distname => 'Acme-Pony',
+            version  => '1.1.1'
+        ];
+
+        $pony->get( get_file_urls => 1 );
+        $pony->extract;
+        $pony_work_dir          = $pony->work_dir.'';
+        $pony_archive_file      = $pony->archive_file.'';
+    }
+
+    note "Make sure we didn't copy the temp objects.";
+    ok !ref $pony_work_dir;
+    ok !ref $pony_archive_file;
+
+    note "Temp files cleaned up in object destruction";
+    ok !-e $pony_work_dir;
+    ok !-e $pony_archive_file;
+};
+
 done_testing;
