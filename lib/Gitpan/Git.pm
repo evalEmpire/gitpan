@@ -154,15 +154,6 @@ method init_git_config() {
 }
 
 
-# Run quiet, run deep
-method run_quiet(...) {
-    my $opts = ref $_[-1] eq 'HASH' ? pop @_ : {};
-    $opts->{quiet} = 1;
-
-    return $self->run(@_, $opts);
-}
-
-
 method delete_repo {
     $self->dist_log("Deleting git repository @{[$self->repo_dir]}");
     $self->repo_dir->remove_tree({ safe => 0 });
@@ -179,7 +170,7 @@ method hooks_dir {
 }
 
 method garbage_collect {
-    $self->run_quiet("gc");
+    $self->run("gc", "--quiet");
 }
 
 # These sample hook files take up a surprising amount of space
@@ -246,7 +237,7 @@ method push(
     # returns, so if push fails try it again.
     my $ok = $self->do_with_backoff(
         code  => sub {
-            my $ret = eval { $self->run_quiet(push => $remote => $branch); 1 };
+            my $ret = eval { $self->run(push => "-q" => $remote => $branch); 1 };
             if( !$ret ) {
                 $self->dist_log( "Push failed: $@" );
             }
@@ -256,7 +247,7 @@ method push(
     );
     croak "Could not push to $remote $branch: $@" unless $ok;
 
-    $self->run_quiet( push => $remote => $branch => "--tags" );
+    $self->run( push => "-q" => $remote => $branch => "--tags" );
 
     return 1;
 }
@@ -268,13 +259,13 @@ method pull(
 ) {
     $self->dist_log( "Pulling from $remote $branch" );
 
-    my @options;
+    my @options = ("-q");
     @options->push("--ff-only") if $ff_only;
 
     my $ok = $self->do_with_backoff(
         code  => sub {
             my $ret = eval {
-                $self->run_quiet(pull => @options => $remote => $branch);
+                $self->run(pull => @options => $remote => $branch);
                 1;
             };
             if( !$ret ) {
@@ -337,8 +328,8 @@ method prepare_for_commits {
 
     # Make sure we're in the right branch and clean up
     # the staging area and working tree
-    $self->run_quiet("reset", "--hard", "HEAD");
-    $self->run_quiet("checkout", "-f", "master");
+    $self->run("reset", "-q", "--hard", "HEAD");
+    $self->run("checkout", "-q", "-f", "master");
 
     return;
 }
