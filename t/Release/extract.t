@@ -57,4 +57,30 @@ subtest "bad links" => sub {
     ok -l $tmp->child("Server/.#Spam.pm");
 };
 
+
+subtest "Too big for Github" => sub {
+    my $too_big = new_ok "Gitpan::Release", [
+        distname        => 'Lingua-JA-WordNet',
+        version         => '0.21'
+    ];
+
+    $too_big->get( check_size => 0 );
+    $too_big->extract;
+
+    my $small_file = $too_big->extract_dir->child("share/LICENSE.txt");
+    cmp_ok -s $small_file, ">", 1800, "small files preserved";
+
+    my $big_file = $too_big->extract_dir->child("share/wnjpn-1.1_and_synonyms-1.0.db");
+
+    my $big_file_size_in_megs = 101;
+    my $too_big_url = "http://backpan.cpan.org/authors/id/P/PA/PAWAPAWA/Lingua-JA-WordNet-0.21.tar.gz";
+
+    is $big_file->slurp_utf8, <<"END", "big files truncated";
+Sorry, this file has been truncated by Gitpan.
+It was $big_file_size_in_megs megs which exceeds Github's limit of 100 megs per file.
+You can get the file from the original archive at $too_big_url
+END
+
+};
+
 done_testing;

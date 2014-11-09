@@ -103,6 +103,19 @@ note "get"; {
 }
 
 
+subtest "get - bad size" => sub {
+    my $release = new_ok "Gitpan::Release", [
+        distname        => 'Lingua-JA-WordNet',
+        version         => '0.21'
+    ];
+
+    throws_ok {
+        $release->get();
+    } qr/File not fully retrieved, got 139495, expected 60831235/;
+
+    ok $release->get( check_size => 0 );
+};
+
 note "move"; {
     my $to = Path::Tiny->tempdir;
 

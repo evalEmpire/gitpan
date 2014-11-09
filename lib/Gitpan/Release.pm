@@ -117,6 +117,9 @@ haz extract_dir =>
   isa           => AbsPath,
   clearer       => "_clear_extract_dir";
 
+haz github_file_size_limit =>
+  isa           => Int,
+  default       => 100 * 1024 * 1024;
 
 method BUILDARGS($class: %args) {
     croak "distname & version or backpan_release required"
@@ -126,7 +129,9 @@ method BUILDARGS($class: %args) {
 }
 
 
-method get {
+method get(
+    Bool :$check_size = 1
+) {
     my $url = $self->url;
 
     $self->dist_log( "Getting $url" );
@@ -138,7 +143,10 @@ method get {
 
     croak "Get from $url was not successful: ".$res->status_line
       unless $res->is_success;
-    croak "File not fully retrieved" unless -s $self->archive_file == $self->size;
+
+    my $archive_size = -s $self->archive_file;
+    croak "File not fully retrieved, got $archive_size, expected @{[$self->size]}"
+      if $check_size && -s $self->archive_file != $self->size;
 
     return $res;
 }
@@ -164,6 +172,8 @@ method extract {
 
     $self->fix_permissions;
 
+    $self->fix_big_files;
+
     return $self->extract_dir;
 }
 
@@ -179,6 +189,33 @@ method fix_permissions {
         -f $_ ? $_->path->chmod("u+r")  :
                 1;
     }, $self->extract_dir);
+
+    return;
+}
+
+method fix_big_files() {
+    return unless -d $self->extract_dir;
+
+    my $limit = $self->github_file_size_limit;
+
+    require File::Find;
+    File::Find::find(sub {
+        return if !-f $_;
+        return if -s $_ < $limit;
+        $self->truncate_file($File::Find::name);
+    }, $self->extract_dir);
+}
+
+method truncate_file( $file ) {
+    my $limit = ($self->github_file_size_limit / 1024 / 1024)->round;
+    my $size  = ((-s $file) / 1024 / 1024)->round;
+    my $url   = "http://backpan.cpan.org/".$self->path;
+
+    $file->path->spew_utf8(<<"END");
+Sorry, this file has been truncated by Gitpan.
+It was $size megs which exceeds Github's limit of $limit megs per file.
+You can get the file from the original archive at $url
+END
 
     return;
 }
