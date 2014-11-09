@@ -241,8 +241,9 @@ method move(
 
     $self->dist_log( "Moving from $from to $to" );
 
-    use File::Copy::Recursive ();
-    File::Copy::Recursive::dirmove( $from, $to );
+    # Work around autodie failure.
+    # "Internal error in Fatal/autodie.  Leak-guard failure"
+    CORE::system( "mv \Q$from\E/* \Q$to\E" ) && croak "mv failed: $!";
 
     # Have to re-extract
     $self->_clear_extract_dir;

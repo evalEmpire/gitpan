@@ -25,7 +25,6 @@ my $build = MyBuilder->new(
         "Archive::Zip"          => '1.39',
         "BackPAN::Index"        => 0.39,
         "Email::Valid"          => '1.195',
-        "File::Copy::Recursive" => 0.38,
         "Git::Raw"              => '0.49',
         "Git::Repository"       => 1.300,
         "Git::Repository::Log"  => 1.312,
