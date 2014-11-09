@@ -290,8 +290,8 @@ method import_release(
 
     $git->commit_release($release);
 
-    $self->push if $push;
     $git->clean if $clean;
+    $self->push if $push;
 
     return;
 }
@@ -339,8 +339,8 @@ method import_releases(
         };
     }
 
-    $self->push         if $push;
     $self->git->clean   if $clean;
+    $self->push         if $push;
 
     return 1;
 }
