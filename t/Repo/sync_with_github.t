@@ -65,9 +65,11 @@ subtest "No Git, have Github" => sub {
     ok !$repo->git->is_empty;
     ok -e $repo->repo_dir->child("foo");
     ok $repo->github->exists_on_github;
+    sleep 1;
     ok $repo->are_git_and_github_on_the_same_commit;
 
     lives_ok { $repo->git->push; };
+    sleep 1;
     ok $repo->are_git_and_github_on_the_same_commit;
 };
 
@@ -104,9 +106,11 @@ subtest "Github & Git, Git is ahead" => sub {
     ok !$repo->git->is_empty;
     ok -e $repo->repo_dir->child("foo");
     ok $repo->github->exists_on_github;
+    sleep 1;
     ok !$repo->are_git_and_github_on_the_same_commit;
 
     lives_ok { $repo->git->push; };
+    sleep 1;
     ok $repo->are_git_and_github_on_the_same_commit;
 };
 
@@ -151,9 +155,11 @@ subtest "Github + Git repos, Git is behind" => sub {
     ok -e $repo->repo_dir->child("foo");
     ok -e $repo->repo_dir->child("bar");
     ok $repo->github->exists_on_github;
+    sleep 1;
     ok $repo->are_git_and_github_on_the_same_commit;
 
     lives_ok { $repo->git->push; };
+    sleep 1;
     ok $repo->are_git_and_github_on_the_same_commit;
 };
 
@@ -197,6 +203,7 @@ subtest "Github + Git repos, diverged" => sub {
     ok !$repo->is_prepared_for_commits;
     ok !$repo->is_prepared_for_push;
 
+    sleep 1;
     ok !$repo->are_git_and_github_on_the_same_commit;
 };
 
