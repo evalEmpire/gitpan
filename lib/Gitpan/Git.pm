@@ -239,7 +239,12 @@ method push(
     # returns, so if push fails try it again.
     my $ok = $self->do_with_backoff(
         code  => sub {
-            my $ret = eval { $self->run(push => "-q" => $remote => $branch); 1 };
+            my $ret = eval {
+                $self->run(push => "-q" => $remote => $branch, {
+                    fatal => "!0"
+                });
+                1;
+            };
             if( !$ret ) {
                 $self->dist_log( "Push failed: $@" );
             }
@@ -249,7 +254,12 @@ method push(
     );
     croak "Could not push to $remote $branch: $@" unless $ok;
 
-    $self->run( push => "-q" => $remote => $branch => "--tags" );
+    eval {
+        $self->run( push => "-q" => "-f" => $remote => $branch => "--tags", {
+            fatal => "!0"
+        });
+        1;
+    } or croak "Could not push tags to $remote $branch: $@";
 
     return 1;
 }

@@ -293,7 +293,7 @@ method import_release(
     $git->clean if $clean;
     $self->push if $push;
 
-    return;
+    return 1;
 }
 
 
