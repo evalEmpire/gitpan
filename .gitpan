@@ -634,9 +634,6 @@ backpan_normalize_releases:
         dist:    Chart
     authors/id/D/DB/DBONNER/chart-0.94.tar.gz:
         dist:    Chart
-    authors/id/P/PT/PTILL/mod_perl-1.11_1-apache-1.3b7dev-bin-bindist1-i386-win95-vc5.zip:
-        dist:    mod_perl-apache-bin-win95
-        version: 1.11_1
     authors/id/T/TI/TIMA/0.21.zip:
         dist:    Net-Trackback
         version: 0.21
@@ -745,6 +742,7 @@ skip:
         - ADARSHTP/-withoutworldwriteables.tar.gz
         - TZADIKV/-withoutworldwriteables.tar.gz
         - KSTAR/20120109-NoSQL_and_MongoDB.tgz
+        - PTILL/mod_perl-1.11_1-apache-1.3b7dev-bin-bindist1-i386-win95-vc5.zip
 
 backpan_always_update: 0
 backpan_cache_ttl: 604800
