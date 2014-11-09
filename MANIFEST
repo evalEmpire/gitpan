@@ -40,6 +40,7 @@ t/backpan/authors/id/C/CH/CHRWIN/date-spoken-german/date-spoken-german-0.02.tar.
 t/backpan/authors/id/C/CH/CHRWIN/date-spoken-german/date-spoken-german-0.03.tar.gz
 t/backpan/authors/id/C/CH/CHRWIN/date-spoken-german/Date-Spoken-German-0.04.tar.gz
 t/backpan/authors/id/C/CH/CHRWIN/date-spoken-german/Date-Spoken-German-0.05.tar.gz
+t/backpan/authors/id/C/CN/CNANDOR/Bundle-Slash-2.11.tar.gz
 t/backpan/authors/id/D/DC/DCANTRELL/Acme-Pony-1.1.1.tar.gz
 t/backpan/authors/id/D/DC/DCANTRELL/Acme-Pony-1.1.2.tar.gz
 t/backpan/authors/id/D/DH/DHOSS/Acme-Blarghy-McBlarghBlargh-0.001-03-09-2009.tar.gz
@@ -79,9 +80,12 @@ t/backpan/authors/id/L/LB/LBROCARD/Acme-Buffy-1.6.tar.gz
 t/backpan/authors/id/L/LD/LDACHARY/uri-2.00.tar.gz
 t/backpan/authors/id/L/LD/LDACHARY/uri-2.01.tar.gz
 t/backpan/authors/id/L/LD/LDACHARY/URIC-2.02.tar.gz
+t/backpan/authors/id/M/MA/MACGYVER/SMTP-Server-1.0.tar.gz
+t/backpan/authors/id/M/MA/MACGYVER/SMTP-Server-1.1.tar.gz
 t/backpan/authors/id/M/MA/MARCEL/-0.01.tar.gz
 t/backpan/authors/id/M/MA/MAXA/Acme-Maybe-0.01.tar.gz
 t/backpan/authors/id/M/MA/MAXA/Acme-Maybe-0.02.tar.gz
+t/backpan/authors/id/P/PA/PAWAPAWA/Lingua-JA-WordNet-0.21.tar.gz
 t/backpan/authors/id/P/PJ/PJACKLAM/Math-BigInt-1.99.1.tar.gz
 t/backpan/authors/id/P/PJ/PJACKLAM/Math-BigInt-1.9902.tar.gz
 t/backpan/authors/id/P/PJ/PJACKLAM/Math-BigInt-1.991.tar.gz
@@ -155,10 +159,12 @@ t/Dist/import_releases.t
 t/Git.t
 t/Git/prepare_for_commits.t
 t/Github.t
+t/Gitpan.t
 t/HasBackpanIndex.t
 t/HasConfig.t
 t/HasCPANAuthors.t
 t/HasUA.t
+t/import/bad_links.t
 t/import/Math-BigInt.t
 t/import/multiple_releases_same_version.t
 t/import/normalization.t
@@ -170,8 +176,10 @@ t/lib/Gitpan/Test.pm
 t/OO.t
 t/perl5i.t
 t/Release.t
+t/Release/extract.t
 t/Repo.t
 t/Repo/prepare_for_commits.t
 t/Repo/prepare_for_push.t
+t/Repo/sync_with_github.t
 t/Test.t
 t/Types.t

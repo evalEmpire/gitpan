@@ -4,7 +4,7 @@
       "Michael G. Schwern <schwern@pobox.com>"
    ],
    "dynamic_config" : 1,
-   "generated_by" : "Module::Build version 0.4205",
+   "generated_by" : "Module::Build version 0.421",
    "license" : [
       "unknown"
    ],
@@ -12,27 +12,30 @@
       "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
       "version" : "2"
    },
-   "name" : "gitpan",
+   "name" : "Gitpan",
    "prereqs" : {
       "configure" : {
          "requires" : {
-            "Module::Build" : "0.42"
+            "Module::Build" : "0.42",
+            "Path::Tiny" : "0.054"
          }
       },
       "runtime" : {
          "requires" : {
+            "Archive::Extract" : "0.72",
+            "Archive::Zip" : "1.39",
             "BackPAN::Index" : "0.39",
-            "CPANPLUS" : "0.9133",
-            "Capture::Tiny" : "0.08",
-            "File::chdir" : "0",
-            "File::chmod" : "0.32",
-            "Getopt::Long::Descriptive" : "0.085",
+            "Email::Valid" : "1.195",
+            "Git::Raw" : "0.49",
             "Git::Repository" : "1.3",
             "Git::Repository::Log" : "1.312",
-            "Method::Signatures" : "0",
-            "Moo" : "1.004002",
-            "Net::GitHub::V3" : "0.60",
-            "Path::Tiny" : "0.054",
+            "Git::Repository::Status" : "0.03",
+            "Import::Into" : "1.002000",
+            "Method::Signatures" : "20141021",
+            "Moo" : "1.006000",
+            "Parallel::ForkManager" : "1.06",
+            "Path::Tiny" : "0.059",
+            "Pithub" : "0.01027",
             "Type::Library" : "0.046",
             "Type::Utils" : "0.046",
             "Types::Standard" : "0.046",
@@ -49,8 +52,15 @@
       }
    },
    "provides" : {
-      "Git::CPAN::Patch::Import" : {
-         "file" : "lib/Git/CPAN/Patch/Import.pm"
+      "Gitpan" : {
+         "file" : "lib/Gitpan.pm",
+         "version" : "v2.3.0"
+      },
+      "Gitpan::CPAN::Author" : {
+         "file" : "lib/Gitpan/CPAN/Author.pm"
+      },
+      "Gitpan::CPAN::Authors" : {
+         "file" : "lib/Gitpan/CPAN/Authors.pm"
       },
       "Gitpan::Config" : {
          "file" : "lib/Gitpan/Config.pm"
@@ -61,12 +71,17 @@
       "Gitpan::Dist" : {
          "file" : "lib/Gitpan/Dist.pm"
       },
+      "Gitpan::Dummy" : {
+         "file" : "lib/Gitpan.pm"
+      },
       "Gitpan::Git" : {
          "file" : "lib/Gitpan/Git.pm"
       },
       "Gitpan::Github" : {
-         "file" : "lib/Gitpan/Github.pm",
-         "version" : "v2.0.0"
+         "file" : "lib/Gitpan/Github.pm"
+      },
+      "Gitpan::OO" : {
+         "file" : "lib/Gitpan/OO.pm"
       },
       "Gitpan::Release" : {
          "file" : "lib/Gitpan/Release.pm"
@@ -77,11 +92,17 @@
       "Gitpan::Role::CanBackoff" : {
          "file" : "lib/Gitpan/Role/CanBackoff.pm"
       },
+      "Gitpan::Role::CanDistLog" : {
+         "file" : "lib/Gitpan/Role/CanDistLog.pm"
+      },
+      "Gitpan::Role::CanLog" : {
+         "file" : "lib/Gitpan/Role/CanLog.pm"
+      },
       "Gitpan::Role::HasBackpanIndex" : {
          "file" : "lib/Gitpan/Role/HasBackpanIndex.pm"
       },
-      "Gitpan::Role::HasCPANPLUS" : {
-         "file" : "lib/Gitpan/Role/HasCPANPLUS.pm"
+      "Gitpan::Role::HasCPANAuthors" : {
+         "file" : "lib/Gitpan/Role/HasCPANAuthors.pm"
       },
       "Gitpan::Role::HasConfig" : {
          "file" : "lib/Gitpan/Role/HasConfig.pm"
@@ -91,8 +112,11 @@
       },
       "Gitpan::Types" : {
          "file" : "lib/Gitpan/Types.pm"
+      },
+      "Gitpan::perl5i" : {
+         "file" : "lib/Gitpan/perl5i.pm"
       }
    },
    "release_status" : "stable",
-   "version" : "0.01"
+   "version" : "v2.3.0"
 }
