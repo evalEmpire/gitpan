@@ -116,7 +116,22 @@ method wait_until_created() {
 method sync_with_github() {
     return 1 if $self->is_synced_with_github;
 
-    if( $self->have_github_repo ) {
+    # An optimization for the most common case
+    if( $self->have_git_repo &&
+        $self->git->remote("origin") eq $self->github->remote
+    ) {
+        my $git = Gitpan::Git->new(
+            repo_dir    => $self->repo_dir,
+            distname    => $self->distname
+        );
+        $git->prepare_for_commits;
+        $self->git($git);
+        $git->pull( "ff_only" => 1 );
+
+        $self->is_prepared_for_commits(1);
+        $self->is_prepared_for_push(1);
+    }
+    elsif( $self->have_github_repo ) {
         # We have a Git repo, update it from Github
         if( $self->have_git_repo ) {
             my $git = Gitpan::Git->new(
