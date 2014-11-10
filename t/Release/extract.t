@@ -108,4 +108,17 @@ subtest "tempdir cleanup" => sub {
     ok !-e $pony_archive_file;
 };
 
+
+subtest "archives which extract to cwd" => sub {
+    my $release = new_ok "Gitpan::Release", [
+        distname => 'RandomJungle',
+        version  => '0.05'
+    ];
+
+    $release->get;
+    $release->extract;
+
+    ok -e $release->extract_dir->child("META.json");
+};
+
 done_testing;

@@ -184,7 +184,28 @@ method extract {
 
     $self->fix_big_files;
 
+    $self->fix_extract_dir($ae);
+
     return $self->extract_dir;
+}
+
+# Check for tarballs which unpack into cwd.  Archive::Extract does not
+# eliminate the top level directory for us.
+method fix_extract_dir( Archive::Extract $ae ) {
+    my $files = $ae->files;
+
+    return unless $files->first(qr{^\./.+$});
+
+    my @children = $self->extract_dir->children;
+    croak "Too many files in the extraction dir to fix it: @children" if @children > 1;
+
+    my $child = $children[0];
+    CORE::system( "mv $child/* ".$self->extract_dir ) == 0 ||
+        croak "Could not move $child/* to ".$self->extract_dir;
+
+    rmdir $child;
+
+    return 1;
 }
 
 # Make sure the archive files are readable and the directories are traversable.
