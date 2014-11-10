@@ -1,6 +1,7 @@
 backpan_normalize_dist_names:
     uri:                                URIC
     Webservice-Google-Suggest:          WebService-Google-Suggest
+    Absrtact-Meta-Class:                Abstract-Meta-Class
     ACME-ESP:                           Acme-ESP
     ACME-KeyboardMarathon:              Acme-KeyboardMarathon
     ACME-Method-CaseInsensitive:        Acme-Method-CaseInsensitive
