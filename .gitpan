@@ -748,6 +748,7 @@ skip:
         - PTILL/mod_perl-1.11_1-apache-1.3b7dev-bin-bindist1-i386-win95-vc5.zip
         - JIMI/.\Tk-Markdown-withoutworldwriteables.tar.gz
         - MBROOKS/Apache2-WebApp-Extra-Admin-Packages-.tar.gz
+        - DAUNAY/oEdtk.20050408.v0.3..zip
 
 backpan_always_update: 0
 backpan_cache_ttl: 604800
