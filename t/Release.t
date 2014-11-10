@@ -129,6 +129,18 @@ subtest "get from file urls" => sub {
 };
 
 
+subtest "get - file url does not exist" => sub {
+    my $release = new_ok "Gitpan::Release", [
+        distname => 'Acme-Pony',
+        version  => '1.1.1',
+        url      => 'file:///blah/blabity/blah'
+    ];
+
+    throws_ok {
+        $release->get;
+    } qr{^Could not find /blah/blabity/blah};
+};
+
 note "move"; {
     my $to = Path::Tiny->tempdir;
 

@@ -139,7 +139,9 @@ method get(
 
     my $res;
     if( !$get_file_urls && $url->scheme eq 'file' ) {
-        $self->archive_file($url->path);
+        my $path = $url->path;
+        croak "Could not find $path" unless -e $path;
+        $self->archive_file($path);
         $res = HTTP::Response->new( 200, "file URL not copied" );
     }
     else {
