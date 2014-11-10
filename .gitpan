@@ -661,6 +661,21 @@ backpan_normalize_releases:
     authors/id/S/SE/SEANO/pscope-04-03.tgz:
         dist:    Sepia
         version: 0.403
+    authors/id/A/AN/ANANTHBV/OpenXML-Properties-withoutworldwriteables.tar.gz:
+        dist:    OpenXML-Properties
+        version: 0.01
+    authors/id/J/JC/JCROCHON/Country-Codes_v1-01.tgz:
+        dist:    Country-Codes
+        version: 1.01
+    authors/id/J/JC/JCROCHON/Codes.tar.gz:
+        dist:    Country-Codes
+        version: 1.00
+    authors/id/M/MS/MSPERL/Angle-Omega-withoutworldwriteables.tar.gz:
+        dist:    Angle-Omega
+        version: 1.00
+    authors/id/P/PE/PERLISH/Abjad-withoutworldwriteables.tar.gz:
+        dist:    Abjad
+        version: 0.02
 
 skip:
     dists:
@@ -749,6 +764,16 @@ skip:
         - JIMI/.\Tk-Markdown-withoutworldwriteables.tar.gz
         - MBROOKS/Apache2-WebApp-Extra-Admin-Packages-.tar.gz
         - DAUNAY/oEdtk.20050408.v0.3..zip
+        - ABERNDT/Win32-Snarl-withoutworldwriteables.tar.gz
+        - ADARSHTP/-withoutworldwriteables.tar.gz
+        - AHERNIT/Class-Injection-withoutworldwriteables.tar.gz
+        - ARJUNS/Dao-Map-Helper-withoutworldwriteables.tar.gz
+        - EFORGEOT/HTML-WikiConverter-Txt2tags-withoutworldwriteables.tar.gz
+        - EGOR/Catalyst-Action-SubDomain-withoutworldwriteables.tar.gz
+        - JAMESR/Dancer-Plugin-SiteMap-withoutworldwriteables.tar.gz
+        - JCROCHON/Country-Codes-withoutworldwriteables.tar.gz
+        - STEFANOS/Net-SMTP_auth-SSL-withoutworldwriteables.tar.gz
+        - ULIZAMA/CGI-Application-Muto-withoutworldwriteables.tar.gz
 
 backpan_always_update: 0
 backpan_cache_ttl: 604800
