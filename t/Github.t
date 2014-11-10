@@ -16,6 +16,7 @@ note "repo_name_on_github()"; {
         "Testing-ünicode"       => "Testing--nicode",
         "bpd.PW44"              => "bpd.PW44",
         "perl-5.005_02+apache1.3.3+modperl" => "perl-5.005_02-apache1.3.3-modperl",
+        "Acme-Working-Out-Dependencies-From-META-yml-Or-META-json-Will-Be-Wrong-At-Some-Point-Like-This-Module-For-Instance" => "Acme-Working-Out-Dependencies-From-META-yml-Or-META-json-Will-Be-Wrong-At-Some-Point-Like-This-Modul"
     );
 
     %tests->each(func($have, $want) {

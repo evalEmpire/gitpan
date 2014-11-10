@@ -56,6 +56,9 @@ haz "repo_name_on_github" =>
       # Dots seem ok.
       $repo =~ s{[^a-z0-9-_.]+}{-}ig;
 
+      # Maximum length is 100 characters.
+      $repo = substr $repo, 0, 100;
+
       return $repo;
   };
 
@@ -207,15 +210,16 @@ method create_repo(
 )
 {
     my $repo = $self->repo;
+    my $repo_name_on_github = $self->repo_name_on_github;
 
-    $self->dist_log( "Creating Github repo for $repo" );
+    $self->dist_log( "Creating Github repo for $repo as $repo_name_on_github" );
 
     my $result = $self->try_request(
         code => sub {
             $self->pithub->repos->create(
                 org     => $self->owner,
                 data    => {
-                    name            => encode_utf8($repo),
+                    name            => encode_utf8($repo_name_on_github),
                     description     => encode_utf8($desc),
                     homepage        => encode_utf8($homepage),
                     has_issues      => 0,
@@ -225,6 +229,9 @@ method create_repo(
         },
         retry_if_not_found => $retry_if_not_found,
     );
+
+    my $created_name  = $result->content->{name};
+    croak "Github repo name '$created_name' does not match our expected name '$repo_name_on_github'" if $created_name ne $repo_name_on_github;
 
     $self->_exists_on_github_cache(1);
 
