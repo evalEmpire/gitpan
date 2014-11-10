@@ -42,6 +42,7 @@ backpan_normalize_dist_names:
     catalyst-view-thumbnail-simple:     Catalyst-View-Thumbnail-Simple
     catmandu:                           Catmandu
     catmandu-fix-date:                  Catmandu-Fix-Date
+    Catmandu-Store-Elasticsearch:       Catmandu-Store-ElasticSearch
     cddb_get:                           CDDB_get
     CGI-Session-ID-UUID:                CGI-Session-ID-uuid
     Cgi-Simple:                         CGI-Simple
@@ -288,6 +289,7 @@ backpan_normalize_dist_names:
     Webservice-Validator-HTML-W3C:      WebService-Validator-HTML-W3C
     WebService-Viglink:                 WebService-VigLink
     webtools:                           WebTools
+    whatbot:                            Whatbot
     win32-gui-xmlbuilder:               Win32-GUI-XMLBuilder
     Win32-HardLink:                     Win32-Hardlink
     win32-IIS-rasdialer:                Win32-IIS-RASdialer
