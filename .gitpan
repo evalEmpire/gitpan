@@ -118,6 +118,7 @@ backpan_normalize_dist_names:
     geanfammer:                         Geanfammer
     geography-china-provinces:          Geography-China-Provinces
     GeoHash:                            Geohash
+    geo-coder-all:                      Geo-Coder-All
     Graphics-PLPLOT:                    Graphics-PLplot
     HASH-Sanitize:                      Hash-Sanitize
     haver-client:                       Haver-Client
