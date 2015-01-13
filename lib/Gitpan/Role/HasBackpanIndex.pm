@@ -41,6 +41,12 @@ method _build_index {
     push @opts, (normalize_releases   => $config->backpan_normalize_releases)
       if keys %{$config->backpan_normalize_releases};
 
+    push @opts, (cache_dir => $config->backpan_cache_dir.'')
+      if defined $config->backpan_cache_dir;
+
+    push @opts, (backpan_index_url => $config->backpan_index_url)
+      if defined $config->backpan_index_url;
+
     return BackPAN::Index->new(
         cache_ttl                       => $self->config->backpan_cache_ttl,
         releases_only_from_authors      => 1,

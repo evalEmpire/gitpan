@@ -9,6 +9,15 @@ haz backpan_url =>
   isa           => URI,
   default       => 'http://gitpan.integra.net/backpan';
 
+haz backpan_index_url =>
+  is            => 'ro',
+  isa           => URI,
+  default       => 'http://gitpan.integra.net/backpan-index.gz';
+
+haz backpan_cache_dir =>
+  is            => 'ro',
+  isa           => Maybe[AbsPath];
+
 haz backpan_cache_ttl =>
   is            => 'ro',
   isa           => Int,

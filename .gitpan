@@ -788,7 +788,9 @@ committer_email: schwern+gitpan-test@pobox.com
 overlays:
     test:
         backpan_always_update: 0
+        backpan_cache_dir: t/caches/backpan/
         backpan_cache_ttl: 604800
+        backpan_index_url: file:t/backpan/backpan-index.gz
         backpan_url: file:t/backpan/
 
         github_owner: gitpan-test

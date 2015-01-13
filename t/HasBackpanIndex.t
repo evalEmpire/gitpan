@@ -42,4 +42,16 @@ note "not shared across forks"; {
     Test::More->builder->current_test( Test::More->builder->current_test + $child->read );
 }
 
+note "test config"; {
+    my $obj = Some::Class->new;
+    my $bp = $obj->backpan_index;
+
+    ok("t"->path->subsumes($bp->cache_dir->path),
+       "backpan cache is in the t/ directory")
+      or diag $bp->cache_dir;
+
+    is $bp->backpan_index_url->scheme, "file";
+    is $bp->backpan_index_url->path, "t/backpan/backpan-index.gz";
+}
+
 done_testing;
