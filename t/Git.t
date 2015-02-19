@@ -176,6 +176,52 @@ note "commit & log"; {
 }
 
 
+subtest "checkout" => sub {
+    my $git = Gitpan::Git->init(
+        distname        => "Foo-Bar"
+    );
+
+    note "Put a commit into master";
+    $git->repo_dir->child("foo")->touch;
+    $git->add_all;
+    $git->commit( message => "first commit in master" );
+    is $git->current_branch, "master";
+
+    note "Change to a different branch";
+    $git->run( "branch", "something" );
+    $git->checkout( "something" );
+    is $git->current_branch, "something";
+
+    note "Put a commit into something";
+    $git->repo_dir->child("bar")->touch;
+    $git->add_all;
+    $git->commit( message => "first commit in something" );
+
+    note "Switch to master";
+    $git->checkout( "master" );
+    ok -e $git->repo_dir->child("foo");
+    ok !-e $git->repo_dir->child("bar");
+
+    $git->repo_dir->child("in_master")->touch;
+    $git->add_all;
+    $git->commit( message => "make master diverge" );
+
+    note "Put something in the index";
+    $git->repo_dir->child("added")->touch;
+    $git->add("added");
+
+    note "Checkout with force to clear the index";
+    $git->checkout(
+        "something",
+        "force" => 1,
+    );
+
+    ok !-e $git->repo_dir->child("added"),      "cleans added files";
+    ok  -e $git->repo_dir->child("bar"),        "checked out";
+    ok  -e $git->repo_dir->child("foo"),        "checked out";
+};
+
+
 note "clone, push, pull"; {
     my $origin = Gitpan::Git->init(
         distname        => "Foo-Bar"
@@ -201,6 +247,7 @@ note "clone, push, pull"; {
     $origin->add( "bar" );
     $origin->commit( message => "adding bar" );
 
+    note "Pulling";
     $clone->pull;
 
     ok -e $clone->repo_dir->child("bar"), "pulled new file";
@@ -224,6 +271,7 @@ note "clone, push, pull"; {
     $clone2->commit( message => "adding baz" );
     $clone2->tag( "some_tag" );
 
+    note "Pushing";
     $clone2->push;
     my($bare_log)   = $bare->log("-1");
     my($clone2_log) = $clone2->log("-1");

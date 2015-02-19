@@ -49,7 +49,7 @@ subtest "prepare_for_commits on a non-empty repository" => sub {
 
     # Change to a different branch
     $git->run( "branch", "something" );
-    $git->run( "checkout", "-q", "something" );
+    $git->checkout( "something" );
 
     is $git->current_branch, "something";
 

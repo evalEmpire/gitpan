@@ -44,6 +44,7 @@ haz git_raw =>
   handles       => [qw(
       is_empty
       head
+      ignore
   )],
   lazy          => 1,
   default       => method {
@@ -341,7 +342,20 @@ method prepare_for_commits {
     # Make sure we're in the right branch and clean up
     # the staging area and working tree
     $self->run("reset", "-q", "--hard", "HEAD");
-    $self->run("checkout", "-q", "-f", "master");
+    $self->checkout("master", force => 1);
+
+    return;
+}
+
+
+method checkout(
+    Str         $branch_name,
+    Bool        :$force = 0,
+) {
+    my @run_args = ("checkout", "-q");
+    @run_args->push("-f") if $force;
+
+    $self->run(@run_args, $branch_name);
 
     return;
 }
@@ -439,7 +453,7 @@ method commit(
         $author_sig,
         $committer_sig,
         \@parents,
-        $repo->lookup( $repo->index->write_tree ),
+        $repo->index->write_tree,
     );
 }
 
