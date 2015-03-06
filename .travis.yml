@@ -1,3 +1,5 @@
 language: perl
 perl:
     - "5.18"
+env:
+    - secure: "EOModDmXL8VA4AbV1BeNeQFqp8PHDFBzVB2gjyzKWCudqX7Byv6BNNSk28q7OVzk2H6Su22upzyWtdluhGIAdj9cwxbJJ9uVQ5512yPtdjdiznDK+55kcKVKdD1RVewieXKZeHyIWO9Ffn2KhDN0NzGo/3u9kvqDB/LxdyOxqbA="

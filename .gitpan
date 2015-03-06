@@ -780,7 +780,6 @@ backpan_always_update: 0
 backpan_cache_ttl: 604800
 
 github_owner: gitpan-test
-github_access_token: d0e256108f5384fec8c24f26c21ee831cbd208aa
 
 committer_name:  Gitpan Test
 committer_email: schwern+gitpan-test@pobox.com
@@ -794,7 +793,6 @@ overlays:
         backpan_url: file:t/backpan/
 
         github_owner: gitpan-test
-        github_access_token: d0e256108f5384fec8c24f26c21ee831cbd208aa
 
         committer_name:  Gitpan Test
         committer_email: schwern+gitpan-test@pobox.com
