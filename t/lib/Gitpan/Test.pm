@@ -10,6 +10,8 @@ use Test::Most ();
 method import($class: ...) {
     my $caller = caller;
 
+    warn "GITPAN_GITHUB_ACCESS_TOKEN is not set, tests which talk to Github will probably fail" unless $ENV{GITPAN_GITHUB_ACCESS_TOKEN};
+    
     $ENV{GITPAN_CONFIG_DIR} //= "."->path->absolute;
     $ENV{GITPAN_TEST}       //= 1;
 
