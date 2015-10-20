@@ -124,7 +124,7 @@ How can I merge Gitpan's history with my module?
 If you are the owner of a CPAN module and have an existing, but
 incomplete, repository you can fill in the history using Gitpan.  The
 technique is outlined in this article.
-http://use.perl.org/~schwern/journal/39974
+http://use.perl.org/use.perl.org/_schwern/journal/39974.html
 
 
 How do I update my module on Gitpan?
