@@ -30,7 +30,7 @@ is difficult to get the complete history of a distribution, especially
 one that has changed authors or is released by multiple authors (for
 example, Moose).  Because releases are regularly deleted from CPAN
 even sites like search.cpan.org provide an incomplete history.  Having
-the complete history of each distrubtion in its own repository makes
+the complete history of each distribution in its own repository makes
 the full distribution history easy to access.
 
 Gitpan also hopes to make patching CPAN modules easier.  Ideally you
